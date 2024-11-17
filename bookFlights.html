@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>OnoAir - Book a Flight</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="app.js" defer></script>
+</head>
+<body>
+    <header>
+        <h1><a href="index.html">OnoAir</a></h1>
+    </header>
+    <main>
+        <h2>Book a Flight</h2>
+        <label for="origin">Origin:</label>
+        <select id="origin">
+            <!-- Options will be populated with JavaScript -->
+        </select><br>
+
+        <label for="destination">Destination:</label>
+        <select id="destination">
+            <!-- Options will be populated with JavaScript -->
+        </select><br>
+
+        <label for="passengerCount">Number of Passengers:</label>
+        <input type="number" id="passengerCount" min="1"><br>
+
+        <div id="passengerFields"></div>
+        <button onclick="bookFlight()">Save</button>
+    </main>
+    <footer>
+        <a href="help.html"><i class="fa fa-question-circle"></i></a>
+    </footer>
+</body>
+</html>
