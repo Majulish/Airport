@@ -1,3 +1,5 @@
+
+// Save the initial destinations to localStorage
 // Load flights from localStorage or use default flights
 let flights = JSON.parse(localStorage.getItem("flights")) || [
     { flightNo: "W61283", origin: "Tel Aviv", destination: "Krakow", boardingDate: "2025-07-16", boardingTime: "20:00", arrivalDate: "2025-07-17", arrivalTime: "01:00", seatCount: 200 },
@@ -6,11 +8,25 @@ let flights = JSON.parse(localStorage.getItem("flights")) || [
 
 // Load destinations from localStorage or use default destinations
 let destinations = JSON.parse(localStorage.getItem("destinations")) || [
-    { destCode: "TLV", destName: "Tel Aviv", airportName: "Ben Gurion Airport", airportUrl: "https://www.iaa.gov.il/en/", imageUrl: "image1.jpg" },
-    { destCode: "JFK", destName: "New York", airportName: "John F. Kennedy International Airport", airportUrl: "https://www.jfkairport.com/", imageUrl: "image2.jpg" }
+    {
+        destCode: "TLV",
+        destName: "Tel Aviv",
+        airportName: "Ben Gurion Airport",
+        airportUrl: "https://www.iaa.gov.il/en/",
+        imageUrl: "https://via.placeholder.com/400?text=Tel+Aviv"
+    },
+    {
+        destCode: "JFK",
+        destName: "New York",
+        airportName: "John F. Kennedy International Airport",
+        airportUrl: "https://www.jfkairport.com/",
+        imageUrl: "https://thenewyorktravelguide.com/wp-content/uploads/2021/02/statue-of-liberty-nyc-usa_1476328154.jpeg"
+    }
 ];
 
-// Function to render flights in the table
+// Save the initial destinations to localStorage
+localStorage.setItem("destinations", JSON.stringify(destinations));
+
 function renderFlights() {
     const table = document.getElementById("flightsTable");
     if (!table) return; // Check if the table exists
@@ -146,21 +162,131 @@ document.addEventListener("DOMContentLoaded", () => {
     if (document.getElementById("destinationsTable")) renderDestinations();
 });
 
-// Function to populate origin and destination dropdowns
+
+// Function to save a booking and validate all inputs
+function saveBooking() {
+    const origin = document.getElementById("origin").value;
+    const destination = document.getElementById("destination").value;
+    const boardingDate = document.getElementById("boardingDate").value;
+    const boardingTime = document.getElementById("boardingTime").value;
+    const arrivalDate = document.getElementById("arrivalDate").value;
+    const arrivalTime = document.getElementById("arrivalTime").value;
+    const passengerCount = parseInt(document.getElementById("passengerCount").value);
+
+    if (!origin || !destination || isNaN(passengerCount) || passengerCount < 1) {
+        alert("Please fill in all required fields.");
+        return;
+    }
+
+    const passengers = [];
+    for (let i = 1; i <= passengerCount; i++) {
+        const name = document.getElementById(`passengerName${i}`).value;
+        const passportId = document.getElementById(`passportId${i}`).value;
+        if (!name || !passportId) {
+            alert(`Please fill details for Passenger ${i}`);
+            return;
+        }
+        passengers.push({ name, passportId });
+    }
+
+    const destinationData = destinations.find(dest => dest.destName === destination);
+    const imageUrl = destinationData ? destinationData.imageUrl : "https://via.placeholder.com/150";
+
+    const booking = {
+        origin,
+        destination,
+        boardingDate,
+        boardingTime,
+        arrivalDate,
+        arrivalTime,
+        passengerCount,
+        passengers,
+        imageUrl
+    };
+
+    const bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+    bookings.push(booking);
+    localStorage.setItem("bookings", JSON.stringify(bookings));
+
+    alert("Booking saved successfully!");
+    window.location.href = "myBookings.html";
+}
+
+// Updated renderBookings with `imageSrc`
+function renderBookings() {
+    const bookingsContainer = document.getElementById("bookingsContainer");
+    if (!bookingsContainer) return;
+
+    bookingsContainer.innerHTML = ""; // Clear existing bookings
+
+    const bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+    const destinations = JSON.parse(localStorage.getItem("destinations")) || [];
+
+    bookings.forEach(booking => {
+        const bookingCard = document.createElement("div");
+        bookingCard.className = "booking-card";
+
+        const imageSrc = destinations.find((d) => d.destName === booking.destination)?.imageUrl || "https://via.placeholder.com/150?text=Image+Not+Found";
+
+        const imageDiv = document.createElement("div");
+        imageDiv.className = "booking-image";
+        imageDiv.innerHTML = `
+            <img src="${imageSrc}" alt="Destination Image" 
+                 onerror="this.src='https://via.placeholder.com/150?text=Image+Not+Found';" />
+        `;
+
+        const detailsDiv = document.createElement("div");
+        detailsDiv.className = "booking-details";
+        detailsDiv.innerHTML = `
+            <p><strong>Origin:</strong> ${booking.origin} 
+               <strong>Boarding:</strong> ${booking.boardingDate} ${booking.boardingTime}</p>
+            <p><strong>Destination:</strong> ${booking.destination} 
+               <strong>Landing:</strong> ${booking.arrivalDate} ${booking.arrivalTime}</p>
+            <p><strong>No. of Passengers:</strong> ${booking.passengerCount}</p>
+        `;
+
+        bookingCard.appendChild(imageDiv);
+        bookingCard.appendChild(detailsDiv);
+        bookingsContainer.appendChild(bookingCard);
+    });
+}
+
+// Updated editPhotoLink
+function editPhotoLink() {
+    const destCode = document.getElementById("destCode").value.trim();
+    const newImageUrl = document.getElementById("newImageUrl").value.trim();
+
+    if (!destCode || !newImageUrl) {
+        alert("Please fill out all fields.");
+        return;
+    }
+
+    const destinations = JSON.parse(localStorage.getItem("destinations")) || [];
+    const destinationIndex = destinations.findIndex(dest => dest.destCode === destCode);
+
+    if (destinationIndex === -1) {
+        alert("Destination not found. Please check the destination code.");
+        return;
+    }
+
+    destinations[destinationIndex].imageUrl = newImageUrl;
+    localStorage.setItem("destinations", JSON.stringify(destinations));
+
+    alert("Photo link updated successfully!");
+    renderBookings(); // Ensure updated image is reflected in bookings
+}
+
+// Function to populate dropdowns for origin and destination
 function populateDropdowns() {
     const originDropdown = document.getElementById("origin");
     const destinationDropdown = document.getElementById("destination");
 
-    // Load flights and destinations from localStorage
-    const flights = JSON.parse(localStorage.getItem("flights")) || [];
-    const destinations = JSON.parse(localStorage.getItem("destinations")) || [];
-
-    // Collect unique origins from flights
     const origins = [...new Set(flights.map(flight => flight.origin))];
-    // Collect unique destination names from destinations
     const destinationNames = [...new Set(destinations.map(dest => dest.destName))];
 
-    // Populate the origin dropdown
+    originDropdown.innerHTML = `<option value="">Select Origin</option>`;
+    destinationDropdown.innerHTML = `<option value="">Select Destination</option>`;
+
     origins.forEach(origin => {
         const option = document.createElement("option");
         option.value = origin;
@@ -168,7 +294,6 @@ function populateDropdowns() {
         originDropdown.appendChild(option);
     });
 
-    // Populate the destination dropdown
     destinationNames.forEach(destination => {
         const option = document.createElement("option");
         option.value = destination;
@@ -177,47 +302,9 @@ function populateDropdowns() {
     });
 }
 
-// Function to book a flight
-function bookFlight() {
-    const origin = document.getElementById("origin").value;
-    const destination = document.getElementById("destination").value;
-    const passengerCount = parseInt(document.getElementById("passengerCount").value);
+// Call functions when the page loads
+document.addEventListener("DOMContentLoaded", () => {
+    if (document.getElementById("bookingsContainer")) renderBookings();
+    populateDropdowns();
+});
 
-    // Validate inputs
-    if (!origin || !destination || isNaN(passengerCount) || passengerCount < 1) {
-        alert("Please select valid origin, destination, and number of passengers.");
-        return;
-    }
-
-    // Create passenger details dynamically based on the passenger count
-    const passengerFields = document.getElementById("passengerFields");
-    passengerFields.innerHTML = ""; // Clear existing fields
-
-    for (let i = 1; i <= passengerCount; i++) {
-        const nameLabel = document.createElement("label");
-        nameLabel.textContent = `Passenger ${i} Name:`;
-        const nameInput = document.createElement("input");
-        nameInput.type = "text";
-        nameInput.id = `passengerName${i}`;
-        nameInput.required = true;
-
-        const passportLabel = document.createElement("label");
-        passportLabel.textContent = `Passenger ${i} Passport ID:`;
-        const passportInput = document.createElement("input");
-        passportInput.type = "text";
-        passportInput.id = `passportId${i}`;
-        passportInput.required = true;
-
-        passengerFields.appendChild(nameLabel);
-        passengerFields.appendChild(nameInput);
-        passengerFields.appendChild(document.createElement("br"));
-        passengerFields.appendChild(passportLabel);
-        passengerFields.appendChild(passportInput);
-        passengerFields.appendChild(document.createElement("br"));
-    }
-
-    alert("Passenger fields generated. Fill out the details and click Save again.");
-}
-
-// Call populateDropdowns when the page loads
-document.addEventListener("DOMContentLoaded", populateDropdowns);
