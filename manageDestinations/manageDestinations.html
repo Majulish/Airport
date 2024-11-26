@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>OnoAir - Manage Destinations</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <header>
+        <h1><a href="../index.html">OnoAir</a></h1>
+    </header>
+    <main>
+        <h2>Manage Destinations</h2>
+
+        <!-- Add Destination Link -->
+        <div class="actions">
+            <a href="../addDestination/addDestination.html" class="button">Add New Destination</a>
+        </div>
+
+        <!-- Table to display destinations -->
+        <table id="destinationsTable">
+            <thead>
+                <tr>
+                    <th>Destination Code</th>
+                    <th>Destination Name</th>
+                    <th>Airport Name</th>
+                    <th>Airport URL</th>
+                    <th>Image URL</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Destination rows will be dynamically loaded here -->
+            </tbody>
+        </table>
+    </main>
+    <footer>
+        <a href="../help/help.html" title="Help"><i class="fa fa-question-circle"></i></a>
+    </footer>
+    <script type="module" src="manageDestinations.js" defer></script>
+</body>
+</html>
