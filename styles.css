@@ -233,3 +233,151 @@ button:hover, .button:hover {
 .booking-details p strong {
     color: #333;
 }
+
+.error {
+    border: 2px solid red;
+    background-color: #ffe6e6;
+}
+
+#addDestinationButton {
+    float: right; /* Aligns the button to the right */
+    background-color: #007bff; /* Button color */
+    color: white; /* Text color */
+    padding: 10px 20px; /* Padding around the button */
+    font-size: 16px; /* Font size */
+    border: none; /* Remove default border */
+    border-radius: 8px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    margin-bottom: 10px; /* Space below the button */
+}
+
+
+/* Styling for all buttons in the .actions-bottom container */
+/* Fixed bottom button container */
+.actions-bottom {
+    position: fixed; /* Sticks the container to the bottom-right corner */
+    bottom: 20px; /* Distance from the bottom of the viewport */
+    right: 20px; /* Distance from the right of the viewport */
+    text-align: center; /* Center the content inside the container */
+    z-index: 1000; /* Ensures the button stays above other content */
+}
+
+/* Styling for the Add New Destination button */
+.actions-bottom .button {
+    display: inline-block;
+    background-color: #007bff;
+    color: white;
+    padding: 12px 24px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease-in-out;
+}
+
+.actions-bottom .button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+/* Fixed Save Button styling */
+#saveButton {
+    position: fixed; /* Sticks the button to the bottom-right */
+    bottom: 20px; /* Distance from the bottom edge */
+    right: 20px; /* Distance from the right edge */
+    background-color: #28a745; /* Green background for Save button */
+    color: white; /* White text for contrast */
+    padding: 12px 24px; /* Spacing for better clickability */
+    font-size: 16px; /* Font size for readability */
+    border: none; /* Remove borders */
+    border-radius: 8px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow */
+    z-index: 1000; /* Ensures the button is above other content */
+    transition: all 0.2s ease-in-out; /* Smooth hover effect */
+}
+
+#saveButton:hover {
+    background-color: #218838; /* Darker green for hover */
+    transform: scale(1.05); /* Slight enlargement */
+}
+
+/* General form styling */
+.form-container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.form-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    color: #333;
+}
+
+.form-container form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+}
+
+.form-group label {
+    font-weight: bold;
+    font-size: 1rem;
+    color: #555;
+}
+
+.form-group input {
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.form-group input:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.form-button {
+    background-color: #007bff;
+    color: white;
+    padding: 12px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: center;
+    width: 100%;
+    transition: all 0.2s ease-in-out;
+}
+
+.form-button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+
+
+
+
+
+

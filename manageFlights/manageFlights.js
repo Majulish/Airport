@@ -1,4 +1,5 @@
 import { flights } from '../Data/FlightsData.js';
+import { destinations } from '../Data/DestinationsData.js';
 
 function renderFlights() {
     const table = document.getElementById("flightsTable");
@@ -34,4 +35,23 @@ function renderFlights() {
     });
 }
 
-document.addEventListener("DOMContentLoaded", renderFlights);
+function validateDestination(destinationCode) {
+    // Check if the destination exists in the destinations list
+    const destinationExists = destinations.some(dest => dest.destCode === destinationCode);
+    if (!destinationExists) {
+        alert(`We do not fly to the destination (${destinationCode}) at this moment.`);
+    }
+    return destinationExists;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    renderFlights();
+
+    const addFlightButton = document.querySelector(".actions-end .button");
+    addFlightButton.addEventListener("click", (event) => {
+        const destinationCode = prompt("Enter the destination code for validation:");
+        if (!validateDestination(destinationCode)) {
+            event.preventDefault(); // Stop navigation if destination is invalid
+        }
+    });
+});

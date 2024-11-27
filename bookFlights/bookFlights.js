@@ -1,5 +1,71 @@
-import { flights } from '../Data/FlightsData.js';
-import { destinations } from "../Data/DestinationsData.js";
+import { flights } from '../Data/FlightsData.js'; // Ensure the correct path
+
+/* Render the Flights Table */
+function renderFlightsTable() {
+    const mainContent = document.querySelector("main");
+    mainContent.innerHTML = `
+        <h2>Book a Flight</h2>
+        <div class="filter">
+            <label for="origin">Filter by: Origin:</label>
+            <select id="origin">
+                <option value="">Select Origin</option>
+            </select>
+
+            <label for="destination">Destination:</label>
+            <select id="destination">
+                <option value="">Select Destination</option>
+            </select>
+        </div>
+        <table id="flightsTable">
+            <thead>
+                <tr>
+                    <th>Flight No.</th>
+                    <th>Origin</th>
+                    <th>Destination</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows dynamically generated -->
+            </tbody>
+        </table>
+    `;
+
+    populateDropdowns();
+    renderFlights(flights);
+
+    // Attach event listeners to the dropdowns
+    document.getElementById('origin').addEventListener('change', filterFlights);
+    document.getElementById('destination').addEventListener('change', filterFlights);
+}
+
+/* Render Flights in the Table */
+function renderFlights(filteredFlights) {
+    const flightsTableBody = document.querySelector('#flightsTable tbody');
+    flightsTableBody.innerHTML = ''; // Clear previous rows
+
+    filteredFlights.forEach((flight, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${flight.flightNo}</td>
+            <td>${flight.origin}</td>
+            <td>${flight.destination}</td>
+            <td>
+                <button class="button" data-index="${index}">Book</button>
+            </td>
+        `;
+        flightsTableBody.appendChild(row);
+    });
+
+    // Attach event listeners to "Book" buttons
+    document.querySelectorAll('.button').forEach(button => {
+        button.addEventListener('click', (event) => {
+            const flightIndex = event.target.dataset.index;
+            const selectedFlight = filteredFlights[flightIndex];
+            showBookingForm(selectedFlight);
+        });
+    });
+}
 
 /* Populate Dropdowns for Origin and Destination */
 function populateDropdowns() {
@@ -24,95 +90,61 @@ function populateDropdowns() {
         option.textContent = destination;
         destinationDropdown.appendChild(option);
     });
-
-    console.log('Populated Dropdowns:', { uniqueOrigins, uniqueDestinations }); // Debugging
-}
-
-
-/* Render Flights in the Table */
-function renderFlights(filteredFlights) {
-    const flightsTableBody = document.querySelector('#flightsTable tbody');
-    flightsTableBody.innerHTML = ''; // Clear previous rows
-
-    filteredFlights.forEach((flight, index) => {
-        const row = document.createElement('tr');
-
-        // Flight Details
-        row.innerHTML = `
-            <td>${flight.flightNo}</td>
-            <td>${flight.origin}</td>
-            <td>${flight.destination}</td>
-            <td>
-                <button class="button" data-index="${index}">Book</button>
-            </td>
-        `;
-
-        flightsTableBody.appendChild(row);
-    });
-
-    // Attach event listeners to all "Book" buttons
-    document.querySelectorAll('.button').forEach(button => {
-        button.addEventListener('click', () => {
-            const flightIndex = button.getAttribute('data-index');
-            const selectedFlight = filteredFlights[flightIndex];
-            showBookingForm(selectedFlight);
-        });
-    });
 }
 
 /* Show the Booking Form for a Selected Flight */
 function showBookingForm(flight) {
-    const bookingForm = document.getElementById('bookingForm');
-    bookingForm.style.display = 'block';
-
-    const flightDetails = document.getElementById('flightDetails');
+    const mainContent = document.querySelector("main");
     const availableSeats = flight.seatCount - flight.takenSeats;
-    flightDetails.textContent = `Origin: ${flight.origin} Boarding: ${flight.boardingDate} ${flight.boardingTime}
-        Destination: ${flight.destination} Landing: ${flight.arrivalDate} ${flight.arrivalTime}
-        Available Seats: ${availableSeats}`;
 
-    // Generate Passenger Input Fields
-    const passengerFieldsContainer = document.getElementById('passengerFields');
-    passengerFieldsContainer.innerHTML = ''; // Clear existing fields
+    mainContent.innerHTML = `
+        <h3>Flight Details</h3>
+        <p>
+            Origin: ${flight.origin}<br>
+            Boarding: ${flight.boardingDate} ${flight.boardingTime}<br>
+            Destination: ${flight.destination}<br>
+            Landing: ${flight.arrivalDate} ${flight.arrivalTime}<br>
+            Available Seats: ${availableSeats}
+        </p>
+        <form id="bookingForm">
+            <label for="numPassengers">No. of Passengers:</label>
+            <input type="number" id="numPassengers" min="1" max="${availableSeats}" required><br>
+            <div id="passengerFields"></div>
+            <button type="submit">Save Booking</button>
+        </form>
+    `;
 
     const numPassengersField = document.getElementById('numPassengers');
-    numPassengersField.addEventListener('input', () => {
-        const numPassengers = parseInt(numPassengersField.value);
-        passengerFieldsContainer.innerHTML = ''; // Clear previous fields
+    numPassengersField.addEventListener('input', () => updatePassengerFields(numPassengersField.value));
 
-        for (let i = 1; i <= numPassengers; i++) {
-            passengerFieldsContainer.innerHTML += `
-                <div>
-                    <label>Passenger ${i} Name: <input type="text" id="passengerName${i}" required></label><br>
-                    <label>Passenger ${i} Passport ID: <input type="text" id="passportId${i}" required></label><br>
-                </div>
-            `;
-        }
-    });
-
-    bookingForm.onsubmit = (e) =>saveBooking(e, flight);
+    document.getElementById('bookingForm').addEventListener('submit', (e) => saveBooking(e, flight));
 }
 
+/* Update Passenger Input Fields Dynamically */
+function updatePassengerFields(numPassengers) {
+    const passengerFieldsContainer = document.getElementById('passengerFields');
+    passengerFieldsContainer.innerHTML = ''; // Clear previous fields
+
+    for (let i = 1; i <= numPassengers; i++) {
+        passengerFieldsContainer.innerHTML += `
+            <div>
+                <label>Passenger ${i} Name: <input type="text" id="passengerName${i}" required></label><br>
+                <label>Passenger ${i} Passport ID: <input type="text" id="passportId${i}" required></label><br>
+            </div>
+        `;
+    }
+}
+
+/* Save Booking Data and Return to the Flight Table */
 function saveBooking(e, flight) {
     e.preventDefault(); // Prevent form reload
 
-    const origin = flight.origin;
-    const destination = flight.destination;
-    const boardingDate = flight.boardingDate;
-    const boardingTime = flight.boardingTime;
-    const arrivalDate = flight.arrivalDate;
-    const arrivalTime = flight.arrivalTime;
-
-    const passengerCount = parseInt(document.getElementById('numPassengers').value);
-    if (isNaN(passengerCount) || passengerCount < 1) {
-        alert('Please enter a valid number of passengers.');
-        return;
-    }
-
+    const numPassengers = parseInt(document.getElementById('numPassengers').value);
     const passengers = [];
-    for (let i = 1; i <= passengerCount; i++) {
-        const name = document.getElementById(`passengerName${i}`).value;
-        const passportId = document.getElementById(`passportId${i}`).value;
+
+    for (let i = 1; i <= numPassengers; i++) {
+        const name = document.getElementById(`passengerName${i}`).value.trim();
+        const passportId = document.getElementById(`passportId${i}`).value.trim();
 
         if (!name || !passportId) {
             alert(`Please fill out all fields for Passenger ${i}.`);
@@ -122,34 +154,10 @@ function saveBooking(e, flight) {
         passengers.push({ name, passportId });
     }
 
-    const destinationData = destinations.find(dest => dest.destName === destination);
-    const imageUrl = destinationData ? destinationData.imageUrl : "https://via.placeholder.com/150";
-
-    const booking = {
-    origin: flight.origin,
-    destination: flight.destination,
-    boardingDate: flight.boardingDate,
-    boardingTime: flight.boardingTime,
-    arrivalDate: flight.arrivalDate,
-    arrivalTime: flight.arrivalTime,
-    passengerCount,
-    passengers,
-    imageUrl
-};
-
-
-    console.log('Booking Data:', booking); // Debug log for booking data
-
-    const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
-    bookings.push(booking);
-    localStorage.setItem('bookings', JSON.stringify(bookings));
-
-    console.log('Updated Bookings:', bookings); // Debug log for saved bookings
-
+    console.log('Booking Data:', { flight, passengers }); // Debug log
     alert('Booking saved successfully!');
-    window.location.href = '../myBookings/myBookings.html';
+    renderFlightsTable(); // Return to the flight table
 }
-
 
 /* Filter Flights Based on Origin and Destination */
 function filterFlights() {
@@ -165,51 +173,7 @@ function filterFlights() {
     renderFlights(filteredFlights);
 }
 
-function renderBookings() {
-    const bookingsContainer = document.getElementById("bookingsContainer");
-    if (!bookingsContainer) return;
-
-    bookingsContainer.innerHTML = ""; // Clear existing bookings
-
-    const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
-    console.log('Retrieved Bookings:', bookings); // Debugging
-
-    if (bookings.length === 0) {
-        bookingsContainer.innerHTML = `<p>No bookings found. Book your first flight!</p>`;
-        return;
-    }
-
-    bookings.forEach((booking) => {
-        const { origin, destination, boardingDate, boardingTime, arrivalDate, arrivalTime, passengers, imageUrl } = booking;
-
-        const bookingCard = document.createElement("div");
-        bookingCard.className = "booking-card";
-
-        bookingCard.innerHTML = `
-            <div class="booking-image">
-                <img src="${imageUrl}" alt="Destination Image"
-                     onerror="this.src='https://via.placeholder.com/150?text=Image+Not+Found';" />
-            </div>
-            <div class="booking-details">
-                <p><strong>Origin:</strong> ${origin}</p>
-                <p><strong>Destination:</strong> ${destination}</p>
-                <p><strong>Boarding:</strong> ${boardingDate} ${boardingTime}</p>
-                <p><strong>Arrival:</strong> ${arrivalDate} ${arrivalTime}</p>
-                <p><strong>No. of Passengers:</strong> ${passengers.length}</p>
-            </div>
-        `;
-        bookingsContainer.appendChild(bookingCard);
-    });
-}
-
-document.addEventListener("DOMContentLoaded", renderBookings);
-
-
 /* Initialize Page */
 document.addEventListener('DOMContentLoaded', () => {
-    populateDropdowns();
-    renderFlights(flights); // Show all flights initially
-
-    document.getElementById('origin').addEventListener('change', filterFlights);
-    document.getElementById('destination').addEventListener('change', filterFlights);
+    renderFlightsTable(); // Render the initial flights table
 });

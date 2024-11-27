@@ -4,6 +4,12 @@ function renderDestinations() {
     const tableBody = document.querySelector('#destinationsTable tbody');
     tableBody.innerHTML = ''; // Clear existing rows
 
+    // Handle empty or invalid destinations array
+    if (!Array.isArray(destinations) || destinations.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="5">No destinations available.</td></tr>';
+        return;
+    }
+
     destinations.forEach(destination => {
         const row = document.createElement('tr');
 
@@ -28,6 +34,7 @@ function renderDestinations() {
         link.href = destination.airportUrl;
         link.textContent = "Visit";
         link.target = "_blank";
+        link.ariaLabel = `Visit ${destination.airportName} website`;
         airportUrlCell.appendChild(link);
         row.appendChild(airportUrlCell);
 
@@ -35,9 +42,11 @@ function renderDestinations() {
         const imageCell = document.createElement('td');
         const img = document.createElement('img');
         img.src = destination.imageUrl;
-        img.alt = destination.destName;
+        img.alt = `Image of ${destination.destName}`;
         img.style.width = "100px"; // Adjust size as needed
         img.style.height = "auto";
+        img.style.objectFit = "cover";
+        img.loading = "lazy"; // Improve performance
         imageCell.appendChild(img);
         row.appendChild(imageCell);
 

@@ -1,25 +1,29 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>OnoAir - Add Destination</title>
-  <link rel="stylesheet" href="../styles.css">
-  <script src="../common.js"></script>
+    <title>OnoAir - Add Destination</title>
+    <link rel="stylesheet" href="../styles.css">
 </head>
 <body>
-  <header>
-    <h1><a href="../index.html">OnoAir</a></h1>
-  </header>
-  <main>
-    <h2>New Destination</h2>
-    <label>Destination Code: <input type="text" id="destCode"></label><br>
-    <label>Destination Name: <input type="text" id="destName"></label><br>
-    <label>Airport Name: <input type="text" id="airportName"></label><br>
-    <label>Airport URL: <input type="url" id="airportUrl"></label><br>
-    <label>Image URL: <input type="url" id="imageUrl"></label><br>
-    <button onclick="addDestination()">Save</button>
-  </main>
-  <footer>
-    <a href="../help/help.html"><i class="fa fa-question-circle"></i></a>
-  </footer>
+    <header>
+        <h1><a href="../index.html">OnoAir</a></h1>
+    </header>
+    <main>
+        <h2>Add New Destination</h2>
+        <label>Destination Code: <input type="text" id="destCode"></label><br>
+        <label>Destination Name: <input type="text" id="destName"></label><br>
+        <label>Airport Name: <input type="text" id="airportName"></label><br>
+        <label>Airport URL: <input type="url" id="airportUrl"></label><br>
+        <label>Image URL: <input type="url" id="imageUrl"></label><br>
+
+        <!-- Save Button -->
+        <div class="button-container">
+            <button id="saveButton">Save</button>
+        </div>
+    </main>
+    <footer>
+        <a href="../help/help.html" title="Help"><i class="fa fa-question-circle"></i></a>
+    </footer>
+    <script type="module" src="addDestination.js" defer></script>
 </body>
 </html>

@@ -1,29 +1,54 @@
-import { getFlights, saveToLocalStorage } from '../common.js';
+import { destinations } from '../Data/DestinationsData.js';
+import { flights } from '../Data/FlightsData.js';
 
-function addFlight() {
-    const flightNo = document.getElementById("flightNo").value;
-    const origin = document.getElementById("origin").value;
-    const destination = document.getElementById("destination").value;
+function validateDestination(destinationCode) {
+    // Check if the destination exists in the destinations list
+    const destinationExists = destinations.some(dest => dest.destCode.toLowerCase() === destinationCode.toLowerCase());
+    return destinationExists;
+}
+
+function addFlight(event) {
+    event.preventDefault(); // Prevent default form submission
+
+    const flightNo = document.getElementById("flightNo").value.trim();
+    const origin = document.getElementById("origin").value.trim();
+    const destination = document.getElementById("destination").value.trim();
     const boardingDate = document.getElementById("boardingDate").value;
     const boardingTime = document.getElementById("boardingTime").value;
     const arrivalDate = document.getElementById("arrivalDate").value;
     const arrivalTime = document.getElementById("arrivalTime").value;
-    const seatCount = parseInt(document.getElementById("seatCount").value);
+    const seatCount = parseInt(document.getElementById("seatCount").value, 10);
 
-    if (!flightNo || !origin || !destination || !boardingDate || !boardingTime || !arrivalDate || !arrivalTime || isNaN(seatCount) || seatCount < 1) {
-        alert("Please fill out all fields correctly.");
+    // Validate destination code
+    if (!validateDestination(destination)) {
+        alert(`Sorry, we do not fly to the destination (${destination}) yet.`);
         return;
     }
 
-    const newFlight = { flightNo, origin, destination, boardingDate, boardingTime, arrivalDate, arrivalTime, seatCount };
-    const flights = getFlights();
+    // Create a new flight object
+    const newFlight = {
+        flightNo,
+        origin,
+        destination,
+        boardingDate,
+        boardingTime,
+        arrivalDate,
+        arrivalTime,
+        seatCount,
+        takenSeats: 0 // Default booked seats
+    };
+
+    // Add the new flight to the flights array (or save to localStorage/server)
     flights.push(newFlight);
 
-    saveToLocalStorage("flights", flights);
+    // Show success message
     alert("Flight added successfully!");
-    window.location.href = "manageFlights.html";
+
+    // Redirect to manage flights page
+    window.location.href = "../manageFlights/manageFlights.html";
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("addFlightButton").addEventListener("click", addFlight);
+    const addFlightForm = document.getElementById("addFlightForm");
+    addFlightForm.addEventListener("submit", addFlight);
 });
