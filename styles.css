@@ -256,11 +256,12 @@ button:hover, .button:hover {
 /* Styling for all buttons in the .actions-bottom container */
 /* Fixed bottom button container */
 .actions-bottom {
-    position: fixed; /* Sticks the container to the bottom-right corner */
+    position: relative; /* Sticks the container to the bottom-right corner */
     bottom: 20px; /* Distance from the bottom of the viewport */
     right: 20px; /* Distance from the right of the viewport */
     text-align: center; /* Center the content inside the container */
     z-index: 1000; /* Ensures the button stays above other content */
+    padding:30px;
 }
 
 /* Styling for the Add New Destination button */
@@ -285,7 +286,7 @@ button:hover, .button:hover {
 
 /* Fixed Save Button styling */
 #saveButton {
-    position: fixed; /* Sticks the button to the bottom-right */
+    position: relative; /* Sticks the button to the bottom-right */
     bottom: 20px; /* Distance from the bottom edge */
     right: 20px; /* Distance from the right edge */
     background-color: #28a745; /* Green background for Save button */
@@ -362,12 +363,12 @@ button:hover, .button:hover {
     color: white;
     padding: 12px;
     font-size: 1rem;
-    border: none;
+    /*border: none;*/
     border-radius: 8px;
     cursor: pointer;
     text-align: center;
     width: 100%;
-    transition: all 0.2s ease-in-out;
+    /*transition: all 0.2s ease-in-out;*/
 }
 
 .form-button:hover {
