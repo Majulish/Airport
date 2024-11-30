@@ -245,7 +245,7 @@ button:hover, .button:hover {
     position: relative; /* Sticks the container to the bottom-right corner */
     bottom: 20px; /* Distance from the bottom of the viewport */
     right: 20px; /* Distance from the right of the viewport */
-    text-align: center; /* Center the content inside the container */
+    text-align: left; /* Center the content inside the container */
     z-index: 1000; /* Ensures the button stays above other content */
     padding:30px;
 }
