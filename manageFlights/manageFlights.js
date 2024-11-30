@@ -25,7 +25,7 @@ function renderFlights() {
         const row = table.insertRow();
         row.insertCell(0).textContent = flight.flightNo;
         row.insertCell(1).textContent = flight.origin;
-        row.insertCell(2).textContent = flight.destination;
+        row.insertCell(2).textContent = flight.destination.destName; // Access destName
         row.insertCell(3).textContent = flight.boardingDate;
         row.insertCell(4).textContent = flight.boardingTime;
         row.insertCell(5).textContent = flight.arrivalDate;
@@ -55,3 +55,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
+
+
+

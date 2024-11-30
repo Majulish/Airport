@@ -1,0 +1,34 @@
+#saveBookingButton {
+    margin-top: 8px;
+}
+
+.booking-form-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+
+.booking-form {
+    max-width: 300px;
+}
+
+.booking-button-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 8px;
+}
+
+.passengerLabel {
+    display: flex;
+    flex-direction: row;
+    max-width: 340px;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    margin-top: 8px;
+}
+
+.saveBookingButton {
+    margin-top: 8px;
+}

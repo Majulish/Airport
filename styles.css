@@ -141,7 +141,7 @@ button:hover, .button:hover {
 
 /* Actions Section */
 .actions {
-    text-align: center;
+    text-align: left;
     margin-top: 30px;
 }
 
@@ -238,20 +238,6 @@ button:hover, .button:hover {
     border: 2px solid red;
     background-color: #ffe6e6;
 }
-
-#addDestinationButton {
-    float: right; /* Aligns the button to the right */
-    background-color: #007bff; /* Button color */
-    color: white; /* Text color */
-    padding: 10px 20px; /* Padding around the button */
-    font-size: 16px; /* Font size */
-    border: none; /* Remove default border */
-    border-radius: 8px; /* Rounded corners */
-    cursor: pointer; /* Pointer cursor on hover */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-    margin-bottom: 10px; /* Space below the button */
-}
-
 
 /* Styling for all buttons in the .actions-bottom container */
 /* Fixed bottom button container */
@@ -353,10 +339,3 @@ button:hover, .button:hover {
     background-color: #0056b3;
     transform: scale(1.05);
 }
-
-
-
-
-
-
-

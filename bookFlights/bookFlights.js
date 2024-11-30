@@ -49,7 +49,7 @@ function renderFlights(filteredFlights) {
         row.innerHTML = `
             <td>${flight.flightNo}</td>
             <td>${flight.origin}</td>
-            <td>${flight.destination}</td>
+            <td>${flight.destination.destName}</td> <!-- Use destName -->
             <td>
                 <button class="button" data-index="${index}">Book</button>
             </td>
@@ -73,7 +73,7 @@ function populateDropdowns() {
     const destinationDropdown = document.getElementById('destination');
 
     const uniqueOrigins = [...new Set(flights.map(flight => flight.origin))];
-    const uniqueDestinations = [...new Set(flights.map(flight => flight.destination))];
+    const uniqueDestinations = [...new Set(flights.map(flight => flight.destination.destName))]; // Use destName
 
     // Populate Origins
     uniqueOrigins.forEach(origin => {
@@ -102,7 +102,7 @@ function showBookingForm(flight) {
         <p>
             Origin: ${flight.origin}<br>
             Boarding: ${flight.boardingDate} ${flight.boardingTime}<br>
-            Destination: ${flight.destination}<br>
+            Destination: ${flight.destination.destName}<br> <!-- Use destName -->
             Landing: ${flight.arrivalDate} ${flight.arrivalTime}<br>
             Available Seats: ${availableSeats}
         </p>
@@ -110,7 +110,7 @@ function showBookingForm(flight) {
             <label for="numPassengers">No. of Passengers:</label>
             <input type="number" id="numPassengers" min="1" max="${availableSeats}" required><br>
             <div id="passengerFields"></div>
-            <button type="submit">Save Booking</button>
+            <button class="saveBookingButton" type="submit">Save Booking</button>
         </form>
     `;
 
@@ -127,9 +127,9 @@ function updatePassengerFields(numPassengers) {
 
     for (let i = 1; i <= numPassengers; i++) {
         passengerFieldsContainer.innerHTML += `
-            <div>
-                <label>Passenger ${i} Name: <input type="text" id="passengerName${i}" required></label><br>
-                <label>Passenger ${i} Passport ID: <input type="text" id="passportId${i}" required></label><br>
+            <div class="passengerDiv">
+                <label class="passengerLabel"><label class="passengerTextPart">Passenger ${i} Name:</label> <input type="text" id="passengerName${i}" required></label>
+                <label class="passengerLabel"><label class="passengerTextPart">Passenger ${i} Passport ID:</label> <input type="text" id="passportId${i}" required></label>
             </div>
         `;
     }
@@ -166,7 +166,7 @@ function filterFlights() {
 
     const filteredFlights = flights.filter(flight => {
         const matchesOrigin = !originFilter || flight.origin === originFilter;
-        const matchesDestination = !destinationFilter || flight.destination === destinationFilter;
+        const matchesDestination = !destinationFilter || flight.destination.destName === destinationFilter; // Use destName
         return matchesOrigin && matchesDestination;
     });
 

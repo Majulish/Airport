@@ -1,20 +1,20 @@
 #saveButton {
-    background-color: #28a745; /* Green background for Save button */
-    color: white; /* White text for contrast */
-    padding: 12px 24px; /* Spacing for better clickability */
-    font-size: 16px; /* Font size for readability */
-    border: none; /* Remove borders */
-    border-radius: 8px; /* Rounded corners */
-    cursor: pointer; /* Pointer cursor on hover */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow */
-    z-index: 1000; /* Ensures the button is above other content */
-    transition: all 0.2s ease-in-out; /* Smooth hover effect */
+    background-color: #28a745;
+    color: white;
+    padding: 12px 24px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    transition: all 0.2s ease-in-out;
     margin: 8px 0 0 0;
 }
 
 #saveButton:hover {
-    background-color: #218838; /* Darker green for hover */
-    transform: scale(1.05); /* Slight enlargement */
+    background-color: #218838;
+    transform: scale(1.05);
 }
 
 .destination-form-item {
@@ -23,12 +23,14 @@
     margin-bottom: 8px;
 }
 
+
 .add-destination-form {
     max-width: 300px;
 }
 
 .destination-button-container{
     display: flex;
-    justify-content: center;
+    justify-content: start;
     align-items: center;
 }
+
