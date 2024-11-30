@@ -284,28 +284,6 @@ button:hover, .button:hover {
     transform: scale(1.05);
 }
 
-/* Fixed Save Button styling */
-#saveButton {
-    position: relative; /* Sticks the button to the bottom-right */
-    bottom: 20px; /* Distance from the bottom edge */
-    right: 20px; /* Distance from the right edge */
-    background-color: #28a745; /* Green background for Save button */
-    color: white; /* White text for contrast */
-    padding: 12px 24px; /* Spacing for better clickability */
-    font-size: 16px; /* Font size for readability */
-    border: none; /* Remove borders */
-    border-radius: 8px; /* Rounded corners */
-    cursor: pointer; /* Pointer cursor on hover */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow */
-    z-index: 1000; /* Ensures the button is above other content */
-    transition: all 0.2s ease-in-out; /* Smooth hover effect */
-}
-
-#saveButton:hover {
-    background-color: #218838; /* Darker green for hover */
-    transform: scale(1.05); /* Slight enlargement */
-}
-
 /* General form styling */
 .form-container {
     max-width: 400px;

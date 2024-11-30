@@ -1,58 +1,52 @@
-import { getDestinations } from './common.js';
+import { bookings } from "../Data/BookingData.js";
+import { flights } from "../Data/FlightsData.js";
+import { destinations } from "../Data/DestinationsData.js";
 
-// Function to render bookings
 function renderBookings() {
-    const bookingsContainer = document.getElementById("bookingsContainer");
-    if (!bookingsContainer) return;
+    const bookingsContainer = document.querySelector(".bookings-container");
+    bookingsContainer.innerHTML = ""; // Clear previous bookings
 
-    bookingsContainer.innerHTML = ""; // Clear existing bookings
+    bookings.forEach((booking) => {
+        const flight = flights.find((f) => f.flightNo === booking.flightNo);
+        const destination = destinations.find((d) => d.destCode === flight.destination.destCode);
 
-    // Fetch bookings from localStorage
-    const bookings = JSON.parse(localStorage.getItem("bookings")) || [];
-    const destinations = getDestinations();
+        if (!flight || !destination) {
+            console.error(`Flight or destination not found for booking: ${booking.bookingId}`);
+            return;
+        }
 
-    if (bookings.length === 0) {
-        bookingsContainer.innerHTML = `<p>No bookings found. Book your first flight!</p>`;
-        return;
-    }
-
-    bookings.forEach(booking => {
+        // Create booking card
         const bookingCard = document.createElement("div");
         bookingCard.className = "booking-card";
 
-        // Retrieve flight and passenger information
-        const { flight, passengers } = booking;
+        // Create image container
+        const imageContainer = document.createElement("div");
+        imageContainer.className = "booking-image";
+        const image = document.createElement("img");
+        image.src = destination.imageUrl;
+        image.alt = destination.destName || "Destination Image";
+        image.onerror = () => {
+            image.src = "https://via.placeholder.com/150?text=Image+Not+Found";
+        };
+        imageContainer.appendChild(image);
 
-        // Find destination image
-        const imageSrc =
-            destinations.find(dest => dest.destName === flight.destination)?.imageUrl ||
-            "https://via.placeholder.com/150?text=Destination+Image";
+        // Create details container
+        const detailsContainer = document.createElement("div");
+        detailsContainer.className = "booking-details";
 
-        // Booking card content
-        const imageDiv = document.createElement("div");
-        imageDiv.className = "booking-image";
-        imageDiv.innerHTML = `
-            <img src="${imageSrc}" alt="Destination Image" 
-                 onerror="this.src='https://via.placeholder.com/150?text=Image+Not+Found';" />
+        detailsContainer.innerHTML = `
+            <p><strong>Origin:</strong> ${flight.origin} <strong>Boarding:</strong> ${flight.boardingDate} ${flight.boardingTime}</p>
+            <p><strong>Destination:</strong> ${destination.destName} <strong>Landing:</strong> ${flight.arrivalDate} ${flight.arrivalTime}</p>
+            <p><strong>No. of Passengers:</strong> ${booking.passengerCount}</p>
         `;
 
-        const detailsDiv = document.createElement("div");
-        detailsDiv.className = "booking-details";
-        detailsDiv.innerHTML = `
-            <p><strong>Origin:</strong> ${flight.origin} 
-               <strong>Boarding:</strong> ${flight.boardingDate} ${flight.boardingTime}</p>
-            <p><strong>Destination:</strong> ${flight.destination} 
-               <strong>Landing:</strong> ${flight.arrivalDate} ${flight.arrivalTime}</p>
-            <p><strong>No. of passengers:</strong> ${passengers.length}</p>
-        `;
+        // Append image and details to the booking card
+        bookingCard.appendChild(imageContainer);
+        bookingCard.appendChild(detailsContainer);
 
-        bookingCard.appendChild(imageDiv);
-        bookingCard.appendChild(detailsDiv);
+        // Append booking card to the container
         bookingsContainer.appendChild(bookingCard);
     });
 }
 
-// Initialize render function on DOMContentLoaded
-document.addEventListener("DOMContentLoaded", () => {
-    renderBookings();
-});
+document.addEventListener("DOMContentLoaded", renderBookings);

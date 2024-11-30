@@ -3,6 +3,7 @@
 <head>
     <title>OnoAir - Add Destination</title>
     <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
     <header>
@@ -10,16 +11,31 @@
     </header>
     <main>
         <h2>Add New Destination</h2>
-        <label>Destination Code: <input type="text" id="destCode"></label><br>
-        <label>Destination Name: <input type="text" id="destName"></label><br>
-        <label>Airport Name: <input type="text" id="airportName"></label><br>
-        <label>Airport URL: <input type="url" id="airportUrl"></label><br>
-        <label>Image URL: <input type="url" id="imageUrl"></label><br>
-
-        <!-- Save Button -->
-        <div class="button-container">
-            <button id="saveButton">Save</button>
-        </div>
+        <form class="add-destination-form">
+            <div class="destination-form-item">
+                <label for="destCode">Destination Code:</label>
+                <input type="text" id="destCode">
+            </div>
+            <div class="destination-form-item">
+                <label for="destName">Destination Name:</label>
+                <input type="text" id="destName">
+            </div>
+            <div class="destination-form-item">
+                <label for="airportName">Airport Name:</label>
+                <input type="text" id="airportName">
+            </div>
+            <div class="destination-form-item">
+                <label for="airportUrl">Airport URL:</label>
+                <input type="text" id="airportUrl">
+            </div>
+            <div class="destination-form-item">
+                <label for="imageUrl">Image URL:</label>
+                <input type="text" id="imageUrl">
+            </div>
+            <div class="destination-button-container">
+                <button id="saveButton" type="submit">Save</button>
+            </div>
+        </form>
     </main>
     <footer>
         <a href="../help/help.html" title="Help"><i class="fa fa-question-circle"></i></a>

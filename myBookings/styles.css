@@ -1,0 +1,52 @@
+/* Booking Cards Container */
+.bookings-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin: 20px auto;
+    padding: 20px;
+    max-width: 600px;
+}
+
+/* Individual Booking Card */
+.booking-card {
+    display: flex;
+    background-color: white;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    font-size: 16px;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Booking Image Section */
+.booking-image {
+    flex: 0 0 150px;
+    height: 150px;
+    margin-right: 15px;
+    overflow: hidden;
+    border-radius: 8px;
+    background-color: #f4f4f4;
+}
+
+.booking-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+/* Booking Details Section */
+.booking-details {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+}
+
+.booking-details p {
+    margin: 5px 0;
+}
