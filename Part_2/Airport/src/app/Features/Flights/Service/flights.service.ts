@@ -33,9 +33,9 @@ export class FlightService {
       'LHR789',
       'Los Angeles',
       { destName: 'London', destCode: 'LHR' },
-      date.getUpcomingDate(2),
+      date.getUpcomingDate(12),
       '15:00',
-      date.getUpcomingDate(3),
+      date.getUpcomingDate(13),
       '05:00',
       220,
       180
@@ -44,9 +44,9 @@ export class FlightService {
       'DXB101',
       'Tokyo',
       { destName: 'Dubai', destCode: 'DXB' },
-      date.getUpcomingDate(1),
+      date.getUpcomingDate(11),
       '18:30',
-      date.getUpcomingDate(1),
+      date.getUpcomingDate(11),
       '23:00',
       180,
       50
