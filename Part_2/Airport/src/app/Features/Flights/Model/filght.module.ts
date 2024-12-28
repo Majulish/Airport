@@ -1,12 +1,13 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-
-
-
-@NgModule({
-  declarations: [],
-  imports: [
-    CommonModule
-  ]
-})
-export class FilghtModule { }
+export class Flight {
+  constructor(
+    public flightNumber: string,
+    public originCode: string,
+    public destination: { destName: string; destCode: string },
+    public boardingDate: string,
+    public boardingTime: string,
+    public arrivalDate: string,
+    public arrivalTime: string,
+    public seatCount: number,
+    public takenSeats: number
+  ) {}
+}
