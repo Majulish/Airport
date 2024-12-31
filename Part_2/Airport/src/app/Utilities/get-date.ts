@@ -2,7 +2,7 @@ class getDate {
   getUpcomingDate(daysFromNow: number): string {
     const date = new Date();
     date.setDate(date.getDate() + daysFromNow);
-    return this.formatDate(date);
+    return this.formatDate(date)
   }
 
   getToday(): string {
@@ -13,7 +13,7 @@ class getDate {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
-    return `${day}-${month}-${year}`;
+    return `${year}-${month}-${day}`;
   }
 }
 
