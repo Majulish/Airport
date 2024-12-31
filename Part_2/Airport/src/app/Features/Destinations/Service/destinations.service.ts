@@ -78,12 +78,10 @@ export class DestinationsService {
     ),
   ];
 
-  // List all destinations
-  list(): Destination[] {
+  getAllDestinations(): Destination[] {
     return [...this.destinations];
   }
 
-  // Get a destination by its code
   get(code: string): Destination | undefined {
     return this.destinations.find((dest) => dest.code === code);
   }

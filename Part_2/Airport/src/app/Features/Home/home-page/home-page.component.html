@@ -1,1 +1,24 @@
-<p>home-page works!</p>
+<div class="flights-section">
+  <h3>Last minute flights</h3>
+  <div class="flights-container">
+    <div *ngIf="flights.length === 0" class="no-flights-message">
+      <mat-icon>warning</mat-icon>
+      <p>No flights found. Please check back later.</p>
+    </div>
+    <mat-card *ngFor="let flight of flights" class="flight-card">
+      <img mat-card-image [src]="flight.destination.imageUrl" alt="no picture">
+      <mat-card-content>
+        <h4>{{ flight.destination.name }}</h4>
+        <p><strong>Airport:</strong> {{ flight.destination.airportName }}</p>
+        <p><strong>Flight Number:</strong> {{ flight.flightNumber }}</p>
+        <p><strong>Departure Date:</strong> {{ flight.boardingDate | date: 'dd-MM-yyyy' }}</p>
+        <p><strong>Departure Time:</strong> {{ flight.boardingTime}}</p>
+        <p><strong>Seats Taken:</strong> {{ flight.takenSeats}}</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button color="primary">Learn More</button>
+        <button mat-raised-button color="accent">Book Now</button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>
