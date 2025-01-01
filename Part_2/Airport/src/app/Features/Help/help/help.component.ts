@@ -1,11 +1,8 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'help-component',
-  imports: [],
+  selector: 'ono-help',
   templateUrl: './help.component.html',
-  styleUrl: './help.component.css'
+  styleUrls: ['./help.component.css'],
 })
-export class HelpComponent {
-
-}
+export class HelpComponent {}

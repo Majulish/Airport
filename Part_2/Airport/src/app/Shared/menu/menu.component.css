@@ -1,0 +1,105 @@
+/* Sidenav Styles */
+.sidenav-container {
+  height: 100vh;
+}
+
+.sidenav {
+  width: 250px;
+  background-color: #ffffff;
+  border-right: 1px solid #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
+.menu-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #007bff;
+  text-align: center;
+  padding: 20px 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.menu-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menu-list li {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.menu-list i {
+  margin-left: 7px;
+}
+
+.menu-list li:hover {
+  background-color: #f4f4f4;
+}
+
+.menu-list li i {
+  margin-right: 20px; /* Space between icon and text */
+  color: #007bff;
+}
+
+.menu-list li .submenu-toggle {
+  margin-left: 5px; /* Slightly move the arrow to the right */
+  color: #007bff;
+  font-size: 1rem;
+}
+
+.menu-list li a {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+}
+
+.menu-list li a:hover {
+  color: #007bff;
+}
+
+.menu-list li ul {
+  padding-left: 30px;
+}
+
+.menu-list li ul li {
+  padding: 10px 20px;
+  font-size: 0.9rem;
+}
+
+/* Header Styles */
+.header {
+  background-color: #007bff;
+  color: white;
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+}
+
+.header h1 {
+  font-size: 1.5rem;
+  margin-left: 10px;
+  font-weight: bold;
+}
+
+.menu-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.menu-toggle i {
+  font-size: 24px;
+  color: white;
+}
+
+/* Main Content Styles */
+.content {
+  padding: 20px;
+}

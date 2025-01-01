@@ -1,14 +1,16 @@
 import { Component, Input, ViewEncapsulation } from '@angular/core';
-import { menuRoutes } from './menu.routes';
 import { MatActionList, MatListItem, MatNavList } from '@angular/material/list';
-import { RouterLink } from '@angular/router';
-import { MatIcon } from '@angular/material/icon';
+import {RouterLink, RouterModule} from '@angular/router';
+import {MatIcon, MatIconModule} from '@angular/material/icon';
 import {
   MatExpansionPanel,
   MatExpansionPanelHeader,
-} from '@angular/material/expansion';
-import { MatDrawer } from '@angular/material/sidenav';
-import { CommonModule } from '@angular/common';
+}
+from '@angular/material/expansion';
+import {MatDrawer, MatSidenavModule} from '@angular/material/sidenav';
+import {CommonModule, NgOptimizedImage} from '@angular/common';
+import {MatIconButton} from '@angular/material/button';
+
 
 @Component({
   selector: 'ono-flight-menu',
@@ -25,12 +27,29 @@ import { CommonModule } from '@angular/common';
     MatNavList,
     MatExpansionPanelHeader,
     CommonModule,
+    RouterModule,
+    MatIconModule,
+    MatSidenavModule,
+    MatIconButton,
+    NgOptimizedImage
   ],
 })
+
 export class MenuComponent {
   @Input() matDrawer!: MatDrawer;
 
-  async onLinkClick() {
+  adminMenuOpen = false;
+  userMenuOpen = false;
+
+  toggleMenu(menu: string): void {
+    if (menu === 'admin') {
+      this.adminMenuOpen = !this.adminMenuOpen;
+    } else if (menu === 'user') {
+      this.userMenuOpen = !this.userMenuOpen;
+    }
+  }
+
+  async onClick(): Promise<void> {
     await this.matDrawer.close();
   }
 }

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import {RouterModule, RouterOutlet} from '@angular/router';
 import { HeaderComponent } from './Shared/header/header.component'
 import { FooterComponent } from './Shared/footer/footer.component';
 import { MatSidenavModule } from '@angular/material/sidenav';
@@ -13,8 +13,11 @@ import { MenuComponent } from './Shared/menu/menu.component'
     FooterComponent,
     MatSidenavModule,
     MenuComponent,
+    RouterModule
   ],
-  templateUrl: './app.component.html',
+  template: `
+    <ono-flight-menu></ono-flight-menu>
+  `,
   styleUrl: './app.component.css',
   standalone: true,
 })
