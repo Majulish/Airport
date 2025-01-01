@@ -1,1 +1,38 @@
-<p>manage-flights works!</p>
+<div class="manage-flights-container">
+  <h2 class="title">Manage Flights</h2>
+  <table class="flights-table">
+    <thead>
+    <tr>
+      <th>Flight Number</th>
+      <th>Origin</th>
+      <th>Destination</th>
+      <th>Boarding Date</th>
+      <th>Boarding Time</th>
+      <th>Arrival Date</th>
+      <th>Arrival Time</th>
+      <th>Seat Count</th>
+      <th>Seats Taken</th>
+      <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let flight of flights">
+      <td>{{ flight.flightNumber }}</td>
+      <td>{{ flight.originCode }}</td>
+      <td>{{ flight.destination.name }}</td>
+      <td>{{ flight.boardingDate | date: 'dd-MM-yyyy' }}</td>
+      <td>{{ flight.boardingTime }}</td>
+      <td>{{ flight.arrivalDate | date: 'dd-MM-yyyy' }}</td>
+      <td>{{ flight.arrivalTime }}</td>
+      <td>{{ flight.seatCount }}</td>
+      <td>{{ flight.takenSeats }}</td>
+      <td>
+        <a class="edit-button" [routerLink]="['/edit-flight', flight.flightNumber]">
+          <mat-icon>edit</mat-icon>
+          Edit
+        </a>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>

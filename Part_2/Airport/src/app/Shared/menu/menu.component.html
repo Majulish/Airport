@@ -18,11 +18,11 @@
         <ul *ngIf="adminMenuOpen" class="submenu">
           <li>
             <i class="fas fa-plane"></i>
-            <a [routerLink]="'admin/manage-flights'">Manage Flights</a>
+            <a [routerLink]="'admin/manage-flights'" (click)=closeMenu()>Manage Flights</a>
           </li>
           <li>
             <i class="fas fa-map-marked-alt"></i>
-            <a [routerLink]="'/admin/manage-destinations'">Manage Destinations</a>
+            <a [routerLink]="'/admin/manage-destinations'" (click)=closeMenu()>Manage Destinations</a>
           </li>
         </ul>
 
@@ -35,11 +35,11 @@
         <ul *ngIf="userMenuOpen" class="submenu">
           <li>
             <i class="fas fa-plane-departure"></i>
-            <a [routerLink]="'/user/book-a-flight'">Book a Flight</a>
+            <a [routerLink]="'/user/book-a-flight'" (click)=closeMenu()>Book a Flight</a>
           </li>
           <li>
             <i class="fas fa-calendar-alt"></i>
-            <a [routerLink]="'/user/my-bookings'">My Bookings</a>
+            <a [routerLink]="'/user/my-bookings'" (click)=closeMenu()>My Bookings</a>
           </li>
         </ul>
 

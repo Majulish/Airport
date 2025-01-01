@@ -10,6 +10,7 @@ from '@angular/material/expansion';
 import {MatDrawer, MatSidenavModule} from '@angular/material/sidenav';
 import {CommonModule, NgOptimizedImage} from '@angular/common';
 import {MatIconButton} from '@angular/material/button';
+import {MatMenuModule} from '@angular/material/menu';
 
 
 @Component({
@@ -31,7 +32,8 @@ import {MatIconButton} from '@angular/material/button';
     MatIconModule,
     MatSidenavModule,
     MatIconButton,
-    NgOptimizedImage
+    NgOptimizedImage,
+    MatMenuModule,
   ],
 })
 
@@ -49,7 +51,7 @@ export class MenuComponent {
     }
   }
 
-  async onClick(): Promise<void> {
+  async closeMenu(): Promise<void> {
     await this.matDrawer.close();
   }
 }
