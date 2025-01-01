@@ -1,7 +1,7 @@
 <mat-sidenav-container class="sidenav-container">
   <mat-sidenav #sidenav mode="side" class="sidenav" [opened]="isMenuOpen">
     <nav>
-      <h2 class="menu-title">OnoAir</h2>
+      <h2 class="menu-title">Menu</h2>
       <ul class="menu-list">
         <li>
           <i class="fas fa-home"></i>
@@ -60,5 +60,6 @@
     <main class="content">
       <router-outlet></router-outlet>
     </main>
+    <ono-air-footer/>
   </mat-sidenav-content>
 </mat-sidenav-container>

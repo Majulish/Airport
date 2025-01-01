@@ -19,3 +19,8 @@ footer a {
 footer a:hover {
   color: #0056b3;
 }
+
+.footer-container {
+  display: flex;
+  flex-direction: row-reverse;
+}
