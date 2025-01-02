@@ -1,1 +1,11 @@
-<p>view-booking works!</p>
+<div *ngIf="booking" class="view-booking-container">
+  <h2>Booking Details</h2>
+  <p><strong>Flight Number:</strong> {{ booking?.flightNo }}</p>
+  <p><strong>Number Of Passengers:</strong> {{ booking.passengerCount }}</p>
+  <p><strong>Passengers:</strong></p>
+  <ol>
+    <li *ngFor="let passenger of booking.passengers">
+      <p><strong>Name:</strong>{{ passenger.name }},   <strong>Passport:</strong>{{passenger.passportId}}</p>
+    </li>
+  </ol>
+</div>

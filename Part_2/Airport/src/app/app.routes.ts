@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import { MyBookingsComponent } from './Features/Bookings/Pages/my-bookings/my-bookings.component';
-import { ViewBookingComponent } from './Features/Bookings/Pages/view-booking/view-booking.component';
 import {HomePageComponent} from './Features/Home/home-page/home-page.component';
 import {ManageFlightsComponent} from './Features/Flights/Pages/manage-flights/manage-flights.component';
 import {
@@ -11,6 +10,7 @@ import {BookFlightComponent} from './Features/Bookings/Pages/book-flight/book-fl
 import {EditFlightComponent} from './Features/Flights/Pages/edit-flight/edit-flight.component';
 import {EditDestinationComponent} from './Features/Destinations/Pages/edit-destination/edit-destination.component';
 import {ViewFlightDetailsComponent} from './Features/Bookings/Pages/view-flight-details/view-flight-details.component';
+import {ViewBookingComponent} from './Features/Bookings/Pages/view-booking/view-booking.component';
 
 export const appRoutes: Routes = [
   { path: '', redirectTo: '/home-page', pathMatch: 'full' },

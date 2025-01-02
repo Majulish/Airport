@@ -10,13 +10,10 @@ import {NgClass, NgIf} from '@angular/common';
   selector: 'ono-air-root',
   imports: [
     RouterOutlet,
-    HeaderComponent,
     FooterComponent,
     MatSidenavModule,
     MenuComponent,
     RouterModule,
-    NgIf,
-    NgClass
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],

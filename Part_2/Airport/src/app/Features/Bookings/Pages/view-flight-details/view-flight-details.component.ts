@@ -6,7 +6,7 @@ import {FlightService} from '../../../Flights/Service/flights.service';
 
 @Component({
   selector: 'app-view-flight-details',
-  imports: [CommonModule], // Include CommonModule for DatePipe
+  imports: [CommonModule],
   templateUrl: './view-flight-details.component.html',
   styleUrl: './view-flight-details.component.css',
   standalone: true

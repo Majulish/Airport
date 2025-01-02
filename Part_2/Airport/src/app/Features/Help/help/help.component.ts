@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import {RouterLink} from '@angular/router';
 import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
 import {MatToolbarModule} from '@angular/material/toolbar';
@@ -8,7 +7,7 @@ import {MatToolbarModule} from '@angular/material/toolbar';
   selector: 'ono-help',
   templateUrl: './help.component.html',
   styleUrls: ['./help.component.css'],
-  imports: [MatToolbarModule, MatIconModule, MatButtonModule, RouterLink],
+  imports: [MatToolbarModule, MatIconModule, MatButtonModule],
   standalone: true,
 })
 export class HelpComponent {}
