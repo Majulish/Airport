@@ -1,15 +1,47 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <title>OnoAir - My Bookings</title>
-</head>
-<body>
-<header>
-</header>
-<main>
-  <h2>My Bookings</h2>
-  <div class="bookings-container">
-  </div>
-</main>
-</body>
-</html>
+<div class="container">
+  <mat-accordion>
+    <!-- Upcoming Flights -->
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <i class="fas fa-calendar-check"></i> Upcoming Bookings
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <div *ngFor="let booking of upcomingBookings" class="booking-card">
+        <img [src]="booking.image" alt="Destination" class="destination-img" />
+        <div class="booking-info">
+          <p><strong>Origin:</strong> {{ booking.origin }}</p>
+          <p><strong>Destination:</strong> {{ booking.destination }}</p>
+          <p><strong>Boarding Time:</strong> {{ booking.boarding }}</p>
+          <p><strong>Landing Time:</strong> {{ booking.landing }}</p>
+          <p><strong>Number of passengers:</strong> {{ booking.numOfPassengers }}</p>
+        </div>
+        <button class="view-booking-btn" (click)="viewBooking(booking.bookingId)">
+          <i class="fas fa-eye"></i> View Booking
+        </button>
+      </div>
+    </mat-expansion-panel>
+
+    <!-- Previous Flights -->
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <i class="fas fa-history"></i> Previous Bookings
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <div *ngFor="let booking of previousBookings" class="booking-card">
+        <img [src]="booking.image" alt="Destination" class="destination-img" />
+        <div class="booking-info">
+          <p><strong>Origin:</strong> {{ booking.origin }}</p>
+          <p><strong>Destination:</strong> {{ booking.destination }}</p>
+          <p><strong>Boarding Time:</strong> {{ booking.boarding }}</p>
+          <p><strong>Landing Time:</strong> {{ booking.landing }}</p>
+          <p><strong>Number of passengers:</strong> {{ booking.numOfPassengers }}</p>
+        </div>
+        <button class="view-booking-btn" (click)="viewBooking(booking.bookingId)">
+          <i class="fas fa-eye"></i> View Booking
+        </button>
+      </div>
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>
