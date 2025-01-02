@@ -4,7 +4,7 @@
 }
 
 .sidenav {
-  width: 250px;
+  width: 260px;
   background-color: #ffffff;
   border-right: 1px solid #e0e0e0;
   display: flex;
@@ -17,7 +17,7 @@
   font-weight: bold;
   color: #007bff;
   text-align: left;
-  padding: 20px 30px;
+  padding: 16px 30px;
   border-bottom: 1px solid #e0e0e0;
 }
 

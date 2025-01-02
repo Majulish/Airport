@@ -21,8 +21,8 @@ export class BookingService {
         "B001",
         "NYC123",
         [
-          { name: "John Doe", passportId: "A1234567" },
-          { name: "Jane Doe", passportId: "A1234568" },
+          { name: "John Smith", passportId: "P9876543" },
+          { name: "Alice Johnson", passportId: "P9876544" }
         ],
         2
       ),
@@ -30,18 +30,83 @@ export class BookingService {
         "B002",
         "LAX456",
         [
-          { name: "Alice Smith", passportId: "B9876543" },
-          { name: "Bob Smith", passportId: "B9876544" },
-          { name: "Charlie Brown", passportId: "B9876545" },
+          { name: "Michael Brown", passportId: "P1234567" },
+          { name: "Emily Davis", passportId: "P1234568" }
         ],
-        3
+        2
       ),
       new Booking(
         "B003",
         "LHR789",
-        [{ name: "Emily Davis", passportId: "C7654321" }],
-        1
+        [
+          { name: "William Wilson", passportId: "P1122334" },
+          { name: "Sophia Taylor", passportId: "P1122335" }
+        ],
+        2
       ),
+      new Booking(
+        "B004",
+        "DXB101",
+        [
+          { name: "Olivia Martinez", passportId: "P9988776" },
+          { name: "Liam Garcia", passportId: "P9988777" }
+        ],
+        2
+      ),
+      new Booking(
+        "B005",
+        "HND202",
+        [
+          { name: "Benjamin Lee", passportId: "P4455667" },
+          { name: "Emma Anderson", passportId: "P4455668" }
+        ],
+        2
+      ),
+      new Booking(
+        "B006",
+        "SYD303",
+        [
+          { name: "Charlotte Moore", passportId: "P5566778" },
+          { name: "Lucas White", passportId: "P5566779" }
+        ],
+        2
+      ),
+      new Booking(
+        "B007",
+        "CDG404",
+        [
+          { name: "James Harris", passportId: "P6677889" },
+          { name: "Amelia Thompson", passportId: "P6677880" }
+        ],
+        2
+      ),
+      new Booking(
+        "B008",
+        "SFO505",
+        [
+          { name: "Henry Jackson", passportId: "P7788990" },
+          { name: "Evelyn Martin", passportId: "P7788991" }
+        ],
+        2
+      ),
+      new Booking(
+        "B009",
+        "SIN606",
+        [
+          { name: "Alexander Perez", passportId: "P8899002" },
+          { name: "Isabella Roberts", passportId: "P8899003" }
+        ],
+        2
+      ),
+      new Booking(
+        "B010",
+        "FCO707",
+        [
+          { name: "Daniel Clark", passportId: "P9900114" },
+          { name: "Mia Wright", passportId: "P9900115" }
+        ],
+        2
+      )
     ];
   }
 
@@ -69,7 +134,7 @@ export class BookingService {
           return false;
         }
 
-        const flightTime = new Date(flight.boardingDate + ' ' + flight.boardingTime); // Combine date and time
+        const flightTime = new Date(flight.boardingDate + ' ' + flight.boardingTime);
         return isUpcoming ? flightTime > now : flightTime <= now;
       })
       .map((booking) => {

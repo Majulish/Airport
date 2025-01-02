@@ -1,12 +1,12 @@
 <div *ngIf="flight" class="edit-flight-container">
   <h2>Flight Details</h2>
-  <p><strong>Flight Number:</strong> {{ flight?.flightNumber }}</p>
-  <p><strong>Origin:</strong> {{ flight?.originCode }}</p>
-  <p><strong>Destination:</strong> {{ flight?.destination?.name }}</p>
-  <p><strong>Boarding Date:</strong> {{ flight?.boardingDate | date: 'dd-MM-yyyy' }}</p>
-  <p><strong>Boarding Time:</strong> {{ flight?.boardingTime }}</p>
-  <p><strong>Arrival Date:</strong> {{ flight?.arrivalDate | date: 'dd-MM-yyyy' }}</p>
-  <p><strong>Arrival Time:</strong> {{ flight?.arrivalTime }}</p>
-  <p><strong>Seat Count:</strong> {{ flight?.seatCount }}</p>
-  <p><strong>Seats Taken:</strong> {{ flight?.takenSeats }}</p>
+  <p><strong>Flight Number:</strong> {{ flight.flightNumber }}</p>
+  <p><strong>Origin:</strong> {{ flight.originCode }}</p>
+  <p><strong>Destination:</strong> {{ flight.destination.name }}</p>
+  <p><strong>Boarding Date:</strong> {{ flight.boardingDate | date: 'dd-MM-yyyy' }}</p>
+  <p><strong>Boarding Time:</strong> {{ flight.boardingTime }}</p>
+  <p><strong>Arrival Date:</strong> {{ flight.arrivalDate | date: 'dd-MM-yyyy' }}</p>
+  <p><strong>Arrival Time:</strong> {{ flight.arrivalTime }}</p>
+  <p><strong>Seat Count:</strong> {{ flight.seatCount }}</p>
+  <p><strong>Seats Taken:</strong> {{ flight.takenSeats }}</p>
 </div>

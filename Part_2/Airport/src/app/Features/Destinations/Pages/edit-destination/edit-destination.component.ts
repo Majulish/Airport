@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { DestinationsService } from '../../Service/destinations.service'; // Adjust path
+import { DestinationsService } from '../../Service/destinations.service';
 import { Destination } from '../../Model/destination.module';
-import {CommonModule} from '@angular/common'; // Adjust path
+import {CommonModule} from '@angular/common';
 
 @Component({
   selector: 'app-edit-destination',

@@ -8,14 +8,14 @@ import {
 } from '@angular/material/expansion';
 import {CommonModule} from '@angular/common';
 import {Router} from '@angular/router';
-import {MatButton, MatButtonModule} from '@angular/material/button';
+import {MatButtonModule} from '@angular/material/button';
 
 @Component({
   selector: 'app-my-booking',
   templateUrl: './my-bookings.component.html',
   styleUrls: ['./my-bookings.component.css'],
   standalone: true,
-  imports: [MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, CommonModule, MatButton, MatButtonModule]
+  imports: [MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, CommonModule, MatButtonModule]
 })
 export class MyBookingsComponent implements OnInit {
   upcomingBookings: any[] = [];

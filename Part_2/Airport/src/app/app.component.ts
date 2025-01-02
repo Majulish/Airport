@@ -21,18 +21,13 @@ import {NgClass, NgIf} from '@angular/common';
   standalone: true,
 })
 export class AppComponent {
-  adminMenuOpen = false;
-  userMenuOpen = false;
   isMenuOpen = false;
 
   @ViewChild('drawer', { static: false }) matDrawer!: MatDrawer;
 
-  toggleDrawer(): void {
+  onMenuItemClick(): void {
     if (this.matDrawer) {
-      console.log('toggle drawer from app.component')
-      this.matDrawer.toggle();
-    } else {
-      console.log('toggle drawer from app.component but this.matDrawer is undefined')
+      this.matDrawer.close();
     }
   }
 }

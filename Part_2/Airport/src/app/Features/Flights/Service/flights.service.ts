@@ -45,9 +45,9 @@ export class FlightService {
         'LHR789',
         'LHR',
         this.findDestination('LAX', destinations),
-        date.getUpcomingDate(12),
+        date.getUpcomingDate(-3),
         '15:00',
-        date.getUpcomingDate(13),
+        date.getUpcomingDate(-2),
         '05:00',
         220,
         180
@@ -56,9 +56,9 @@ export class FlightService {
         'DXB101',
         'DXB',
         this.findDestination('HND', destinations),
-        date.getUpcomingDate(11),
+        date.getUpcomingDate(-5),
         '18:30',
-        date.getUpcomingDate(11),
+        date.getUpcomingDate(-5),
         '23:00',
         180,
         50

@@ -4,12 +4,13 @@
 }
 
 .sidenav {
-  width: 250px;
+  width: 260px;
   background-color: #ffffff;
   border-right: 1px solid #e0e0e0;
   display: flex;
   flex-direction: column;
   padding: 0;
+  overflow: hidden;
 }
 
 .menu-title {

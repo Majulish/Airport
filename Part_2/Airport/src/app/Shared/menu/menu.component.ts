@@ -18,6 +18,7 @@ import {NgClass, NgIf} from '@angular/common';
 export class MenuComponent {
   @Output() menuToggle = new EventEmitter<string>();
   @Output() toggleDrawer = new EventEmitter<void>();
+  @Output() menuItemClicked = new EventEmitter<void>();
   adminMenuOpen = false;
   userMenuOpen = false;
 
@@ -30,7 +31,7 @@ export class MenuComponent {
     this.menuToggle.emit(menu);
   }
 
-  toggle(): void {
-    this.toggleDrawer.emit();
+  onMenuItemClick(): void {
+    this.menuItemClicked.emit();
   }
 }
