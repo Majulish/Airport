@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,7 +14,11 @@ import {FlightService} from '../../../Flights/Service/flights.service'; // Adjus
   imports: [CommonModule, MatIconModule, MatButtonModule, RouterLink], // Add CommonModule
 })
 export class BookFlightComponent implements OnInit {
+  @Input() showHeader = true;
+
   flights: Flight[] = [];
+
+
 
   constructor(private flightService: FlightService){}
   ngOnInit(): void {
