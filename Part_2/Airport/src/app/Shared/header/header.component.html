@@ -1,3 +1,7 @@
-<header>
-  <h1><a href="index.html">OnoAir</a></h1>
+<header class="header">
+  <button class="menu-toggle" (click)="toggleDrawer()">
+    <i class="fas fa-bars"></i>
+  </button>
+  <h1 [routerLink]="'/home-page'">OnoAir</h1>
 </header>
+

@@ -14,6 +14,7 @@ import {NgClass, NgIf} from '@angular/common';
     MatSidenavModule,
     MenuComponent,
     RouterModule,
+    HeaderComponent,
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],

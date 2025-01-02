@@ -4,12 +4,7 @@
   </mat-sidenav>
 
   <mat-sidenav-content>
-    <header class="header">
-      <button class="menu-toggle" (click)="toggleDrawer()">
-        <i class="fas fa-bars"></i>
-      </button>
-      <h1>OnoAir</h1>
-    </header>
+    <ono-air-header [matDrawer]="drawer"/>
     <main class="content">
       <router-outlet></router-outlet>
     </main>
