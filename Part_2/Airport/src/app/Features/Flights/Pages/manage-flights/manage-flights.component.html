@@ -3,15 +3,42 @@
   <table class="flights-table">
     <thead>
     <tr>
-      <th>Flight Number</th>
-      <th>Origin</th>
-      <th>Destination</th>
-      <th>Boarding Date</th>
-      <th>Boarding Time</th>
-      <th>Arrival Date</th>
-      <th>Arrival Time</th>
-      <th>Seat Count</th>
-      <th>Seats Taken</th>
+      <th (click)="sortTable('flightNumber')">
+        Flight Number
+        <i class="fas" [ngClass]="getSortIcon('flightNumber')"></i>
+      </th>
+      <th (click)="sortTable('originCode')">
+        Origin
+        <i class="fas" [ngClass]="getSortIcon('originCode')"></i>
+      </th>
+      <th (click)="sortTable('destination.name')">
+        Destination
+        <i class="fas" [ngClass]="getSortIcon('destination.name')"></i>
+      </th>
+      <th (click)="sortTable('boardingDate')">
+        Boarding Date
+        <i class="fas" [ngClass]="getSortIcon('boardingDate')"></i>
+      </th>
+      <th (click)="sortTable('boardingTime')">
+        Boarding Time
+        <i class="fas" [ngClass]="getSortIcon('boardingTime')"></i>
+      </th>
+      <th (click)="sortTable('arrivalDate')">
+        Arrival Date
+        <i class="fas" [ngClass]="getSortIcon('arrivalDate')"></i>
+      </th>
+      <th (click)="sortTable('arrivalTime')">
+        Arrival Time
+        <i class="fas" [ngClass]="getSortIcon('arrivalTime')"></i>
+      </th>
+      <th (click)="sortTable('seatCount')">
+        Seat Count
+        <i class="fas" [ngClass]="getSortIcon('seatCount')"></i>
+      </th>
+      <th (click)="sortTable('takenSeats')">
+        Seats Taken
+        <i class="fas" [ngClass]="getSortIcon('takenSeats')"></i>
+      </th>
       <th>Actions</th>
     </tr>
     </thead>

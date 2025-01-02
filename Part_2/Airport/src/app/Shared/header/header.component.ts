@@ -17,10 +17,7 @@ export class HeaderComponent {
 
   toggleDrawer(): void {
     if (this.matDrawer) {
-      console.log('toggle drawer from app.component')
       this.matDrawer.toggle();
-    } else {
-      console.log('toggle drawer from app.component but this.matDrawer is undefined')
     }
   }
 }
