@@ -19,14 +19,14 @@
 
 .flight-card {
   width: 300px;
-  height: 500px; /* Fixed height to ensure uniformity */
+  height: 500px;
   border-radius: 10px;
   overflow: hidden;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s, box-shadow 0.3s;
   background: #fff;
   display: flex;
-  flex-direction: column; /* Vertical alignment */
+  flex-direction: column;
 }
 
 .flight-card:hover {
@@ -39,23 +39,23 @@ mat-card {
   padding: 0;
   display: flex;
   flex-direction: column;
-  height: 100%; /* Stretch to fill parent */
+  height: 100%;
 }
 
 mat-card img {
   height: 180px;
   object-fit: cover;
   border-bottom: 2px solid #eee;
-  margin-bottom: 0; /* Remove unnecessary margin below the image */
+  margin-bottom: 0;
 }
 
 mat-card-content {
-  flex: 1; /* Make content fill the available space */
-  padding: 10px; /* Reduced padding for tighter spacing */
+  flex: 1;
+  padding: 10px;
   text-align: left;
   display: flex;
   flex-direction: column;
-  justify-content: space-between; /* Distribute content evenly */
+  justify-content: space-between;
 }
 
 .fas-icon {
@@ -66,23 +66,23 @@ mat-card-content h4 {
   font-size: 1.25rem;
   font-weight: bold;
   color: #007BFF;
-  margin-bottom: 5px; /* Reduced spacing below the headline */
+  margin-bottom: 5px;
   margin-top: 0;
 }
 
 mat-card-content p {
   font-size: 0.9rem;
   color: #555;
-  margin: 3px 0; /* Reduced spacing between paragraphs */
+  margin: 3px 0;
 }
 
 mat-card-actions {
   display: flex;
   justify-content: space-between;
-  padding: 10px; /* Reduced padding for tighter layout */
+  padding: 10px;
   border-top: 1px solid #eee;
   background-color: #f9f9f9;
-  margin-top: auto; /* Push actions to the bottom */
+  margin-top: auto;
 }
 
 mat-card-actions button {
@@ -105,11 +105,11 @@ mat-card-actions button {
   margin-bottom: 10px;
 }
 
-/* Responsive Design */
+
 @media (max-width: 768px) {
   .flight-card {
     width: 90%;
-    height: auto; /* Allow height to adjust on smaller screens */
+    height: auto;
   }
 }
 
@@ -129,7 +129,7 @@ mat-card-actions button {
   font-size: 2rem;
   font-weight: bold;
   margin-bottom: 1rem;
-  color: #000; /* Changed to black */
+  color: #000;
 }
 
 .flights-table {
@@ -153,31 +153,31 @@ mat-card-actions button {
   background-color: #f9f9f9;
 }
 
-/* Smaller Button Styling */
+
 .edit-button {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 5px;
-  padding: 5px 15px; /* Reduced padding for smaller button */
-  font-size: 0.9rem; /* Slightly smaller font size */
+  padding: 5px 15px;
+  font-size: 0.9rem;
   font-weight: bold;
   color: #ffffff;
-  background: linear-gradient(90deg, #007bff, #0056b3); /* Gradient background */
+  background: linear-gradient(90deg, #007bff, #0056b3);
   border: none;
-  border-radius: 15px; /* Slightly smaller rounded corners */
-  box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  border-radius: 15px;
+  box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   transition: all 0.3s ease-in-out;
-  text-transform: none; /* Prevent uppercase text */
+  text-transform: none;
 }
 
 .edit-button mat-icon {
-  font-size: 14px; /* Smaller icon size */
+  font-size: 14px;
 }
 
 .edit-button:hover {
-  background: linear-gradient(90deg, #0056b3, #007bff); /* Reverse gradient on hover */
-  transform: translateY(-1px); /* Slightly smaller lift effect */
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15); /* Adjusted shadow */
+  background: linear-gradient(90deg, #0056b3, #007bff);
+  transform: translateY(-1px);
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
 }

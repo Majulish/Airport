@@ -5,19 +5,22 @@ import { MatButtonModule } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
 import { Flight } from '../../../Flights/Model/filght.module';
 import { FlightService } from '../../../Flights/Service/flights.service';
+import {FormsModule} from '@angular/forms';
 
 @Component({
   selector: 'book-flight',
   templateUrl: './book-flight.component.html',
   styleUrls: ['./book-flight.component.css'],
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatButtonModule, RouterLink],
+  imports: [CommonModule, MatIconModule, MatButtonModule, RouterLink, FormsModule],
 })
 export class BookFlightComponent implements OnInit {
   @Input() showHeader = true;
 
   flights: Flight[] = [];
+  filteredFlights: Flight[] = [];
   originalFlights: Flight[] = [];
+  searchTerm: string = '';
   currentSortColumn: string | null = null;
   currentSortDirection: 'asc' | 'desc' | null = null;
 
@@ -29,6 +32,7 @@ export class BookFlightComponent implements OnInit {
         new Date(`${flight.boardingDate}T${flight.boardingTime}`) > new Date()
     );
     this.originalFlights = [...this.flights];
+    this.filteredFlights = [...this.flights];
   }
 
   sortTable(column: string): void {
@@ -66,5 +70,17 @@ export class BookFlightComponent implements OnInit {
       }
     }
     return 'fa-arrows-up-down';
+  }
+
+  applyFilter(): void {
+    const term = this.searchTerm.toLowerCase();
+    if (!term?.length) {
+      this.filteredFlights = [...this.flights];
+    }
+    this.filteredFlights = this.flights.filter(
+      (flight) =>
+        flight.destination.name.toLowerCase().includes(term) ||
+        flight.originName.toLowerCase().includes(term)
+    );
   }
 }

@@ -1,6 +1,4 @@
 
-
-/* Header Styles */
 .header {
   cursor: pointer;
   background-color: #007bff;
@@ -31,7 +29,6 @@ header:hover {
   color: white;
 }
 
-/* Main Content Styles */
 .content {
   padding: 20px;
 }

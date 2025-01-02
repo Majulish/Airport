@@ -22,6 +22,7 @@ export class FlightService {
       new Flight(
         'NYC123',
         'NYC',
+        this.findDestination('NYC', destinations).name,
         this.findDestination('DXB', destinations),
         date.getUpcomingDate(1),
         '08:00',
@@ -33,6 +34,7 @@ export class FlightService {
       new Flight(
         'LAX456',
         'LAX',
+        this.findDestination('LAX', destinations).name,
         this.findDestination('LHR', destinations),
         date.getUpcomingDate(1),
         '10:00',
@@ -44,6 +46,7 @@ export class FlightService {
       new Flight(
         'LHR789',
         'LHR',
+        this.findDestination('LHR', destinations).name,
         this.findDestination('LAX', destinations),
         date.getUpcomingDate(-3),
         '15:00',
@@ -55,6 +58,7 @@ export class FlightService {
       new Flight(
         'DXB101',
         'DXB',
+        this.findDestination('DXB', destinations).name,
         this.findDestination('HND', destinations),
         date.getUpcomingDate(-5),
         '18:30',
@@ -66,6 +70,7 @@ export class FlightService {
       new Flight(
         'HND202',
         'HND',
+        this.findDestination('HND', destinations).name,
         this.findDestination('SYD', destinations),
         date.getUpcomingDate(1),
         '22:00',
@@ -77,6 +82,7 @@ export class FlightService {
       new Flight(
         'SYD303',
         'SYD',
+        this.findDestination('SYD', destinations).name,
         this.findDestination('SFO', destinations),
         date.getUpcomingDate(10),
         '09:00',
@@ -88,6 +94,7 @@ export class FlightService {
       new Flight(
         'CDG404',
         'CDG',
+        this.findDestination('CDG', destinations).name,
         this.findDestination('SIN', destinations),
         date.getUpcomingDate(8),
         '16:00',
@@ -99,6 +106,7 @@ export class FlightService {
       new Flight(
         'SFO505',
         'SFO',
+        this.findDestination('SFO', destinations).name,
         this.findDestination('FCO', destinations),
         date.getUpcomingDate(12),
         '11:00',
@@ -110,6 +118,7 @@ export class FlightService {
       new Flight(
         'SIN606',
         'SIN',
+        this.findDestination('SIN', destinations).name,
         this.findDestination('CDG', destinations),
         date.getUpcomingDate(13),
         '13:00',
@@ -121,6 +130,7 @@ export class FlightService {
       new Flight(
         'FCO707',
         'FCO',
+        this.findDestination('FCO', destinations).name,
         this.findDestination('NYC', destinations),
         date.getUpcomingDate(14),
         '07:00',
@@ -157,13 +167,5 @@ export class FlightService {
 
   getFlightByNumber(flightNo: string): Flight | undefined {
     return this.flights.find((flight) => flight.flightNumber === flightNo);
-  }
-
-  getFlightsByOrigin(origin: string): Flight[] {
-    return this.flights.filter((flight) => flight.originCode === origin);
-  }
-
-  getFlightsByDestination(destCode: string): Flight[] {
-    return this.flights.filter((flight) => flight.destination.code === destCode);
   }
 }

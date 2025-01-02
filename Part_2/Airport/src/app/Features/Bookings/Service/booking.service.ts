@@ -110,16 +110,8 @@ export class BookingService {
     ];
   }
 
-  getAllBookings(): Booking[] {
-    return [...this.bookings];
-  }
-
   getBookingById(bookingId: string): Booking | undefined {
     return this.bookings.find((booking) => booking.bookingId === bookingId);
-  }
-
-  getBookingsByFlightNumber(flightNo: string): Booking[] {
-    return this.bookings.filter((booking) => booking.flightNo === flightNo);
   }
 
   getBookingsByTime(isUpcoming: boolean): any[] {

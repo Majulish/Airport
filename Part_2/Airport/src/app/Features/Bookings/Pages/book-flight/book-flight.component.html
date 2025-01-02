@@ -1,5 +1,14 @@
 <div class="manage-flights-container">
   <h2 *ngIf="showHeader" class="title">Book a Flight</h2>
+  <div class="search-container">
+    <input
+      type="text"
+      placeholder="Search by destination or origin"
+      [(ngModel)]="searchTerm"
+      (input)="applyFilter()"
+      class="search-input"
+    />
+  </div>
   <table class="flights-table">
     <thead>
     <tr>
@@ -7,9 +16,9 @@
         Flight Number
         <i class="fas" [ngClass]="getSortIcon('flightNumber')"></i>
       </th>
-      <th (click)="sortTable('originCode')">
+      <th (click)="sortTable('originName')">
         Origin
-        <i class="fas" [ngClass]="getSortIcon('originCode')"></i>
+        <i class="fas" [ngClass]="getSortIcon('originName')"></i>
       </th>
       <th (click)="sortTable('destination.name')">
         Destination
@@ -43,9 +52,9 @@
     </tr>
     </thead>
     <tbody>
-    <tr *ngFor="let flight of flights">
+    <tr *ngFor="let flight of filteredFlights">
       <td>{{ flight.flightNumber }}</td>
-      <td>{{ flight.originCode }}</td>
+      <td>{{ flight.originName }}</td>
       <td>{{ flight.destination.name }}</td>
       <td>{{ flight.boardingDate | date: 'dd-MM-yyyy' }}</td>
       <td>{{ flight.boardingTime }}</td>

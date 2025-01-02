@@ -1,5 +1,14 @@
 <div class="manage-flights-container">
   <h2 class="title">Manage Flights</h2>
+  <div class="search-container">
+    <input
+      type="text"
+      placeholder="Search by destination or origin code"
+      [(ngModel)]="searchTerm"
+      (input)="applyFilter()"
+      class="search-input"
+    />
+  </div>
   <table class="flights-table">
     <thead>
     <tr>
@@ -43,7 +52,7 @@
     </tr>
     </thead>
     <tbody>
-    <tr *ngFor="let flight of flights">
+    <tr *ngFor="let flight of filteredFlights">
       <td>{{ flight.flightNumber }}</td>
       <td>{{ flight.originCode }}</td>
       <td>{{ flight.destination.name }}</td>
