@@ -16,8 +16,8 @@
   font-size: 1.5rem;
   font-weight: bold;
   color: #007bff;
-  text-align: center;
-  padding: 20px 0;
+  text-align: left;
+  padding: 20px 30px;
   border-bottom: 1px solid #e0e0e0;
 }
 
@@ -72,35 +72,4 @@
 .menu-list li ul li {
   padding: 10px 20px;
   font-size: 0.9rem;
-}
-
-/* Header Styles */
-.header {
-  background-color: #007bff;
-  color: white;
-  display: flex;
-  align-items: center;
-  padding: 10px 20px;
-}
-
-.header h1 {
-  font-size: 1.5rem;
-  margin-left: 10px;
-  font-weight: bold;
-}
-
-.menu-toggle {
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
-.menu-toggle i {
-  font-size: 24px;
-  color: white;
-}
-
-/* Main Content Styles */
-.content {
-  padding: 20px;
 }

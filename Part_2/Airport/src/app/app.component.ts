@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, ViewChild} from '@angular/core';
 import {RouterModule, RouterOutlet} from '@angular/router';
 import { HeaderComponent } from './Shared/header/header.component'
 import { FooterComponent } from './Shared/footer/footer.component';
@@ -23,22 +23,18 @@ import {NgClass, NgIf} from '@angular/common';
   standalone: true,
 })
 export class AppComponent {
-  matDrawer!: MatDrawer
-
   adminMenuOpen = false;
   userMenuOpen = false;
   isMenuOpen = false;
 
-  toggleMenu(menu: string): void {
-    this.isMenuOpen = !this.isMenuOpen;
-    if (menu === 'admin') {
-      this.adminMenuOpen = !this.adminMenuOpen;
-    } else if (menu === 'user') {
-      this.userMenuOpen = !this.userMenuOpen;
-    }
-  }
+  @ViewChild('drawer', { static: false }) matDrawer!: MatDrawer;
 
-  async closeMenu(): Promise<void> {
-    this.isMenuOpen = false;
+  toggleDrawer(): void {
+    if (this.matDrawer) {
+      console.log('toggle drawer from app.component')
+      this.matDrawer.toggle();
+    } else {
+      console.log('toggle drawer from app.component but this.matDrawer is undefined')
+    }
   }
 }

@@ -1,66 +1,48 @@
-<mat-sidenav-container class="sidenav-container">
-  <mat-sidenav #sidenav mode="side" class="sidenav" opened>
-    <nav>
-      <h2 class="menu-title">Menu</h2>
-      <ul class="menu-list">
-        <!-- Home -->
+<mat-sidenav #sidenav mode="side" class="sidenav" [opened]="true">
+  <nav>
+    <h2 class="menu-title">Menu</h2>
+    <ul class="menu-list">
+      <li>
+        <i class="fas fa-home"></i>
+        <a routerLink="/">Home</a>
+      </li>
+
+      <li (click)="toggleMenu('admin')">
+        <i class="fas fa-user-shield"></i>
+        <span>Admin</span>
+        <i class="fas" [ngClass]="adminMenuOpen ? 'fa-chevron-down' : 'fa-chevron-right'"></i>
+      </li>
+      <ul *ngIf="adminMenuOpen" class="submenu">
         <li>
-          <i class="fas fa-home"></i>
-          <a routerLink="/">Home</a>
+          <i class="fas fa-plane"></i>
+          <a [routerLink]="'admin/manage-flights'">Manage Flights</a>
         </li>
-
-        <!-- Admin Section -->
-        <li (click)="toggleMenu('admin')">
-          <i class="fas fa-user-shield"></i>
-          <span>Admin</span>
-          <i class="fas" [ngClass]="adminMenuOpen ? 'fa-chevron-down' : 'fa-chevron-right'"></i>
-        </li>
-        <ul *ngIf="adminMenuOpen" class="submenu">
-          <li>
-            <i class="fas fa-plane"></i>
-            <a [routerLink]="'admin/manage-flights'" (click)=closeMenu()>Manage Flights</a>
-          </li>
-          <li>
-            <i class="fas fa-map-marked-alt"></i>
-            <a [routerLink]="'/admin/manage-destinations'" (click)=closeMenu()>Manage Destinations</a>
-          </li>
-        </ul>
-
-        <!-- User Section -->
-        <li (click)="toggleMenu('user')">
-          <i class="fas fa-user"></i>
-          <span>User</span>
-          <i class="fas" [ngClass]="userMenuOpen ? 'fa-chevron-down' : 'fa-chevron-right'"></i>
-        </li>
-        <ul *ngIf="userMenuOpen" class="submenu">
-          <li>
-            <i class="fas fa-plane-departure"></i>
-            <a [routerLink]="'/user/book-a-flight'" (click)=closeMenu()>Book a Flight</a>
-          </li>
-          <li>
-            <i class="fas fa-calendar-alt"></i>
-            <a [routerLink]="'/user/my-bookings'" (click)=closeMenu()>My Bookings</a>
-          </li>
-        </ul>
-
-        <!-- Help -->
         <li>
-          <i class="fas fa-question-circle"></i>
-          <a routerLink="/help">Help</a>
+          <i class="fas fa-map-marked-alt"></i>
+          <a [routerLink]="'/admin/manage-destinations'">Manage Destinations</a>
         </li>
       </ul>
-    </nav>
-  </mat-sidenav>
 
-  <mat-sidenav-content>
-    <header class="header">
-      <button class="menu-toggle" (click)="sidenav.toggle()">
-        <i class="fas fa-bars"></i>
-      </button>
-      <h1>OnoAir</h1>
-    </header>
-    <main class="content">
-      <router-outlet></router-outlet>
-    </main>
-  </mat-sidenav-content>
-</mat-sidenav-container>
+      <li (click)="toggleMenu('user')">
+        <i class="fas fa-user"></i>
+        <span>User</span>
+        <i class="fas" [ngClass]="userMenuOpen ? 'fa-chevron-down' : 'fa-chevron-right'"></i>
+      </li>
+      <ul *ngIf="userMenuOpen" class="submenu">
+        <li>
+          <i class="fas fa-plane-departure"></i>
+          <a [routerLink]="'/user/book-a-flight'">Book a Flight</a>
+        </li>
+        <li>
+          <i class="fas fa-calendar-alt"></i>
+          <a [routerLink]="'/user/my-bookings'">My Bookings</a>
+        </li>
+      </ul>
+
+      <li>
+        <i class="fas fa-question-circle"></i>
+        <a routerLink="/help">Help</a>
+      </li>
+    </ul>
+  </nav>
+</mat-sidenav>
