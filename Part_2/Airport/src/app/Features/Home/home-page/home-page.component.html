@@ -6,7 +6,7 @@
       <p>No flights found. Please check back later.</p>
     </div>
     <mat-card *ngFor="let flight of flights" class="flight-card">
-      <img mat-card-image [src]="flight.destination.imageUrl" alt="no picture">
+      <img [src]="flight.destination.imageUrl" alt="no picture">
       <mat-card-content>
         <h4>{{ flight.destination.name }}</h4>
         <p><strong>Airport:</strong> {{ flight.destination.airportName }}</p>
@@ -16,8 +16,8 @@
         <p><strong>Seats Taken:</strong> {{ flight.takenSeats}}</p>
       </mat-card-content>
       <mat-card-actions>
-        <button mat-button color="primary">Learn More</button>
-        <button mat-raised-button color="accent">Book Now</button>
+        <button (click)="openAirportUrl(flight.destination.airportUrl)">Learn More</button>
+        <button [routerLink]="['/book-flight', flight.flightNumber]">Book Now</button>
       </mat-card-actions>
     </mat-card>
   </div>
