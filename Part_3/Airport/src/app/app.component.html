@@ -1,0 +1,13 @@
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav #drawer mode="side" class="sidenav" [opened]="isMenuOpen">
+    <menu-component (menuItemClicked)="onMenuItemClick()"></menu-component>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <ono-air-header [matDrawer]="drawer"></ono-air-header>
+    <main class="content">
+      <router-outlet></router-outlet>
+    </main>
+    <ono-air-footer></ono-air-footer>
+  </mat-sidenav-content>
+</mat-sidenav-container>
