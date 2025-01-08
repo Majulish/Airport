@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
+import { Firestore, collection, setDoc, doc } from '@angular/fire/firestore';
 import { Destination } from '../Model/destination.module';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DestinationsService {
+
   private readonly destinations: Destination[] = [
     new Destination(
       'NYC',
@@ -46,7 +48,7 @@ export class DestinationsService {
       'Sydney',
       'Sydney Kingsford Smith Airport',
       'https://www.sydneyairport.com.au',
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Sydney_Opera_House_and_Harbour_Bridge_Dusk_%282%29_2019-06-21.jpg/800px-Sydney_Opera_House_and_Harbour_Bridge_Dusk_%282%29_2019-06-21.jpg'
+      'https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Sydney_Opera_House_and_Harbour_Bridge_Dusk_%282%29_2019-06-21.jpg/268px-Sydney_Opera_House_and_Harbour_Bridge_Dusk_%282%29_2019-06-21.jpg'
     ),
     new Destination(
       'CDG',
@@ -77,6 +79,17 @@ export class DestinationsService {
       'https://i.natgeofe.com/k/a6c9f195-de20-445d-9d36-745ef56042c5/OG_Colosseum_Ancient-Rome_KIDS_1122.jpg'
     ),
   ];
+
+  constructor(private firestore: Firestore) {}
+
+  async uploadDestinations(): Promise<void> {
+    const destinationsCollection = collection(this.firestore, 'Destinations');
+    for (const destination of this.destinations) {
+      const destinationData = { ...destination }; // Convert to plain object
+      await setDoc(doc(destinationsCollection, destination.code), destinationData);
+    }
+    console.log('Destinations uploaded successfully!');
+  }
 
   getAllDestinations(): Destination[] {
     return [...this.destinations];

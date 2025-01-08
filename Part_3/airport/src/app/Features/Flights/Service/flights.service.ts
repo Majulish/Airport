@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
+import { Firestore, collection, setDoc, doc } from '@angular/fire/firestore';
 import { Flight } from '../Model/filght.module';
-
+import { DestinationsService } from '../../Destinations/Service/destinations.service';
+import { Destination } from '../../Destinations/Model/destination.module';
 import {date} from '../../../Utilities/get-date';
-import {DestinationsService} from '../../Destinations/Service/destinations.service';
-import {Destination} from '../../Destinations/Model/destination.module';
 
 @Injectable({
   providedIn: 'root',
@@ -11,7 +11,10 @@ import {Destination} from '../../Destinations/Model/destination.module';
 export class FlightService {
   private flights: Flight[] = [];
 
-  constructor(private destinationsService: DestinationsService) {
+  constructor(
+    private destinationsService: DestinationsService,
+    private firestore: Firestore
+  ) {
     this.initializeFlights();
   }
 
@@ -148,6 +151,18 @@ export class FlightService {
       throw new Error(`Destination with code ${code} not found.`);
     }
     return destination;
+  }
+
+  async uploadFlights(): Promise<void> {
+    const flightCollection = collection(this.firestore, 'Flight');
+    for (const flight of this.flights) {
+      await setDoc(doc(flightCollection, flight.flightNumber), {
+        ...flight,
+        destination: flight.destination.toPlainObject(),
+        destinationRef: doc(this.firestore, 'Destinations', flight.destination.code),
+      });
+    }
+    console.log('Flights uploaded successfully!');
   }
 
   getAllFlights(): Flight[] {
