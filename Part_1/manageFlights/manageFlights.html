@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>OnoAir - Manage Flights</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script type="module" src="manageFlights.js" defer></script>
+</head>
+<body>
+    <header>
+        <h1><a href="../index.html">OnoAir</a></h1>
+    </header>
+    <main>
+        <h2>Manage Flights</h2>
+        <table id="flightsTable">
+            <thead>
+                <tr>
+                    <th>Flight No.</th>
+                    <th>Origin</th>
+                    <th>Destination</th>
+                    <th>Boarding Date</th>
+                    <th>Boarding Time</th>
+                    <th>Arrival Date</th>
+                    <th>Arrival Time</th>
+                    <th>Seats</th>
+                    <th>Booked Seats</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows will be dynamically populated by manageFlights.js -->
+            </tbody>
+        </table>
+
+        <div class="actions-bottom">
+            <a href="../addFlights/addFlights.html" class="button">Add New Flight</a>
+        </div>
+    </main>
+    <footer>
+        <a href="../help/help.html" title="Help">
+            <i class="fa fa-question-circle"></i>
+        </a>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,36 @@
+#saveButton {
+    background-color: #28a745;
+    color: white;
+    padding: 12px 24px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    transition: all 0.2s ease-in-out;
+    margin: 8px 0 0 0;
+}
+
+#saveButton:hover {
+    background-color: #218838;
+    transform: scale(1.05);
+}
+
+.destination-form-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+
+.add-destination-form {
+    max-width: 300px;
+}
+
+.destination-button-container{
+    display: flex;
+    justify-content: start;
+    align-items: center;
+}
+

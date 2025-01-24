@@ -1,0 +1,56 @@
+.container {
+  padding: 20px;
+}
+
+mat-accordion {
+  width: 100%;
+}
+
+mat-expansion-panel {
+  margin-bottom: 10px;
+}
+
+mat-panel-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.booking-card {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.destination-img {
+  width: 200px;
+  height: 200px;
+  border-radius: 5px;
+  margin-right: 15px;
+  object-fit: cover;
+}
+
+.booking-info {
+  flex: 1;
+}
+
+.view-booking-btn {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 1rem;
+  background-color: transparent;
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.view-booking-btn:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}

@@ -1,0 +1,51 @@
+.main {
+  padding: 2rem;
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+}
+
+.help-title {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: #000;
+  font-weight: bold;
+}
+
+.help-description {
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+.help-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.help-list li {
+  margin-bottom: 1rem;
+}
+
+.help-list li strong {
+  color: #000;
+  font-weight: bold;
+}
+
+.help-list li span {
+  color: #333;
+}
+
+.help-contact {
+  font-size: 1rem;
+  margin-top: 2rem;
+  color: #555;
+}
+
+.help-contact a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.help-contact a:hover {
+  text-decoration: underline;
+}

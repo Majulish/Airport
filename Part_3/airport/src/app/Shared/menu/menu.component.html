@@ -1,0 +1,48 @@
+<mat-sidenav #sidenav mode="side" class="sidenav" [opened]="true">
+  <nav>
+    <h2 class="menu-title">Menu</h2>
+    <ul class="menu-list">
+      <li (click)="onMenuItemClick()">
+        <i class="fas fa-home"></i>
+        <a routerLink="/">Home</a>
+      </li>
+
+      <li (click)="toggleMenu('admin')">
+        <i class="fas fa-user-shield"></i>
+        <span>Admin</span>
+        <i class="fas" [ngClass]="adminMenuOpen ? 'fa-chevron-down' : 'fa-chevron-right'"></i>
+      </li>
+      <ul *ngIf="adminMenuOpen" class="submenu">
+        <li (click)="onMenuItemClick()">
+          <i class="fas fa-plane"></i>
+          <a [routerLink]="'admin/manage-flights'">Manage Flights</a>
+        </li>
+        <li (click)="onMenuItemClick()">
+          <i class="fas fa-map-marked-alt"></i>
+          <a [routerLink]="'/admin/manage-destinations'">Manage Destinations</a>
+        </li>
+      </ul>
+
+      <li (click)="toggleMenu('user')">
+        <i class="fas fa-user"></i>
+        <span>User</span>
+        <i class="fas" [ngClass]="userMenuOpen ? 'fa-chevron-down' : 'fa-chevron-right'"></i>
+      </li>
+      <ul *ngIf="userMenuOpen" class="submenu">
+        <li (click)="onMenuItemClick()">
+          <i class="fas fa-plane-departure"></i>
+          <a [routerLink]="'/user/book-a-flight'">Book a Flight</a>
+        </li>
+        <li (click)="onMenuItemClick()">
+          <i class="fas fa-calendar-alt"></i>
+          <a [routerLink]="'/user/my-bookings'">My Bookings</a>
+        </li>
+      </ul>
+
+      <li (click)="onMenuItemClick()">
+        <i class="fas fa-question-circle"></i>
+        <a routerLink="/help">Help</a>
+      </li>
+    </ul>
+  </nav>
+</mat-sidenav>

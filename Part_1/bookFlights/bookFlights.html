@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>OnoAir - Book a Flight</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script type="module" src="bookFlights.js" defer></script>
+</head>
+<body>
+    <header>
+        <h1><a href="../index.html">OnoAir</a></h1>
+    </header>
+    <main>
+        <h2>Book a Flight</h2>
+
+        <!-- Filter Section -->
+        <form class="filter-form">
+            <div class="filter-item">
+                <label for="origin">Filter by: Origin:</label>
+                <select id="origin">
+                    <option value="">Select Origin</option>
+                </select>
+            </div>
+            <div class="filter-item">
+                <label for="destination">Destination:</label>
+                <select id="destination">
+                    <option value="">Select Destination</option>
+                </select>
+            </div>
+        </form>
+
+        <!-- Flight Table -->
+        <table id="flightsTable">
+            <thead>
+                <tr>
+                    <th>Flight No.</th>
+                    <th>Origin</th>
+                    <th>Destination</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows dynamically generated -->
+            </tbody>
+        </table>
+
+        <!-- Booking Form -->
+        <form id="bookingForm" class="booking-form" style="display: none;">
+            <h3>Flight Details</h3>
+            <p id="flightDetails"></p>
+
+            <div class="booking-form-item">
+                <label for="numPassengers">No. of Passengers:</label>
+                <input type="number" id="numPassengers" min="1" required>
+            </div>
+
+            <!-- Passenger Fields -->
+            <div id="passengerFields">
+                <!-- Passenger fields will be dynamically added here -->
+            </div>
+        </form>
+    </main>
+    <footer>
+        <a href="../help/help.html" title="Help">
+            <i class="fa fa-question-circle"></i>
+        </a>
+    </footer>
+</body>
+</html>
