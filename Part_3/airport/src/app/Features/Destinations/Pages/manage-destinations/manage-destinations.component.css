@@ -100,3 +100,29 @@
   box-sizing: border-box;
 }
 
+.add-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: linear-gradient(90deg, #007bff, #0056b3);
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.add-button:hover {
+  background: linear-gradient(90deg, #0056b3, #004494);
+}
+
+.add-button mat-icon {
+  font-size: 20px;
+}
+
+

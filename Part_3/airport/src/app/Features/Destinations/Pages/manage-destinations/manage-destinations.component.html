@@ -1,14 +1,17 @@
 <div class="manage-destinations-container">
   <h2 class="title">Manage Destinations</h2>
+
+
   <div class="search-container">
     <input
-      type="text"
-      placeholder="Search by name or code"
-      [(ngModel)]="searchTerm"
-      (input)="applyFilter()"
-      class="search-input"
+            type="text"
+            placeholder="Search by name or code"
+            [(ngModel)]="searchTerm"
+            (input)="applyFilter()"
+            class="search-input"
     />
   </div>
+
   <table class="destinations-table">
     <thead>
     <tr>
@@ -38,4 +41,11 @@
     </tr>
     </tbody>
   </table>
+  <div class="actions-container">
+    <button class="add-button" [routerLink]="['/add-destination']">
+      <mat-icon>add</mat-icon>
+      Add Destination
+    </button>
+  </div>
+
 </div>

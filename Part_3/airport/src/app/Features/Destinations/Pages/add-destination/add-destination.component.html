@@ -1,0 +1,64 @@
+<div class="add-destination-container">
+    <h2>Add New Destination</h2>
+
+    <!-- Display error or success messages -->
+    <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+    <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+
+    <form (ngSubmit)="addDestination()" #destinationForm="ngForm">
+        <label for="code">Code:</label>
+        <input
+                type="text"
+                id="code"
+                [(ngModel)]="newDestination.code"
+                name="code"
+                required
+        />
+
+        <label for="name">Name:</label>
+        <input
+                type="text"
+                id="name"
+                [(ngModel)]="newDestination.name"
+                name="name"
+                required
+        />
+
+        <label for="airportName">Airport Name:</label>
+        <input
+                type="text"
+                id="airportName"
+                [(ngModel)]="newDestination.airportName"
+                name="airportName"
+                required
+        />
+
+        <label for="airportUrl">Airport URL:</label>
+        <input
+                type="text"
+                id="airportUrl"
+                [(ngModel)]="newDestination.airportUrl"
+                name="airportUrl"
+                required
+        />
+
+        <label for="imageUrl">Image URL:</label>
+        <input
+                type="text"
+                id="imageUrl"
+                [(ngModel)]="newDestination.imageUrl"
+                name="imageUrl"
+                required
+        />
+
+        <div class="button-container">
+            <button type="button" (click)="confirmAndSave()" [disabled]="destinationForm.invalid">
+                Save Destination
+            </button>
+
+            <button type="button" class="cancel-button" (click)="goBack()">
+                Cancel
+            </button>
+        </div>
+    </form>
+</div>
