@@ -4,10 +4,9 @@ import { HeaderComponent } from './Shared/header/header.component'
 import { FooterComponent } from './Shared/footer/footer.component';
 import {MatDrawer, MatSidenavModule} from '@angular/material/sidenav';
 import { MenuComponent } from './Shared/menu/menu.component'
-import {NgClass, NgIf} from '@angular/common';
-import {DestinationsService} from './Features/Destinations/Service/destinations.service';
-import {FlightService} from './Features/Flights/Service/flights.service';
-import {BookingService} from './Features/Bookings/Service/booking.service';
+import {DestinationsUploadService} from './Features/Destinations/Service/destinatons-upload.service';
+import {FlightUploadService} from './Features/Flights/Service/flights-upload.service';
+import {BookingUploadService} from './Features/Bookings/Service/booking-upload.service';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 
 @Component({
@@ -36,15 +35,15 @@ export class AppComponent implements OnInit {
   @ViewChild('drawer', { static: false }) matDrawer!: MatDrawer;
 
   constructor(
-    private destinationsService: DestinationsService,
-    private flightService: FlightService,
-    private bookingService: BookingService
+    private UploadDestinationsService: DestinationsUploadService ,
+    private UploadFlightService: FlightUploadService,
+    private uploadBookingService: BookingUploadService
   ) {}
 
   async ngOnInit() {
-    await this.destinationsService.uploadDestinations();
-    await this.flightService.uploadFlights();
-    await this.bookingService.uploadBookings();
+    await this.UploadDestinationsService.uploadDestinations();
+    await this.UploadFlightService.uploadFlights();
+    await this.uploadBookingService.uploadBookings();
   }
 
   onMenuItemClick(): void {

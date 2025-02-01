@@ -19,10 +19,10 @@ export class EditDestinationComponent implements OnInit {
     private destinationsService: DestinationsService
   ) {}
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     const destinationCode = this.route.snapshot.paramMap.get('code');
     if (destinationCode) {
-      this.destination = this.destinationsService.get(destinationCode);
+      this.destination = await this.destinationsService.get(destinationCode);
     }
   }
 }

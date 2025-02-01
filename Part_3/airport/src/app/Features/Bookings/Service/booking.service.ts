@@ -1,126 +1,79 @@
 import { Injectable } from '@angular/core';
-import { Firestore, collection, setDoc, doc } from '@angular/fire/firestore';
-import { Booking } from '../Model/booking.module';
 import { Flight } from '../../Flights/Model/filght.module';
 import { FlightService } from '../../Flights/Service/flights.service';
 import { DestinationsService } from '../../Destinations/Service/destinations.service';
+import { Firestore, doc, getDoc, collection, getDocs } from '@angular/fire/firestore';
+import { Booking } from '../Model/booking.module';
 
 @Injectable({
   providedIn: 'root',
 })
 export class BookingService {
-  private bookings: Booking[] = [];
-
   constructor(
     private flightService: FlightService,
     private destinationsService: DestinationsService,
     private firestore: Firestore
-  ) {
-    this.initializeBookings();
-  }
+  ) {}
 
-  private initializeBookings(): void {
-    this.bookings = [
-      new Booking('B001', 'NYC123', [
-        { name: 'John Smith', passportId: 'P9876543' },
-        { name: 'Alice Johnson', passportId: 'P9876544' },
-      ], 2),
-      new Booking('B002', 'LAX456', [
-        { name: 'Michael Brown', passportId: 'P1234567' },
-        { name: 'Emily Davis', passportId: 'P1234568' },
-      ], 2),
-      new Booking('B003', 'LHR789', [
-        { name: 'William Wilson', passportId: 'P1122334' },
-        { name: 'Sophia Taylor', passportId: 'P1122335' },
-      ], 2),
-      new Booking('B004', 'DXB101', [
-        { name: 'Olivia Martinez', passportId: 'P9988776' },
-        { name: 'Liam Garcia', passportId: 'P9988777' },
-      ], 2),
-      new Booking('B005', 'HND202', [
-        { name: 'Benjamin Lee', passportId: 'P4455667' },
-        { name: 'Emma Anderson', passportId: 'P4455668' },
-      ], 2),
-      new Booking('B006', 'SYD303', [
-        { name: 'Charlotte Moore', passportId: 'P5566778' },
-        { name: 'Lucas White', passportId: 'P5566779' },
-      ], 2),
-      new Booking('B007', 'CDG404', [
-        { name: 'James Harris', passportId: 'P6677889' },
-        { name: 'Amelia Thompson', passportId: 'P6677880' },
-      ], 2),
-      new Booking('B008', 'SFO505', [
-        { name: 'Henry Jackson', passportId: 'P7788990' },
-        { name: 'Evelyn Martin', passportId: 'P7788991' },
-      ], 2),
-      new Booking('B009', 'SIN606', [
-        { name: 'Alexander Perez', passportId: 'P8899002' },
-        { name: 'Isabella Roberts', passportId: 'P8899003' },
-      ], 2),
-      new Booking('B010', 'FCO707', [
-        { name: 'Daniel Clark', passportId: 'P9900114' },
-        { name: 'Mia Wright', passportId: 'P9900115' },
-      ], 2),
-    ];
-  }
+  async getBookingById(bookingId: string): Promise<Booking | undefined> {
+    const docRef = doc(this.firestore, 'Booking', bookingId);
+    const docSnap = await getDoc(docRef);
 
-  async uploadBookings(): Promise<void> {
-    const bookingCollection = collection(this.firestore, 'Booking');
-    for (const booking of this.bookings) {
-      await setDoc(doc(bookingCollection, booking.bookingId), booking.toPlainObject());
+    if (docSnap.exists()) {
+      return docSnap.data() as Booking;
+    } else {
+      console.warn(`No booking found with ID: ${bookingId}`);
+      return undefined;
     }
-    console.log('Bookings uploaded successfully!');
   }
 
-
-getBookingById(bookingId: string): Booking | undefined {
-    return this.bookings.find((booking) => booking.bookingId === bookingId);
-  }
-
-  getBookingsByTime(isUpcoming: boolean): any[] {
+  async getBookingsByTime(isUpcoming: boolean): Promise<any[]> {
     const now = new Date();
 
-    return this.bookings
-      .filter((booking) => {
-        const flight: Flight | undefined = this.flightService.getFlightByNumber(booking.flightNo);
+    // Fetch all bookings from Firestore
+    const bookingCollectionRef = collection(this.firestore, 'Booking');
+    const querySnapshot = await getDocs(bookingCollectionRef);
+    const bookings: Booking[] = querySnapshot.docs.map(doc => doc.data() as Booking);
 
-        if (!flight) {
+    // Process each booking asynchronously
+    const processedBookings = await Promise.all(
+      bookings.map(async (booking) => {
+        const flightDocRef = doc(this.firestore, 'Flight', booking.flightNo);
+        const flightDocSnap = await getDoc(flightDocRef);
+
+        if (!flightDocSnap.exists()) {
           console.warn(`Flight not found for flight number: ${booking.flightNo}`);
-          return false;
+          return null; // Skip invalid flights
         }
 
-        const flightTime = new Date(flight.boardingDate + ' ' + flight.boardingTime);
-        return isUpcoming ? flightTime > now : flightTime <= now;
-      })
-      .map((booking) => {
-        const flight: Flight | undefined = this.flightService.getFlightByNumber(booking.flightNo);
+        const flight = flightDocSnap.data() as Flight;
 
-        if (!flight) {
-          throw new Error(`Flight not found for flight number: ${booking.flightNo}`);
-        }
-
-        const originDestination = this.destinationsService.get(flight.originCode)
+        const originDestination = await this.destinationsService.get(flight.originCode);
+        const destination = await this.destinationsService.get(flight.destination.code);
 
         return {
           bookingId: booking.bookingId,
           flightNumber: booking.flightNo,
           passengers: booking.passengers,
           numOfPassengers: booking.passengers.length,
-          origin: originDestination?.name,
-          destination: flight.destination.name,
-          image: flight.destination.imageUrl,
+          origin: originDestination?.name ?? 'Unknown',
+          destination: destination?.name ?? 'Unknown',
+          image: destination?.imageUrl ?? '',
           boarding: `${this.formatDate(flight.boardingDate)} ${flight.boardingTime}`,
           landing: `${this.formatDate(flight.arrivalDate)} ${flight.arrivalTime}`,
         };
-      });
+      })
+    );
+
+    // Filter out null entries (invalid flights)
+    return processedBookings.filter((booking) => booking !== null);
   }
 
   private formatDate(dateString: string): string {
-    const date = new Date(dateString)
+    const date = new Date(dateString);
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     return `${day}-${month}-${year}`;
   }
 }
-

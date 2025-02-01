@@ -7,7 +7,7 @@
     </mat-expansion-panel-header>
     <ng-template matExpansionPanelContent>
       <div class="flights-container">
-        <div *ngIf="flights.length === 0" class="no-flights-message">
+        <div *ngIf="flights?.length === 0" class="no-flights-message">
           <mat-icon>warning</mat-icon>
           <p>No flights found. Please check back later.</p>
         </div>

@@ -1,11 +1,12 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { RouterLink } from '@angular/router';
-import { Flight } from '../../../Flights/Model/filght.module';
-import { FlightService } from '../../../Flights/Service/flights.service';
+import {Component, Input} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {MatIconModule} from '@angular/material/icon';
+import {MatButtonModule} from '@angular/material/button';
+import {RouterLink} from '@angular/router';
+import {Flight} from '../../../Flights/Model/filght.module';
+import {FlightService} from '../../../Flights/Service/flights.service';
 import {FormsModule} from '@angular/forms';
+
 
 @Component({
   selector: 'book-flight',
@@ -14,73 +15,45 @@ import {FormsModule} from '@angular/forms';
   standalone: true,
   imports: [CommonModule, MatIconModule, MatButtonModule, RouterLink, FormsModule],
 })
-export class BookFlightComponent implements OnInit {
-  @Input() showHeader = true;
-
+export class BookFlightComponent {
+  @Input() showHeader: boolean = true;
   flights: Flight[] = [];
   filteredFlights: Flight[] = [];
-  originalFlights: Flight[] = [];
-  searchTerm: string = '';
   currentSortColumn: string | null = null;
   currentSortDirection: 'asc' | 'desc' | null = null;
+  searchTerm: string = '';
 
-  constructor(private flightService: FlightService) {}
-
-  ngOnInit(): void {
-    this.flights = this.flightService.getAllFlights().filter(
-      (flight) =>
-        new Date(`${flight.boardingDate}T${flight.boardingTime}`) > new Date()
-    );
-    this.originalFlights = [...this.flights];
-    this.filteredFlights = [...this.flights];
+  constructor(private flightService: FlightService) {
   }
 
-  sortTable(column: string): void {
-    if (this.currentSortColumn === column) {
-      if (this.currentSortDirection === 'asc') {
-        this.currentSortDirection = 'desc';
-      } else if (this.currentSortDirection === 'desc') {
-        this.currentSortDirection = null;
-        this.flights = [...this.originalFlights];
-        return;
-      } else {
-        this.currentSortDirection = 'asc';
-      }
-    } else {
-      this.currentSortColumn = column;
-      this.currentSortDirection = 'asc';
-    }
-
-    this.flights.sort((a, b) => {
-      const valueA = (a as any)[column];
-      const valueB = (b as any)[column];
-
-      if (valueA < valueB) return this.currentSortDirection === 'asc' ? -1 : 1;
-      if (valueA > valueB) return this.currentSortDirection === 'asc' ? 1 : -1;
-      return 0;
-    });
-  }
-
-  getSortIcon(column: string): string {
-    if (this.currentSortColumn === column) {
-      if (this.currentSortDirection === 'asc') {
-        return 'fa-arrow-up';
-      } else if (this.currentSortDirection === 'desc') {
-        return 'fa-arrow-down';
-      }
-    }
-    return 'fa-arrows-up-down';
-  }
-
-  applyFilter(): void {
-    const term = this.searchTerm.toLowerCase();
-    if (!term?.length) {
+  async ngOnInit() {
+    try {
+      this.flights = await this.flightService.getAllFlights();
       this.filteredFlights = [...this.flights];
+    } catch (error) {
+      console.error("Error fetching flights:", error);
     }
+  }
+
+  applyFilter() {
+    const term = this.searchTerm.toLowerCase();
+    if (!term.length) {
+      this.filteredFlights = [...this.flights];
+      return;
+    }
+
     this.filteredFlights = this.flights.filter(
-      (flight) =>
-        flight.destination.name.toLowerCase().includes(term) ||
-        flight.originName.toLowerCase().includes(term)
+        flight =>
+            flight.destination.name.toLowerCase().includes(term) ||
+            flight.originName.toLowerCase().includes(term)
     );
+  }
+
+  sortTable(column: string) {
+    this.flightService.sortObjectArray(column, this.currentSortDirection, this.currentSortColumn, this.filteredFlights, this.flights)
+  }
+
+  getSortIcon(column: string) {
+    return this.flightService.getSortIcon(column, this.currentSortDirection, this.currentSortColumn, this.filteredFlights, this.flights)
   }
 }

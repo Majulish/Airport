@@ -7,14 +7,4 @@ export class Destination {
     public imageUrl: string
   ) {
   }
-
-  toPlainObject() {
-    return {
-      code: this.code,
-      name: this.name,
-      airportName: this.airportName,
-      airportUrl: this.airportUrl,
-      imageUrl: this.imageUrl,
-    };
-  }
 }

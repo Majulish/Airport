@@ -21,8 +21,8 @@ export class ManageDestinationsComponent implements OnInit {
 
   constructor(private destinationsService: DestinationsService) {}
 
-  ngOnInit(): void {
-    this.destinations = this.destinationsService.getAllDestinations();
+  async ngOnInit(): Promise<void> {
+    this.destinations = await this.destinationsService.getAllDestinations();
     this.filteredDestinations = [...this.destinations];
   }
 

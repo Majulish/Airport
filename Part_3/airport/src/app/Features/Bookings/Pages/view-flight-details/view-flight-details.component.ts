@@ -20,10 +20,10 @@ export class ViewFlightDetailsComponent {
     private flightService: FlightService
   ) {}
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     const flightNumber = this.route.snapshot.paramMap.get('flightNumber');
     if (flightNumber) {
-      this.flight = this.flightService.getFlightByNumber(flightNumber);
+      this.flight = await this.flightService.getFlightByNumber(flightNumber);
     }
   }
 }

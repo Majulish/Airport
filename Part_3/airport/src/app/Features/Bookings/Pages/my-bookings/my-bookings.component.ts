@@ -23,9 +23,11 @@ export class MyBookingsComponent implements OnInit {
 
   constructor(private bookingService: BookingService, private router: Router) {}
 
-  ngOnInit(): void {
-    this.upcomingBookings = this.bookingService.getBookingsByTime(true);
-    this.previousBookings = this.bookingService.getBookingsByTime(false);
+  async ngOnInit(): Promise<void> {
+    [this.upcomingBookings, this.previousBookings] = await Promise.all([
+        this.bookingService.getBookingsByTime(true),
+        this.bookingService.getBookingsByTime(false)
+    ])
   }
 
   viewBooking(id: string): void {

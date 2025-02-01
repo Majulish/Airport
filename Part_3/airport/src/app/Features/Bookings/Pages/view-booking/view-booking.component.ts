@@ -20,10 +20,10 @@ export class ViewBookingComponent {
     private bookingService: BookingService
   ) {}
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     const bookingId = this.route.snapshot.paramMap.get('id');
     if (bookingId) {
-      this.booking = this.bookingService.getBookingById(bookingId);
+      this.booking = await this.bookingService.getBookingById(bookingId);
     }
   }
 }

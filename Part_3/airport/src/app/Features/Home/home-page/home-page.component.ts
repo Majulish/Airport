@@ -34,9 +34,11 @@ export class HomePageComponent implements OnInit {
   ) {
   }
 
-  ngOnInit() {
-    this.flights = this.flightsService.getAllFlightsForNextWeek();
-    this.destinations = this.destinationsService.getAllDestinations();
+  async ngOnInit() {
+    [this.flights, this.destinations] = await Promise.all([
+      this.flightsService.getAllFlightsForNextWeek(),
+      this.destinationsService.getAllDestinations()
+    ])
   }
 
   onPanelOpened(panel: string): void {

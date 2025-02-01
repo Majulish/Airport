@@ -7,6 +7,7 @@ import {Component, OnInit} from '@angular/core';
 import {Flight} from '../../Model/filght.module';
 import {FlightService} from '../../Service/flights.service';
 
+
 @Component({
   selector: 'app-manage-flights',
   templateUrl: './manage-flights.component.html',
@@ -23,8 +24,8 @@ export class ManageFlightsComponent implements OnInit {
 
   constructor(private flightService: FlightService) {}
 
-  ngOnInit(): void {
-    this.flights = this.flightService.getAllFlights();
+  async ngOnInit(): Promise<void> {
+    this.flights = await this.flightService.getAllFlights();
     this.filteredFlights = [...this.flights];
   }
 
@@ -38,39 +39,11 @@ export class ManageFlightsComponent implements OnInit {
   }
 
   sortTable(column: string): void {
-    if (this.currentSortColumn === column) {
-      if (this.currentSortDirection === 'asc') {
-        this.currentSortDirection = 'desc';
-      } else if (this.currentSortDirection === 'desc') {
-        this.currentSortDirection = null;
-        this.filteredFlights = [...this.flights];
-        return;
-      } else {
-        this.currentSortDirection = 'asc';
-      }
-    } else {
-      this.currentSortColumn = column;
-      this.currentSortDirection = 'asc';
-    }
-
-    this.filteredFlights.sort((a, b) => {
-      const valueA = (a as any)[column];
-      const valueB = (b as any)[column];
-
-      if (valueA < valueB) return this.currentSortDirection === 'asc' ? -1 : 1;
-      if (valueA > valueB) return this.currentSortDirection === 'asc' ? 1 : -1;
-      return 0;
-    });
+    this.flightService.sortObjectArray(column, this.currentSortDirection, this.currentSortColumn, this.filteredFlights, this.flights)
   }
 
-  getSortIcon(column: string): string {
-    if (this.currentSortColumn === column) {
-      if (this.currentSortDirection === 'asc') {
-        return 'fa-arrow-up';
-      } else if (this.currentSortDirection === 'desc') {
-        return 'fa-arrow-down';
-      }
-    }
-    return 'fa-arrows-up-down';
+
+  getSortIcon(column: string) {
+    return this.flightService.getSortIcon(column, this.currentSortDirection, this.currentSortColumn, this.filteredFlights, this.flights)
   }
 }
