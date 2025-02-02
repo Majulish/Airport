@@ -9,6 +9,7 @@ import { Booking } from '../Model/booking.module';
   providedIn: 'root',
 })
 export class BookingService {
+  private bookings: Booking[] = [];
   constructor(
     private flightService: FlightService,
     private destinationsService: DestinationsService,
@@ -30,44 +31,54 @@ export class BookingService {
   async getBookingsByTime(isUpcoming: boolean): Promise<any[]> {
     const now = new Date();
 
-    // Fetch all bookings from Firestore
     const bookingCollectionRef = collection(this.firestore, 'Booking');
     const querySnapshot = await getDocs(bookingCollectionRef);
-    const bookings: Booking[] = querySnapshot.docs.map(doc => doc.data() as Booking);
+    this.bookings = querySnapshot.docs.map(doc => doc.data() as Booking);
 
-    // Process each booking asynchronously
+    if (this.bookings.length === 0) {
+      console.warn("No bookings found in Firestore.");
+      return [];
+    }
+
     const processedBookings = await Promise.all(
-      bookings.map(async (booking) => {
-        const flightDocRef = doc(this.firestore, 'Flight', booking.flightNo);
-        const flightDocSnap = await getDoc(flightDocRef);
+      this.bookings.map(async (booking) => {
+        const flight: Flight | undefined = await this.flightService.getFlightByNumber(booking.flightNo);
 
-        if (!flightDocSnap.exists()) {
+        if (!flight) {
           console.warn(`Flight not found for flight number: ${booking.flightNo}`);
-          return null; // Skip invalid flights
+          return null;
         }
 
-        const flight = flightDocSnap.data() as Flight;
+        const flightTime = new Date(`${flight.boardingDate} ${flight.boardingTime}`);
+        const isFlightUpcoming = flightTime > now;
+        const shouldInclude = isUpcoming ? isFlightUpcoming : !isFlightUpcoming;
 
+        return shouldInclude ? { booking, flight } : null;
+      })
+    );
+
+    const validBookings = processedBookings.filter(item => item !== null) as { booking: Booking, flight: Flight }[];
+
+    return Promise.all(
+      validBookings.map(async ({ booking, flight }) => {
         const originDestination = await this.destinationsService.get(flight.originCode);
-        const destination = await this.destinationsService.get(flight.destination.code);
 
         return {
           bookingId: booking.bookingId,
           flightNumber: booking.flightNo,
           passengers: booking.passengers,
           numOfPassengers: booking.passengers.length,
-          origin: originDestination?.name ?? 'Unknown',
-          destination: destination?.name ?? 'Unknown',
-          image: destination?.imageUrl ?? '',
+          origin: originDestination?.name || 'Unknown',
+          destination: flight.destination.name,
+          image: flight.destination.imageUrl,
           boarding: `${this.formatDate(flight.boardingDate)} ${flight.boardingTime}`,
           landing: `${this.formatDate(flight.arrivalDate)} ${flight.arrivalTime}`,
         };
       })
     );
-
-    // Filter out null entries (invalid flights)
-    return processedBookings.filter((booking) => booking !== null);
   }
+
+
 
   private formatDate(dateString: string): string {
     const date = new Date(dateString);

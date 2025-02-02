@@ -28,12 +28,14 @@ export class BookFlightComponent {
 
   async ngOnInit() {
     try {
-      this.flights = await this.flightService.getAllFlights();
-      this.filteredFlights = [...this.flights];
+      this.flights = await this.flightService.getUpcomingFlights();
+      this.filteredFlights = [...this.flights]; // Ensure the filter updates
     } catch (error) {
-      console.error("Error fetching flights:", error);
+      console.error("Error fetching upcoming flights:", error);
     }
   }
+
+
 
   applyFilter() {
     const term = this.searchTerm.toLowerCase();

@@ -12,7 +12,18 @@ export class FlightService {
   async getAllFlights(): Promise<Flight[]> {
     const flightsCollectionRef = collection(this.firestore, 'Flight');
     const querySnapshot = await getDocs(flightsCollectionRef);
-    return querySnapshot.docs.map(doc => doc.data() as Flight);
+
+    return querySnapshot.docs.map(doc => doc.data() as Flight); // ✅ Show all flights
+  }
+
+  async getUpcomingFlights(): Promise<Flight[]> {
+    const allFlights = await this.getAllFlights();
+
+    const today = new Date();
+    return allFlights.filter(flight => {
+      const flightDate = new Date(flight.boardingDate);
+      return flightDate >= today; // ✅ Filter out past flights
+    });
   }
 
   async getAllFlightsForNextWeek(): Promise<Flight[]> {
