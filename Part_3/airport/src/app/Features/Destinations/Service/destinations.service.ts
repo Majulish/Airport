@@ -1,11 +1,24 @@
 import { Injectable } from '@angular/core';
-import {Firestore, collection, getDocs, doc, getDoc, setDoc, query, where } from '@angular/fire/firestore';
+import {
+  Firestore,
+  collection,
+  getDocs,
+  doc,
+  getDoc,
+  setDoc,
+  query,
+  where,
+  updateDoc,
+  DocumentReference,
+} from '@angular/fire/firestore';
 import { Destination } from '../Model/destination.module';
+import firebase from '@angular/fire/firestore';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DestinationsService {
+  private collectionName = 'Destinations';
   constructor(private firestore: Firestore) {}
 
   async getAllDestinations(): Promise<Destination[]> {
@@ -15,14 +28,22 @@ export class DestinationsService {
   }
 
   async get(code: string): Promise<Destination | undefined> {
-    const docRef = doc(this.firestore, 'Destinations', code);
-    const docSnap = await getDoc(docRef);
+    console.log(`Fetching Firestore document: ${this.collectionName}/${code}`); // Debugging
 
-    if (docSnap.exists()) {
-      return docSnap.data() as Destination;
-    } else {
-      console.warn(`No destination found with code: ${code}`);
-      return undefined;
+    try {
+      const documentRef: DocumentReference = doc(this.firestore, this.collectionName, code);
+      const docSnap = await getDoc(documentRef); // ✅ Use getDoc() for async fetching
+
+      if (docSnap.exists()) {
+        console.log('Fetched destination data:', docSnap.data()); // Debugging
+        return docSnap.data() as Destination;
+      } else {
+        console.warn(`No destination found with code: ${code}`);
+        return undefined;
+      }
+    } catch (error) {
+      console.error('Firestore error fetching destination:', error);
+      throw error;
     }
   }
   async addDestination(destination: Destination): Promise<void> {
@@ -42,4 +63,15 @@ export class DestinationsService {
     // Check if any matching documents exist
     return !codeSnapshot.empty || !nameSnapshot.empty;
   }
+
+  async update(destination: Destination): Promise<void> {
+    const docRef = doc(this.firestore, `Destinations/${destination.code}`);
+    return updateDoc(docRef, {
+      name: destination.name,
+      airportName: destination.airportName,
+      airportUrl: destination.airportUrl,
+      imageUrl: destination.imageUrl
+    });
+  }
+
 }

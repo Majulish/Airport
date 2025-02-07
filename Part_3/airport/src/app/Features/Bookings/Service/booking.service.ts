@@ -10,11 +10,13 @@ import { Booking } from '../Model/booking.module';
 })
 export class BookingService {
   private bookings: Booking[] = [];
+
   constructor(
     private flightService: FlightService,
     private destinationsService: DestinationsService,
     private firestore: Firestore
-  ) {}
+  ) {
+  }
 
   async getBookingById(bookingId: string): Promise<Booking | undefined> {
     const docRef = doc(this.firestore, 'Booking', bookingId);
@@ -53,14 +55,15 @@ export class BookingService {
         const isFlightUpcoming = flightTime > now;
         const shouldInclude = isUpcoming ? isFlightUpcoming : !isFlightUpcoming;
 
-        return shouldInclude ? { booking, flight } : null;
+        return shouldInclude ? {booking, flight} : null;
       })
     );
 
     const validBookings = processedBookings.filter(item => item !== null) as { booking: Booking, flight: Flight }[];
 
     return Promise.all(
-      validBookings.map(async ({ booking, flight }) => {
+      validBookings.map(async ({booking, flight}) => {
+        // ✅ Fix: Remove firstValueFrom() and directly await get()
         const originDestination = await this.destinationsService.get(flight.originCode);
 
         return {
@@ -68,7 +71,7 @@ export class BookingService {
           flightNumber: booking.flightNo,
           passengers: booking.passengers,
           numOfPassengers: booking.passengers.length,
-          origin: originDestination?.name || 'Unknown',
+          origin: originDestination?.name ?? 'Unknown', // ✅ No more TS2339 error
           destination: flight.destination.name,
           image: flight.destination.imageUrl,
           boarding: `${this.formatDate(flight.boardingDate)} ${flight.boardingTime}`,
@@ -77,9 +80,6 @@ export class BookingService {
       })
     );
   }
-
-
-
   private formatDate(dateString: string): string {
     const date = new Date(dateString);
     const year = date.getFullYear();
@@ -87,4 +87,5 @@ export class BookingService {
     const day = String(date.getDate()).padStart(2, '0');
     return `${day}-${month}-${year}`;
   }
+
 }
