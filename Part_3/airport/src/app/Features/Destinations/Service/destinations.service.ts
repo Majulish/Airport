@@ -59,8 +59,6 @@ export class DestinationsService {
 
     const codeSnapshot = await getDocs(codeQuery);
     const nameSnapshot = await getDocs(nameQuery);
-
-    // Check if any matching documents exist
     return !codeSnapshot.empty || !nameSnapshot.empty;
   }
 
