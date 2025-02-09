@@ -9,10 +9,10 @@ import {
   query,
   where,
   updateDoc,
-  DocumentReference,
+  DocumentReference, deleteDoc,
 } from '@angular/fire/firestore';
 import { Destination } from '../Model/destination.module';
-import firebase from '@angular/fire/firestore';
+
 
 @Injectable({
   providedIn: 'root',
@@ -32,7 +32,7 @@ export class DestinationsService {
 
     try {
       const documentRef: DocumentReference = doc(this.firestore, this.collectionName, code);
-      const docSnap = await getDoc(documentRef); // ✅ Use getDoc() for async fetching
+      const docSnap = await getDoc(documentRef);
 
       if (docSnap.exists()) {
         console.log('Fetched destination data:', docSnap.data()); // Debugging
@@ -72,4 +72,36 @@ export class DestinationsService {
     });
   }
 
+  async hasFlights(code: string): Promise<boolean> {
+    const flightsCollection = collection(this.firestore, 'Flights');
+    const flightsQuery = query(
+      flightsCollection,
+      where('departureCode', '==', code),
+      where('arrivalCode', '==', code)
+    );
+
+    const flightsSnapshot = await getDocs(flightsQuery);
+    return !flightsSnapshot.empty;
+  }
+
+  async deleteDestination(code: string): Promise<void> {
+    const flightsCollection = collection(this.firestore, 'Flight');
+
+    // ✅ Correct Queries: Check if destination is either a departure or arrival
+    const departureQuery = query(flightsCollection, where('departureCode', '==', code));
+    const arrivalQuery = query(flightsCollection, where('originCode', '==', code));
+
+    // ✅ Fetch results
+    const departureSnapshot = await getDocs(departureQuery);
+    const arrivalSnapshot = await getDocs(arrivalQuery);
+
+    // ✅ Check if any flights exist
+    if (!departureSnapshot.empty || !arrivalSnapshot.empty) {
+      throw new Error('Cannot delete this destination. Flights are associated with it.');
+    }
+
+    // ✅ Delete only if no flights exist
+    const docRef = doc(this.firestore, `Destinations/${code}`);
+    await deleteDoc(docRef);
+  }
 }

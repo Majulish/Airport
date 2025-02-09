@@ -1,6 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import {MatButton} from "@angular/material/button";
+import { MatButton } from "@angular/material/button";
+import {NgForOf, NgIf} from '@angular/common';
 
 @Component({
   selector: 'app-confirmation-dialog',
@@ -8,13 +9,15 @@ import {MatButton} from "@angular/material/button";
   styleUrls: ['./confirmation-dialog.component.css'],
   standalone: true,
   imports: [
-    MatButton
+    MatButton,
+    NgForOf,
+    NgIf
   ]
 })
 export class ConfirmationDialogComponent {
   constructor(
-      public dialogRef: MatDialogRef<ConfirmationDialogComponent>,
-      @Inject(MAT_DIALOG_DATA) public data: { title: string; message: string }
+    public dialogRef: MatDialogRef<ConfirmationDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: { title: string; message: string; flights?: string[] }
   ) {}
 
   onConfirm(): void {

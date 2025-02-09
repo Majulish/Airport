@@ -1,15 +1,26 @@
 .dialog-container {
-    padding: 20px;
-    text-align: center;
+  padding: 20px;
+  text-align: center;
 }
 
 .button-container {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  font-size: 14px;
+  color: #555;
+  margin: 5px 0;
 }
 
 button {
-    font-size: 16px;
-    padding: 8px 16px;
+  font-size: 16px;
+  padding: 8px 16px;
 }

@@ -5,13 +5,13 @@ import { Destination } from '../../Model/destination.module';
 import {CommonModule} from '@angular/common';
 
 @Component({
-  selector: 'app-edit-destination',
-  templateUrl: './edit-destination.component.html',
-  styleUrls: ['./edit-destination.component.css'],
+  selector: 'app-view-destination',
+  templateUrl: './view-destination.component.html',
+  styleUrls: ['./view-destination.component.css'],
   standalone: true,
   imports: [CommonModule]
 })
-export class EditDestinationComponent implements OnInit {
+export class ViewDestinationComponent implements OnInit {
   destination: Destination | undefined;
 
   constructor(

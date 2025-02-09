@@ -1,14 +1,13 @@
 <div class="manage-destinations-container">
   <h2 class="title">Manage Destinations</h2>
 
-
   <div class="search-container">
     <input
-            type="text"
-            placeholder="Search by name or code"
-            [(ngModel)]="searchTerm"
-            (input)="applyFilter()"
-            class="search-input"
+      type="text"
+      placeholder="Search by name or code"
+      [(ngModel)]="searchTerm"
+      (input)="applyFilter()"
+      class="search-input"
     />
   </div>
 
@@ -32,20 +31,24 @@
         <a [href]="destination.airportUrl" target="_blank">{{ destination.airportUrl }}</a>
       </td>
       <td>{{ destination.imageUrl }}</td>
-      <td>
-        <button class="edit-button" [routerLink]="['/edit-destination', destination.code]">
-          <mat-icon>edit</mat-icon>
-          Edit
-        </button>
+      <td class="action-icons">
+        <!-- View Icon -->
+        <mat-icon class="icon" (click)="navigateToView(destination.code)">visibility</mat-icon>
+
+        <!-- Edit Icon -->
+        <mat-icon class="icon" (click)="navigateToEdit(destination.code)">edit</mat-icon>
+
+        <!-- Delete Icon -->
+        <mat-icon class="icon" (click)="confirmDelete(destination.code)">delete</mat-icon>
       </td>
     </tr>
     </tbody>
   </table>
+
   <div class="actions-container">
     <button class="add-button" [routerLink]="['/add-destination']">
       <mat-icon>add</mat-icon>
       Add Destination
     </button>
   </div>
-
 </div>

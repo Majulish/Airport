@@ -42,7 +42,7 @@ export class AppComponent implements OnInit {
 
   async ngOnInit() {
     //uploading only changing data which is flights data of arrival date and departure date
-    //await this.UploadDestinationsService.uploadDestinations();
+    await this.UploadDestinationsService.uploadDestinations();
     await this.UploadFlightService.uploadFlights();
     //await this.uploadBookingService.uploadBookings();
   }
