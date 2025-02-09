@@ -6,6 +6,7 @@ import {RouterLink} from '@angular/router';
 import {Component, OnInit} from '@angular/core';
 import {Flight} from '../../Model/filght.module';
 import {FlightService} from '../../Service/flights.service';
+import {FlightWithDestination} from '../../Model/flight-with-destination.module';
 
 
 @Component({
@@ -16,8 +17,8 @@ import {FlightService} from '../../Service/flights.service';
   imports: [CommonModule, MatIconModule, MatButtonModule, RouterLink, FormsModule],
 })
 export class ManageFlightsComponent implements OnInit {
-  flights: Flight[] = [];
-  filteredFlights: Flight[] = [];
+  flights: FlightWithDestination[] = [];
+  filteredFlights: FlightWithDestination[] = [];
   searchTerm: string = '';
   currentSortColumn: string | null = null;
   currentSortDirection: 'asc' | 'desc' | null = null;
@@ -33,8 +34,8 @@ export class ManageFlightsComponent implements OnInit {
     const term = this.searchTerm.toLowerCase();
     this.filteredFlights = this.flights.filter(
       (flight) =>
-        flight.destination.name.toLowerCase().includes(term) ||
-        flight.originCode.toLowerCase().includes(term)
+        flight.origin?.name.toLowerCase().includes(term) ||
+        flight.arrival?.name.toLowerCase().includes(term)
     );
   }
 

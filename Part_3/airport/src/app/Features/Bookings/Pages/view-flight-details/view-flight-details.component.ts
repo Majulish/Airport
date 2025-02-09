@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import {Flight} from '../../../Flights/Model/filght.module';
 import {FlightService} from '../../../Flights/Service/flights.service';
+import {FlightWithDestination} from "../../../Flights/Model/flight-with-destination.module";
 
 @Component({
   selector: 'app-view-flight-details',
@@ -13,7 +13,7 @@ import {FlightService} from '../../../Flights/Service/flights.service';
 })
 export class ViewFlightDetailsComponent {
 
-  flight: Flight | undefined;
+  flight: FlightWithDestination | undefined;
 
   constructor(
     private route: ActivatedRoute,

@@ -4,6 +4,7 @@ import { FlightService } from '../../Flights/Service/flights.service';
 import { DestinationsService } from '../../Destinations/Service/destinations.service';
 import { Firestore, doc, getDoc, collection, getDocs } from '@angular/fire/firestore';
 import { Booking } from '../Model/booking.module';
+import {FlightWithDestination} from "../../Flights/Model/flight-with-destination.module";
 
 @Injectable({
   providedIn: 'root',
@@ -44,7 +45,7 @@ export class BookingService {
 
     const processedBookings = await Promise.all(
       this.bookings.map(async (booking) => {
-        const flight: Flight | undefined = await this.flightService.getFlightByNumber(booking.flightNo);
+        const flight: FlightWithDestination | undefined = await this.flightService.getFlightByNumber(booking.flightNo);
 
         if (!flight) {
           console.warn(`Flight not found for flight number: ${booking.flightNo}`);
@@ -59,21 +60,20 @@ export class BookingService {
       })
     );
 
-    const validBookings = processedBookings.filter(item => item !== null) as { booking: Booking, flight: Flight }[];
+    const validBookings = processedBookings.filter(item => item !== null) as { booking: Booking, flight: FlightWithDestination }[];
 
     return Promise.all(
       validBookings.map(async ({booking, flight}) => {
-        // ✅ Fix: Remove firstValueFrom() and directly await get()
-        const originDestination = await this.destinationsService.get(flight.originCode);
+        const originDestination = flight.origin?.code ? await this.destinationsService.get(flight.origin.code) : undefined;
 
         return {
           bookingId: booking.bookingId,
           flightNumber: booking.flightNo,
           passengers: booking.passengers,
           numOfPassengers: booking.passengers.length,
-          origin: originDestination?.name ?? 'Unknown', // ✅ No more TS2339 error
-          destination: flight.destination.name,
-          image: flight.destination.imageUrl,
+          origin: originDestination?.name ?? 'Unknown',
+          destination: flight.arrival?.name,
+          image: flight.arrival?.imageUrl,
           boarding: `${this.formatDate(flight.boardingDate)} ${flight.boardingTime}`,
           landing: `${this.formatDate(flight.arrivalDate)} ${flight.arrivalTime}`,
         };

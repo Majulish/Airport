@@ -1,11 +1,8 @@
-import {Destination} from '../../Destinations/Model/destination.module';
-
 export class Flight {
   constructor(
     public flightNumber: string,
     public originCode: string,
-    public originName: string,
-    public destination: Destination,
+    public arrivalCode: string,
     public boardingDate: string,
     public boardingTime: string,
     public arrivalDate: string,

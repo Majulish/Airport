@@ -32,10 +32,10 @@ export class EditDestinationComponent implements OnInit {
     const destinationCode = this.route.snapshot.paramMap.get('code');
     if (destinationCode) {
       try {
-        console.log('Fetching destination with code:', destinationCode); // Debugging
+        console.log('Fetching destination with code:', destinationCode);
 
-        this.destination = await this.destinationsService.get(destinationCode); // ✅ Awaiting the async function
-        console.log('Fetched destination:', this.destination); // Debugging
+        this.destination = await this.destinationsService.get(destinationCode);
+        console.log('Fetched destination:', this.destination);
 
         if (!this.destination) {
           this.errorMessage = 'Destination not found!';

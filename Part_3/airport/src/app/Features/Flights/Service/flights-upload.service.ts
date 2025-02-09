@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Firestore, collection, setDoc, doc } from '@angular/fire/firestore';
-import { Flight } from '../Model/filght.module';
 import { DestinationsService } from '../../Destinations/Service/destinations.service';
 import { Destination } from '../../Destinations/Model/destination.module';
 import { date } from '../../../Utilities/get-date';
+import {Flight} from "../Model/filght.module";
 
 @Injectable({
   providedIn: 'root',
@@ -13,17 +13,16 @@ export class FlightUploadService {
   private destinations: Destination[] = [];
 
   constructor(
-    private destinationsService: DestinationsService,
-    private firestore: Firestore
+      private destinationsService: DestinationsService,
+      private firestore: Firestore
   ) {
-    this.loadDestinationsAndInitializeFlights();
   }
 
-  private async loadDestinationsAndInitializeFlights(): Promise<void> {
+  public async loadDestinationsAndInitializeFlights(): Promise<void> {
     try {
       this.destinations = await this.destinationsService.getAllDestinations();
       this.initializeFlights();
-      this.uploadFlights();
+      await this.uploadFlights();
     } catch (error) {
       console.error('Failed to load destinations:', error);
     }
@@ -36,8 +35,7 @@ export class FlightUploadService {
       new Flight(
           'NYC123',
           'NYC',
-          this.findDestination('NYC').name,
-          this.findDestination('DXB'),
+          'DXB',
           date.getUpcomingDate(1),
           '08:00',
           date.getUpcomingDate(1),
@@ -48,8 +46,7 @@ export class FlightUploadService {
       new Flight(
           'LAX456',
           'LAX',
-          this.findDestination('LAX').name,
-          this.findDestination('LHR'),
+          'LHR',
           date.getUpcomingDate(1),
           '10:00',
           date.getUpcomingDate(1),
@@ -60,8 +57,7 @@ export class FlightUploadService {
       new Flight(
           'LHR789',
           'LHR',
-          this.findDestination('LHR').name,
-          this.findDestination('LAX'),
+          'LAX',
           date.getUpcomingDate(-3),
           '15:00',
           date.getUpcomingDate(-2),
@@ -72,8 +68,7 @@ export class FlightUploadService {
       new Flight(
           'DXB101',
           'DXB',
-          this.findDestination('DXB').name,
-          this.findDestination('HND'),
+          'HND',
           date.getUpcomingDate(-5),
           '18:30',
           date.getUpcomingDate(-5),
@@ -84,8 +79,7 @@ export class FlightUploadService {
       new Flight(
           'HND202',
           'HND',
-          this.findDestination('HND').name,
-          this.findDestination('SYD'),
+          'SYD',
           date.getUpcomingDate(1),
           '22:00',
           date.getUpcomingDate(2),
@@ -96,8 +90,7 @@ export class FlightUploadService {
       new Flight(
           'SYD303',
           'SYD',
-          this.findDestination('SYD').name,
-          this.findDestination('SFO'),
+          'SFO',
           date.getUpcomingDate(10),
           '09:00',
           date.getUpcomingDate(11),
@@ -108,8 +101,7 @@ export class FlightUploadService {
       new Flight(
           'CDG404',
           'CDG',
-          this.findDestination('CDG').name,
-          this.findDestination('SIN'),
+          'SIN',
           date.getUpcomingDate(8),
           '16:00',
           date.getUpcomingDate(9),
@@ -120,8 +112,7 @@ export class FlightUploadService {
       new Flight(
           'SFO505',
           'SFO',
-          this.findDestination('SFO').name,
-          this.findDestination('FCO'),
+          'FCO',
           date.getUpcomingDate(12),
           '11:00',
           date.getUpcomingDate(12),
@@ -132,8 +123,7 @@ export class FlightUploadService {
       new Flight(
           'SIN606',
           'SIN',
-          this.findDestination('SIN').name,
-          this.findDestination('CDG'),
+          'CDG',
           date.getUpcomingDate(13),
           '13:00',
           date.getUpcomingDate(13),
@@ -144,8 +134,7 @@ export class FlightUploadService {
       new Flight(
           'FCO707',
           'FCO',
-          this.findDestination('FCO').name,
-          this.findDestination('NYC'),
+          'NYC',
           date.getUpcomingDate(14),
           '07:00',
           date.getUpcomingDate(14),
@@ -156,24 +145,43 @@ export class FlightUploadService {
     ];
   }
 
-  private findDestination(code: string): Destination {
-    const destination = this.destinations.find((dest) => dest.code === code);
-    if (!destination) {
-      throw new Error(`Destination with code ${code} not found.`);
-    }
-    return destination;
+  private findDestination(code: string): Destination | null {
+    return this.destinations.find((dest) => dest.code === code) || null;
   }
 
   async uploadFlights(): Promise<void> {
-    const flightCollection = collection(this.firestore, 'Flight');
-    for (const flight of this.flights) {
-      await setDoc(doc(flightCollection, flight.flightNumber), {
-        ...flight,
-        destination: flight.destination,
-        destinationRef: doc(this.firestore, 'Destinations', flight.destination.code),
-      },
-          { merge: true });
+    console.log("Uploading Flights...", this.flights);
+
+    if (!this.flights || this.flights.length === 0) {
+      console.error("No flights found to upload.");
+      return;
     }
-    console.log('Flights uploaded successfully!');
+
+    const flightCollection = collection(this.firestore, 'Flight');
+
+    for (const flight of this.flights) {
+      const flightDocRef = doc(flightCollection, flight.flightNumber);
+      await setDoc(
+          flightDocRef,
+          {
+            flightNumber: flight.flightNumber,
+            originCode: flight.originCode,
+            arrivalCode: flight.arrivalCode,
+            boardingDate: flight.boardingDate,
+            boardingTime: flight.boardingTime,
+            arrivalDate: flight.arrivalDate,
+            arrivalTime: flight.arrivalTime,
+            seatCount: flight.seatCount,
+            takenSeats: flight.takenSeats,
+            originRef: doc(this.firestore, 'Destinations', flight.originCode),
+            arrivalRef: doc(this.firestore, 'Destinations', flight.arrivalCode),
+          },
+          { merge: true }
+      );
+    }
+
+    console.log("Flights uploaded successfully!");
   }
+
 }
+

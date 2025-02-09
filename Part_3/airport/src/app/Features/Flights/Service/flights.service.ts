@@ -1,56 +1,160 @@
 import { Injectable } from '@angular/core';
 import { Firestore, collection, getDocs, doc, getDoc } from '@angular/fire/firestore';
 import { Flight } from '../Model/filght.module';
+import { FlightWithDestination } from '../Model/flight-with-destination.module';
+import { Destination } from '../../Destinations/Model/destination.module';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FlightService {
-  constructor(private firestore: Firestore) {
+  constructor(private firestore: Firestore) {}
+
+  async getFlightByNumber(flightNo: string): Promise<FlightWithDestination | undefined> {
+    const docRef = doc(this.firestore, 'Flight', flightNo);
+    const docSnap = await getDoc(docRef);
+
+    if (!docSnap.exists()) {
+      console.warn(`No flight found with number: ${flightNo}`);
+      return undefined;
+    }
+
+    const flightData = docSnap.data() as Flight;
+
+    const [origin, arrival] = await Promise.all([
+        this.getDestinationByCode(flightData.originCode),
+        this.getDestinationByCode(flightData.arrivalCode)
+        ])
+
+    return new FlightWithDestination(flightData.flightNumber, origin, arrival, flightData.boardingDate, flightData.boardingTime, flightData.arrivalDate, flightData.arrivalTime, flightData.seatCount, flightData.takenSeats);
   }
 
-  async getAllFlights(): Promise<Flight[]> {
-    const flightsCollectionRef = collection(this.firestore, 'Flight');
-    const querySnapshot = await getDocs(flightsCollectionRef);
+  private async getDestinationByCode(code: string): Promise<Destination | null> {
+    if (!code) return null;
+    const destinationDocRef = doc(this.firestore, `Destinations/${code}`);
+    const destinationSnapshot = await getDoc(destinationDocRef);
 
-    return querySnapshot.docs.map(doc => doc.data() as Flight); // ✅ Show all flights
+    return destinationSnapshot.exists() ? (destinationSnapshot.data() as Destination) : null;
   }
 
-  async getUpcomingFlights(): Promise<Flight[]> {
-    const allFlights = await this.getAllFlights();
+  async getAllFlights(): Promise<FlightWithDestination[]> {
+    console.log('Fetching all flights and destinations in parallel...');
+
+    // Fetch all flights and destinations simultaneously
+    const [flightsSnapshot, destinationsSnapshot] = await Promise.all([
+      getDocs(collection(this.firestore, 'Flight')),
+      getDocs(collection(this.firestore, 'Destinations'))
+    ]);
+
+    // Process Flights
+    const flightsData: Flight[] = flightsSnapshot.docs.map(doc => doc.data() as Flight);
+
+    // Process Destinations into a Map for fast lookups
+    const destinationsMap = new Map<string, Destination>();
+    destinationsSnapshot.docs.forEach(doc => {
+      const destination = doc.data() as Destination;
+      destinationsMap.set(destination.code, destination);
+    });
+
+    console.log(`Loaded ${flightsData.length} flights`);
+    console.log(`Loaded ${destinationsMap.size} destinations`);
+
+    // Map flights to their destinations efficiently
+    const flightsWithDestinations: FlightWithDestination[] = flightsData.map(flight => {
+      return new FlightWithDestination(
+          flight.flightNumber,
+          destinationsMap.get(flight.originCode) || null,
+          destinationsMap.get(flight.arrivalCode) || null,
+          flight.boardingDate,
+          flight.boardingTime,
+          flight.arrivalDate,
+          flight.arrivalTime,
+          flight.seatCount,
+          flight.takenSeats
+      );
+    });
+
+    console.log(`Returning ${flightsWithDestinations.length} flights with destinations`);
+    return flightsWithDestinations;
+  }
+
+
+  async getUpcomingFlights(): Promise<FlightWithDestination[]> {
+    const [flightsSnapshot, destinationsSnapshot] = await Promise.all([
+      getDocs(collection(this.firestore, 'Flight')),
+      getDocs(collection(this.firestore, 'Destinations'))
+    ]);
+
+    const flightsData: Flight[] = flightsSnapshot.docs.map(doc => doc.data() as Flight);
+    const destinationsMap = new Map<string, Destination>();
+    destinationsSnapshot.docs.forEach(doc => {
+      const destination = doc.data() as Destination;
+      destinationsMap.set(destination.code, destination);
+    });
 
     const today = new Date();
-    return allFlights.filter(flight => {
-      const flightDate = new Date(flight.boardingDate);
-      return flightDate >= today; // ✅ Filter out past flights
-    });
+    return flightsData
+        .filter(flight => new Date(flight.boardingDate) >= today)
+        .map(flight => new FlightWithDestination(
+            flight.flightNumber,
+            destinationsMap.get(flight.originCode) || null,
+            destinationsMap.get(flight.arrivalCode) || null,
+            flight.boardingDate,
+            flight.boardingTime,
+            flight.arrivalDate,
+            flight.arrivalTime,
+            flight.seatCount,
+            flight.takenSeats
+        ));
   }
 
-  async getAllFlightsForNextWeek(): Promise<Flight[]> {
-    const flights = await this.getAllFlights();
+
+  async getAllFlightsForNextWeek(): Promise<FlightWithDestination[]> {
+    const [flightsSnapshot, destinationsSnapshot] = await Promise.all([
+      getDocs(collection(this.firestore, 'Flight')),
+      getDocs(collection(this.firestore, 'Destinations'))
+    ]);
+
+    const flightsData: Flight[] = flightsSnapshot.docs.map(doc => doc.data() as Flight);
+    const destinationsMap = new Map<string, Destination>();
+    destinationsSnapshot.docs.forEach(doc => {
+      const destination = doc.data() as Destination;
+      destinationsMap.set(destination.code, destination);
+    });
+
     const today = new Date();
     const nextWeek = new Date();
     nextWeek.setDate(today.getDate() + 7);
 
-    return flights.filter((flight: Flight) => {
-      const flightDate = new Date(flight.boardingDate);
-      return flightDate >= today && flightDate <= nextWeek;
-    });
+    const flightsForNextWeek: FlightWithDestination[] = flightsData
+        .filter(flight => {
+          const flightDate = new Date(flight.boardingDate);
+          return flightDate >= today && flightDate <= nextWeek;
+        })
+        .map(flight => new FlightWithDestination(
+            flight.flightNumber,
+            destinationsMap.get(flight.originCode) || null,
+            destinationsMap.get(flight.arrivalCode) || null,
+            flight.boardingDate,
+            flight.boardingTime,
+            flight.arrivalDate,
+            flight.arrivalTime,
+            flight.seatCount,
+            flight.takenSeats
+        ));
+
+    console.log(`Returning ${flightsForNextWeek.length} flights for next week`);
+    return flightsForNextWeek;
   }
 
-  async getFlightByNumber(flightNo: string): Promise<Flight | undefined> {
-    const docRef = doc(this.firestore, 'Flight', flightNo);
-    const docSnap = await getDoc(docRef);
 
-    if (docSnap.exists()) {
-      return docSnap.data() as Flight;
-    } else {
-      console.warn(`No flight found with number: ${flightNo}`);
-      return undefined;
-    }
-  }
-
-  sortObjectArray(column: string, currentSortDirection: "asc" | "desc" | null, currentSortColumn: string | null, filteredArray: any[], sourceArray: any[]) {
+  sortObjectArray(
+    column: string,
+    currentSortDirection: "asc" | "desc" | null,
+    currentSortColumn: string | null,
+    filteredArray: any[],
+    sourceArray: any[]
+  ) {
     if (currentSortColumn === column) {
       if (currentSortDirection === 'asc') {
         currentSortDirection = 'desc';
@@ -75,7 +179,14 @@ export class FlightService {
       return 0;
     });
   }
-  getSortIcon(column: string, currentSortDirection: "asc" | "desc" | null, currentSortColumn: string | null, filteredArray: any[], sourceArray: any[]){
+
+  getSortIcon(
+    column: string,
+    currentSortDirection: "asc" | "desc" | null,
+    currentSortColumn: string | null,
+    filteredArray: any[],
+    sourceArray: any[]
+  ) {
     if (currentSortColumn === column) {
       if (currentSortDirection === 'asc') {
         return 'fa-arrow-up';

@@ -54,8 +54,8 @@
     <tbody>
     <tr *ngFor="let flight of filteredFlights">
       <td>{{ flight.flightNumber }}</td>
-      <td>{{ flight.originCode }}</td>
-      <td>{{ flight.destination.name }}</td>
+      <td>{{ flight.origin?.code }}</td>
+      <td>{{ flight.arrival?.name }}</td>
       <td>{{ flight.boardingDate | date: 'dd-MM-yyyy' }}</td>
       <td>{{ flight.boardingTime }}</td>
       <td>{{ flight.arrivalDate | date: 'dd-MM-yyyy' }}</td>

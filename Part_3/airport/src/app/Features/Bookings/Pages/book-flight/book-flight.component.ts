@@ -6,6 +6,7 @@ import {RouterLink} from '@angular/router';
 import {Flight} from '../../../Flights/Model/filght.module';
 import {FlightService} from '../../../Flights/Service/flights.service';
 import {FormsModule} from '@angular/forms';
+import {FlightWithDestination} from "../../../Flights/Model/flight-with-destination.module";
 
 
 @Component({
@@ -17,8 +18,8 @@ import {FormsModule} from '@angular/forms';
 })
 export class BookFlightComponent {
   @Input() showHeader: boolean = true;
-  flights: Flight[] = [];
-  filteredFlights: Flight[] = [];
+  flights: FlightWithDestination[] = [];
+  filteredFlights: FlightWithDestination[] = [];
   currentSortColumn: string | null = null;
   currentSortDirection: 'asc' | 'desc' | null = null;
   searchTerm: string = '';
@@ -46,8 +47,8 @@ export class BookFlightComponent {
 
     this.filteredFlights = this.flights.filter(
         flight =>
-            flight.destination.name.toLowerCase().includes(term) ||
-            flight.originName.toLowerCase().includes(term)
+            flight.arrival?.name.toLowerCase().includes(term) ||
+            flight.origin?.name.toLowerCase().includes(term)
     );
   }
 

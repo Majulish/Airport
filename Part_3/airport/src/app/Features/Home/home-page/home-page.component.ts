@@ -14,6 +14,7 @@ import {
   MatExpansionPanelTitle
 } from '@angular/material/expansion';
 import {BookFlightComponent} from '../../Bookings/Pages/book-flight/book-flight.component';
+import {FlightWithDestination} from "../../Flights/Model/flight-with-destination.module";
 
 @Component({
   selector: 'app-home-page',
@@ -23,7 +24,7 @@ import {BookFlightComponent} from '../../Bookings/Pages/book-flight/book-flight.
   standalone: true,
 })
 export class HomePageComponent implements OnInit {
-  flights!: Flight[];
+  flights!: FlightWithDestination[];
   destinations!: Destination[];
   isLastMinuteExpanded = true;
   isSearchFlightExpanded = false;
@@ -51,7 +52,7 @@ export class HomePageComponent implements OnInit {
     }
   }
 
-  openAirportUrl(url: string): void {
+  openAirportUrl(url: string | undefined): void {
     if (url) {
       window.open(url, '_blank');
     }

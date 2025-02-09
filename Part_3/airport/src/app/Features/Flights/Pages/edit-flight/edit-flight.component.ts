@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import {CommonModule, DatePipe} from '@angular/common';
 import { FlightService } from '../../Service/flights.service';
 import { Flight } from '../../Model/filght.module';
+import {FlightWithDestination} from "../../Model/flight-with-destination.module";
 
 @Component({
   selector: 'app-edit-flight',
@@ -12,7 +13,7 @@ import { Flight } from '../../Model/filght.module';
   imports: [CommonModule, DatePipe],
 })
 export class EditFlightComponent implements OnInit {
-  flight: Flight | undefined;
+  flight: FlightWithDestination | undefined;
 
   constructor(
     private route: ActivatedRoute,

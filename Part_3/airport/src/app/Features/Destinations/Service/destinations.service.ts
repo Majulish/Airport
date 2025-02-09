@@ -87,20 +87,16 @@ export class DestinationsService {
   async deleteDestination(code: string): Promise<void> {
     const flightsCollection = collection(this.firestore, 'Flight');
 
-    // ✅ Correct Queries: Check if destination is either a departure or arrival
     const departureQuery = query(flightsCollection, where('departureCode', '==', code));
     const arrivalQuery = query(flightsCollection, where('originCode', '==', code));
 
-    // ✅ Fetch results
     const departureSnapshot = await getDocs(departureQuery);
     const arrivalSnapshot = await getDocs(arrivalQuery);
 
-    // ✅ Check if any flights exist
     if (!departureSnapshot.empty || !arrivalSnapshot.empty) {
       throw new Error('Cannot delete this destination. Flights are associated with it.');
     }
 
-    // ✅ Delete only if no flights exist
     const docRef = doc(this.firestore, `Destinations/${code}`);
     await deleteDoc(docRef);
   }
