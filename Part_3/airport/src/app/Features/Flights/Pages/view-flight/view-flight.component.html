@@ -1,8 +1,8 @@
-<div *ngIf="flight" class="edit-flight-container">
+<div *ngIf="flight" class="view-flight-container">
   <h2>Flight Details</h2>
   <p><strong>Flight Number:</strong> {{ flight.flightNumber }}</p>
-  <p><strong>Origin:</strong> {{ flight.origin?.code }}</p>
-  <p><strong>Destination:</strong> {{ flight.arrival?.name }}</p>
+  <p><strong>Origin:</strong> {{ flight.origin?.name || 'Unknown' }}</p>
+  <p><strong>Destination:</strong> {{ flight.arrival?.name || 'Unknown' }}</p>
   <p><strong>Boarding Date:</strong> {{ flight.boardingDate | date: 'dd-MM-yyyy' }}</p>
   <p><strong>Boarding Time:</strong> {{ flight.boardingTime }}</p>
   <p><strong>Arrival Date:</strong> {{ flight.arrivalDate | date: 'dd-MM-yyyy' }}</p>

@@ -1,60 +1,35 @@
 <div class="manage-flights-container">
   <h2 class="title">Manage Flights</h2>
+
   <div class="search-container">
     <input
-      type="text"
-      placeholder="Search by destination or origin code"
-      [(ngModel)]="searchTerm"
-      (input)="applyFilter()"
-      class="search-input"
+            type="text"
+            placeholder="Search by destination or origin code"
+            [(ngModel)]="searchTerm"
+            (input)="applyFilter()"
+            class="search-input"
     />
   </div>
+
   <table class="flights-table">
     <thead>
     <tr>
-      <th (click)="sortTable('flightNumber')">
-        Flight Number
-        <i class="fas" [ngClass]="getSortIcon('flightNumber')"></i>
-      </th>
-      <th (click)="sortTable('originCode')">
-        Origin
-        <i class="fas" [ngClass]="getSortIcon('originCode')"></i>
-      </th>
-      <th (click)="sortTable('destination.name')">
-        Destination
-        <i class="fas" [ngClass]="getSortIcon('destination.name')"></i>
-      </th>
-      <th (click)="sortTable('boardingDate')">
-        Boarding Date
-        <i class="fas" [ngClass]="getSortIcon('boardingDate')"></i>
-      </th>
-      <th (click)="sortTable('boardingTime')">
-        Boarding Time
-        <i class="fas" [ngClass]="getSortIcon('boardingTime')"></i>
-      </th>
-      <th (click)="sortTable('arrivalDate')">
-        Arrival Date
-        <i class="fas" [ngClass]="getSortIcon('arrivalDate')"></i>
-      </th>
-      <th (click)="sortTable('arrivalTime')">
-        Arrival Time
-        <i class="fas" [ngClass]="getSortIcon('arrivalTime')"></i>
-      </th>
-      <th (click)="sortTable('seatCount')">
-        Seat Count
-        <i class="fas" [ngClass]="getSortIcon('seatCount')"></i>
-      </th>
-      <th (click)="sortTable('takenSeats')">
-        Seats Taken
-        <i class="fas" [ngClass]="getSortIcon('takenSeats')"></i>
-      </th>
+      <th>Flight Number</th>
+      <th>Origin</th>
+      <th>Destination</th>
+      <th>Boarding Date</th>
+      <th>Boarding Time</th>
+      <th>Arrival Date</th>
+      <th>Arrival Time</th>
+      <th>Seat Count</th>
+      <th>Seats Taken</th>
       <th>Actions</th>
     </tr>
     </thead>
     <tbody>
     <tr *ngFor="let flight of filteredFlights">
       <td>{{ flight.flightNumber }}</td>
-      <td>{{ flight.origin?.code }}</td>
+      <td>{{ flight.origin?.name }}</td>
       <td>{{ flight.arrival?.name }}</td>
       <td>{{ flight.boardingDate | date: 'dd-MM-yyyy' }}</td>
       <td>{{ flight.boardingTime }}</td>
@@ -62,11 +37,15 @@
       <td>{{ flight.arrivalTime }}</td>
       <td>{{ flight.seatCount }}</td>
       <td>{{ flight.takenSeats }}</td>
-      <td>
-        <a class="edit-button" [routerLink]="['/edit-flight', flight.flightNumber]">
-          <mat-icon>edit</mat-icon>
-          Edit
-        </a>
+      <td class="action-icons">
+        <!-- View Icon -->
+        <mat-icon class="icon view-icon" (click)="navigateToView(flight.flightNumber)">visibility</mat-icon>
+
+        <!-- Edit Icon -->
+        <mat-icon class="icon edit-icon" (click)="navigateToEdit(flight.flightNumber)">edit</mat-icon>
+
+        <!-- Delete Icon -->
+        <mat-icon class="icon delete-icon" (click)="confirmDelete(flight.flightNumber)">delete</mat-icon>
       </td>
     </tr>
     </tbody>

@@ -8,8 +8,8 @@ import {
 import {HelpComponent} from './Features/Help/help/help.component';
 import {BookFlightComponent} from './Features/Bookings/Pages/book-flight/book-flight.component';
 import {EditFlightComponent} from './Features/Flights/Pages/edit-flight/edit-flight.component';
+import {ViewFlightComponent} from './Features/Flights/Pages/view-flight/view-flight.component';
 import {EditDestinationComponent} from './Features/Destinations/Pages/edit-destination/edit-destination.component';
-import {ViewFlightDetailsComponent} from './Features/Bookings/Pages/view-flight-details/view-flight-details.component';
 import {ViewBookingComponent} from './Features/Bookings/Pages/view-booking/view-booking.component';
 import {AddDestinationComponent} from "./Features/Destinations/Pages/add-destination/add-destination.component";
 import {ViewDestinationComponent} from './Features/Destinations/Pages/view-destination/view-destination.component';
@@ -22,7 +22,7 @@ export const appRoutes: Routes = [
   { path: 'view-booking/:id', component: ViewBookingComponent },
   { path: 'admin/manage-flights', component: ManageFlightsComponent },
   { path: 'edit-flight/:flightNumber', component: EditFlightComponent },
-  { path: 'book-flight/:flightNumber', component: ViewFlightDetailsComponent },
+  { path: 'book-flight/:flightNumber', component: ViewFlightComponent },
   { path: 'admin/manage-destinations', component: ManageDestinationsComponent },
   { path: 'add-destination', component: AddDestinationComponent },
   { path: 'edit-destination/:code', component: EditDestinationComponent },

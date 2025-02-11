@@ -1,12 +1,38 @@
 <div *ngIf="flight" class="edit-flight-container">
-  <h2>Flight Details</h2>
-  <p><strong>Flight Number:</strong> {{ flight.flightNumber }}</p>
-  <p><strong>Origin:</strong> {{ flight.origin?.code }}</p>
-  <p><strong>Destination:</strong> {{ flight.arrival?.name }}</p>
-  <p><strong>Boarding Date:</strong> {{ flight.boardingDate | date: 'dd-MM-yyyy' }}</p>
-  <p><strong>Boarding Time:</strong> {{ flight.boardingTime }}</p>
-  <p><strong>Arrival Date:</strong> {{ flight.arrivalDate | date: 'dd-MM-yyyy' }}</p>
-  <p><strong>Arrival Time:</strong> {{ flight.arrivalTime }}</p>
-  <p><strong>Seat Count:</strong> {{ flight.seatCount }}</p>
-  <p><strong>Seats Taken:</strong> {{ flight.takenSeats }}</p>
+  <h2>Edit Flight</h2>
+  <form #editForm="ngForm">
+    <label for="flightNumber">Flight Number:</label>
+    <input type="text" id="flightNumber" [(ngModel)]="flight.flightNumber" name="flightNumber" disabled />
+
+    <label for="origin">Origin:</label>
+    <input type="text" id="origin" [value]="flight.origin?.name" name="origin" disabled />
+    <label for="arrival">Destination:</label>
+    <input type="text" id="arrival" [value]="flight.arrival?.name" name="arrival" disabled />
+    <label for="boardingDate">Boarding Date:</label>
+    <input type="date" id="boardingDate" [(ngModel)]="flight.boardingDate" name="boardingDate" required />
+
+    <label for="boardingTime">Boarding Time:</label>
+    <input type="time" id="boardingTime" [(ngModel)]="flight.boardingTime" name="boardingTime" required />
+
+    <label for="arrivalDate">Arrival Date:</label>
+    <input type="date" id="arrivalDate" [(ngModel)]="flight.arrivalDate" name="arrivalDate" required />
+
+    <label for="arrivalTime">Arrival Time:</label>
+    <input type="time" id="arrivalTime" [(ngModel)]="flight.arrivalTime" name="arrivalTime" required />
+
+    <label for="seatCount">Seat Count:</label>
+    <input type="number" id="seatCount" [(ngModel)]="flight.seatCount" name="seatCount" required />
+
+    <label for="takenSeats">Seats Taken:</label>
+    <input type="number" id="takenSeats" [(ngModel)]="flight.takenSeats" name="takenSeats" required />
+
+    <div class="button-container">
+      <button type="button" (click)="openConfirmDialog()" [disabled]="editForm.invalid">
+        Save Changes
+      </button>
+      <button type="button" class="cancel-button" (click)="cancelEdit()">
+        Cancel
+      </button>
+    </div>
+  </form>
 </div>
