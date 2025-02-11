@@ -149,7 +149,7 @@ export class ManageFlightsComponent implements OnInit {
 
 
   navigateToView(flightNumber: string): void {
-    this.router.navigate([`/view-flight/${flightNumber}`]); // ✅ Fixed eye icon navigation
+    this.router.navigate([`/view-flight/${flightNumber}`]);
   }
 
   navigateToEdit(flightNumber: string): void {

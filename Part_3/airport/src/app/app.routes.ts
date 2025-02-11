@@ -22,6 +22,7 @@ export const appRoutes: Routes = [
   { path: 'view-booking/:id', component: ViewBookingComponent },
   { path: 'admin/manage-flights', component: ManageFlightsComponent },
   { path: 'edit-flight/:flightNumber', component: EditFlightComponent },
+  { path: 'view-flight/:flightNumber', component: ViewFlightComponent },
   { path: 'book-flight/:flightNumber', component: ViewFlightComponent },
   { path: 'admin/manage-destinations', component: ManageDestinationsComponent },
   { path: 'add-destination', component: AddDestinationComponent },
