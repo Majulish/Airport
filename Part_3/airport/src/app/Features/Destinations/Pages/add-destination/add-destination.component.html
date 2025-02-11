@@ -1,64 +1,34 @@
 <div class="add-destination-container">
-    <h2>Add New Destination</h2>
+    <h2>Add Destination</h2>
+    <form [formGroup]="destinationForm" (ngSubmit)="openConfirmDialog()">
 
-    <!-- Display error or success messages -->
-    <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
-    <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+        <label for="code">Code (3 uppercase letters):</label>
+        <input id="code" formControlName="code" type="text" placeholder="e.g., JFK">
+        <span class="error" *ngIf="destinationCodeExists">This code is already in use.</span>
+        <span class="error" *ngIf="invalidCodeFormat">Code must be exactly 3 uppercase letters.</span>
 
-    <form (ngSubmit)="addDestination()" #destinationForm="ngForm">
-        <label for="code">Code:</label>
-        <input
-                type="text"
-                id="code"
-                [(ngModel)]="newDestination.code"
-                name="code"
-                required
-        />
-
-        <label for="name">Name:</label>
-        <input
-                type="text"
-                id="name"
-                [(ngModel)]="newDestination.name"
-                name="name"
-                required
-        />
+        <label for="name">Name (Only letters & spaces):</label>
+        <input id="name" formControlName="name" type="text" placeholder="e.g., New York">
+        <span class="error" *ngIf="destinationNameExists">This name is already in use.</span>
+        <span class="error" *ngIf="invalidNameFormat">Name must contain only letters and spaces.</span>
 
         <label for="airportName">Airport Name:</label>
-        <input
-                type="text"
-                id="airportName"
-                [(ngModel)]="newDestination.airportName"
-                name="airportName"
-                required
-        />
+        <input id="airportName" formControlName="airportName" type="text" placeholder="Enter airport name" required>
 
         <label for="airportUrl">Airport URL:</label>
-        <input
-                type="text"
-                id="airportUrl"
-                [(ngModel)]="newDestination.airportUrl"
-                name="airportUrl"
-                required
-        />
+        <input id="airportUrl" formControlName="airportUrl" type="text" placeholder="Enter airport URL">
 
         <label for="imageUrl">Image URL:</label>
-        <input
-                type="text"
-                id="imageUrl"
-                [(ngModel)]="newDestination.imageUrl"
-                name="imageUrl"
-                required
-        />
+        <input id="imageUrl" formControlName="imageUrl" type="text" placeholder="Enter image URL">
 
         <div class="button-container">
-            <button type="button" (click)="confirmAndSave()" [disabled]="destinationForm.invalid">
-                Save Destination
+            <button type="submit" [disabled]="destinationCodeExists || destinationNameExists || invalidCodeFormat || invalidNameFormat">
+                Add Destination
             </button>
-
-            <button type="button" class="cancel-button" (click)="goBack()">
+            <button type="button" class="cancel-button" (click)="cancelAdd()">
                 Cancel
             </button>
         </div>
+
     </form>
 </div>

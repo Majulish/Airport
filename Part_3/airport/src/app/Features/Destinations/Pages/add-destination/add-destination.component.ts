@@ -1,83 +1,108 @@
-import { Component } from '@angular/core';
-import {Router, RouterLink} from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import { DestinationsService } from '../../Service/destinations.service';
 import { Destination } from '../../Model/destination.module';
 import { MatDialog } from '@angular/material/dialog';
-import {FormsModule} from "@angular/forms";
-import {ConfirmationDialogComponent} from "../../../../Utilities/confirmation-dialog/confirmation-dialog.component";
+import { ConfirmationDialogComponent } from '../../../../Utilities/confirmation-dialog/confirmation-dialog.component';
 import {CommonModule} from "@angular/common";
-import {MatIconModule} from "@angular/material/icon";
-import {MatButtonModule} from "@angular/material/button";
 
 @Component({
   selector: 'app-add-destination',
   templateUrl: './add-destination.component.html',
   styleUrls: ['./add-destination.component.css'],
   standalone: true,
-  imports:[CommonModule, MatIconModule, MatButtonModule, RouterLink, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule]
 })
-export class AddDestinationComponent {
-  newDestination: Destination = new Destination('', '', '', '', '');
-  errorMessage: string = '';
-  successMessage: string = '';
+export class AddDestinationComponent implements OnInit {
+  destinationForm!: FormGroup;
+  existingDestinations: Destination[] = [];
+  destinationCodeExists = false;
+  destinationNameExists = false;
+  invalidCodeFormat = false;
+  invalidNameFormat = false;
 
   constructor(
-      public router: Router,
       private destinationsService: DestinationsService,
-      private dialog: MatDialog
+      private router: Router,
+      private fb: FormBuilder,
+      public dialog: MatDialog
   ) {}
 
-  confirmAndSave() {
-    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      width: '400px',
-      data: { title: 'Confirm Save', message: 'Are you sure you want to save this destination?' }
+  async ngOnInit(): Promise<void> {
+    this.existingDestinations = await this.destinationsService.getAllDestinations();
+
+    this.destinationForm = this.fb.group({
+      code: ['', [Validators.required, Validators.pattern(/^[A-Z]{3}$/)]],
+      name: ['', [Validators.required, Validators.pattern(/^[A-Za-z\s]+$/)]],
+      airportName: ['', Validators.required],
+      airportUrl: ['', Validators.pattern('https?://.+')],
+      imageUrl: ['', Validators.pattern('https?://.+')]
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+
+    this.destinationForm.get('code')!.valueChanges.subscribe(value => this.validateCode(value));
+    this.destinationForm.get('name')!.valueChanges.subscribe(value => this.validateName(value));
+  }
+
+  validateCode(code: string): void {
+    this.destinationCodeExists = this.existingDestinations.some(dest => dest.code.toUpperCase() === code.toUpperCase());
+    this.invalidCodeFormat = !/^[A-Z]{3}$/.test(code);
+  }
+
+  validateName(name: string): void {
+    this.destinationNameExists = this.existingDestinations.some(dest => dest.name.toLowerCase() === name.toLowerCase());
+    this.invalidNameFormat = !/^[A-Za-z\s]+$/.test(name);
+  }
+
+  openConfirmDialog(): void {
+    if (this.destinationCodeExists || this.destinationNameExists || this.invalidCodeFormat || this.invalidNameFormat) {
+      this.openAlertDialog('Error', 'Please correct the errors before saving.');
+      return;
+    }
+
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: {
+        title: 'Confirm Destination',
+        message: 'Are you sure you want to add this destination?',
+        confirmation: true
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(async (result) => {
       if (result) {
-        this.addDestination();
-      } else {
-        this.goBack();
+        await this.saveDestination();
       }
     });
   }
 
-  async addDestination(): Promise<void> {
-    this.errorMessage = '';
-    this.successMessage = '';
-
-    if (
-        !this.newDestination.code ||
-        !this.newDestination.name ||
-        !this.newDestination.airportName ||
-        !this.newDestination.airportUrl ||
-        !this.newDestination.imageUrl
-    ) {
-      this.errorMessage = 'All fields are required.';
+  async saveDestination(): Promise<void> {
+    if (this.destinationCodeExists || this.destinationNameExists || this.invalidCodeFormat || this.invalidNameFormat) {
+      this.openAlertDialog('Error', 'Please correct the errors before saving.');
       return;
     }
 
     try {
-      const existingDestination = await this.destinationsService.checkDestinationExists(
-          this.newDestination.code,
-          this.newDestination.name
-      );
-
-      if (existingDestination) {
-        this.errorMessage = 'A destination with the same code or name already exists.';
-        return;
-      }
-
-      await this.destinationsService.addDestination(this.newDestination);
-      this.successMessage = 'Destination saved successfully!';
-      setTimeout(() => this.router.navigate(['/admin/manage-destinations']), 2000);
+      await this.destinationsService.addDestination(this.destinationForm.value);
+      this.openAlertDialog('Success', 'Destination added successfully!', true);
     } catch (error) {
-      console.error('Error adding destination:', error);
-      this.errorMessage = 'Failed to save destination. Please try again.';
+      this.openAlertDialog('Error', 'Failed to add destination. Please try again.');
     }
   }
 
-  goBack(): void {
-    this.router.navigate(['/admin/manage-destinations']);
+  cancelAdd(): void {
+    this.router.navigate(['/manage-destinations']);
+  }
+
+  openAlertDialog(title: string, message: string, navigateAfter?: boolean): void {
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: { title, message }
+    });
+
+    dialogRef.afterClosed().subscribe(() => {
+      if (navigateAfter) {
+        this.router.navigate(['/manage-destinations']);
+      }
+    });
   }
 }

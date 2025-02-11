@@ -67,11 +67,17 @@ button[type="submit"]:hover {
 .error-message {
     color: red;
     font-weight: bold;
-    margin-bottom: 15px;
+    margin-bottom: 25px;
 }
 
 .success-message {
     color: green;
     font-weight: bold;
     margin-bottom: 15px;
+}
+
+.error {
+    color: red;
+    font-size: 0.9rem;
+    margin-top: 5px;
 }
