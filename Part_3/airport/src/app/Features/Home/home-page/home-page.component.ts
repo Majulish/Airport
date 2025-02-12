@@ -13,12 +13,12 @@ import {
   MatExpansionPanelHeader,
   MatExpansionPanelTitle
 } from '@angular/material/expansion';
-import {BookFlightComponent} from '../../Bookings/Pages/book-flight/book-flight.component';
+import {ManageBookingsComponent} from '../../Bookings/Pages/manage-bookings/manage-bookings.component';
 import {FlightWithDestination} from "../../Flights/Model/flight-with-destination.module";
 
 @Component({
   selector: 'app-home-page',
-  imports: [MatIconModule, MatCard, MatCardActions, MatCardContent, CommonModule, RouterLink, MatExpansionPanelHeader, MatExpansionPanelTitle, MatExpansionPanel, BookFlightComponent, MatExpansionPanelContent],
+  imports: [MatIconModule, MatCard, MatCardActions, MatCardContent, CommonModule, RouterLink, MatExpansionPanelHeader, MatExpansionPanelTitle, MatExpansionPanel, ManageBookingsComponent, MatExpansionPanelContent],
   templateUrl: './home-page.component.html',
   styleUrl: './home-page.component.css',
   standalone: true,

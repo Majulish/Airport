@@ -3,7 +3,6 @@ import {CommonModule} from '@angular/common';
 import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
 import {RouterLink} from '@angular/router';
-import {Flight} from '../../../Flights/Model/filght.module';
 import {FlightService} from '../../../Flights/Service/flights.service';
 import {FormsModule} from '@angular/forms';
 import {FlightWithDestination} from "../../../Flights/Model/flight-with-destination.module";
@@ -11,12 +10,12 @@ import {FlightWithDestination} from "../../../Flights/Model/flight-with-destinat
 
 @Component({
   selector: 'book-flight',
-  templateUrl: './book-flight.component.html',
-  styleUrls: ['./book-flight.component.css'],
+  templateUrl: './manage-bookings.component.html',
+  styleUrls: ['./manage-bookings.component.css'],
   standalone: true,
   imports: [CommonModule, MatIconModule, MatButtonModule, RouterLink, FormsModule],
 })
-export class BookFlightComponent {
+export class ManageBookingsComponent {
   @Input() showHeader: boolean = true;
   flights: FlightWithDestination[] = [];
   filteredFlights: FlightWithDestination[] = [];
@@ -30,13 +29,11 @@ export class BookFlightComponent {
   async ngOnInit() {
     try {
       this.flights = await this.flightService.getUpcomingFlights();
-      this.filteredFlights = [...this.flights]; // Ensure the filter updates
+      this.filteredFlights = [...this.flights];
     } catch (error) {
       console.error("Error fetching upcoming flights:", error);
     }
   }
-
-
 
   applyFilter() {
     const term = this.searchTerm.toLowerCase();

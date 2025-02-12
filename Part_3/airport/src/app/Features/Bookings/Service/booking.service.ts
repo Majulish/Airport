@@ -5,6 +5,7 @@ import { DestinationsService } from '../../Destinations/Service/destinations.ser
 import { Firestore, doc, getDoc, collection, getDocs } from '@angular/fire/firestore';
 import { Booking } from '../Model/booking.module';
 import {FlightWithDestination} from "../../Flights/Model/flight-with-destination.module";
+import {BookingWithFlightData} from "../Model/bookingWithFlightData.module";
 
 @Injectable({
   providedIn: 'root',
@@ -31,7 +32,7 @@ export class BookingService {
     }
   }
 
-  async getBookingsByTime(isUpcoming: boolean): Promise<any[]> {
+  async getAllBookings(): Promise<BookingWithFlightData[]> {
     const now = new Date();
 
     const bookingCollectionRef = collection(this.firestore, 'Booking');
@@ -43,42 +44,37 @@ export class BookingService {
       return [];
     }
 
-    const processedBookings = await Promise.all(
-      this.bookings.map(async (booking) => {
-        const flight: FlightWithDestination | undefined = await this.flightService.getFlightByNumber(booking.flightNo);
+    // 🔹 Step 2: Fetch all flights in one query
+    const flightCollectionRef = collection(this.firestore, 'Flight');
+    const flightSnapshot = await getDocs(flightCollectionRef);
+    const flightsMap = await this.flightService.getAllFlights()
+
+    const processedBookings =  this.bookings.map((booking) => {
+        const flight: FlightWithDestination | undefined = flightsMap.find((flight) => flight.flightNumber === booking.flightNo)
 
         if (!flight) {
           console.warn(`Flight not found for flight number: ${booking.flightNo}`);
           return null;
         }
 
-        const flightTime = new Date(`${flight.boardingDate} ${flight.boardingTime}`);
-        const isFlightUpcoming = flightTime > now;
-        const shouldInclude = isUpcoming ? isFlightUpcoming : !isFlightUpcoming;
+        return {booking, flight};
+      }).filter(Boolean)
 
-        return shouldInclude ? {booking, flight} : null;
-      })
-    );
+    const validBookings = processedBookings?.filter(item => item !== null) as { booking: Booking, flight: FlightWithDestination }[];
 
-    const validBookings = processedBookings.filter(item => item !== null) as { booking: Booking, flight: FlightWithDestination }[];
-
-    return Promise.all(
-      validBookings.map(async ({booking, flight}) => {
-        const originDestination = flight.origin?.code ? await this.destinationsService.get(flight.origin.code) : undefined;
-
+    return validBookings.map(({booking, flight}) => {
         return {
           bookingId: booking.bookingId,
           flightNumber: booking.flightNo,
           passengers: booking.passengers,
-          numOfPassengers: booking.passengers.length,
-          origin: originDestination?.name ?? 'Unknown',
-          destination: flight.arrival?.name,
-          image: flight.arrival?.imageUrl,
-          boarding: `${this.formatDate(flight.boardingDate)} ${flight.boardingTime}`,
-          landing: `${this.formatDate(flight.arrivalDate)} ${flight.arrivalTime}`,
+          passengerCount: booking.passengers.length,
+          origin: flight.origin?.name ?? 'Unknown',
+          arrival: flight.arrival?.name ?? 'Unknown',
+          image: flight.arrival?.imageUrl ?? 'empty',
+          boardingTime: new Date(flight.boardingDate + "T" + flight.boardingTime),
+          landingTime: new Date(flight.arrivalDate + "T" + flight.arrivalTime),
         };
-      })
-    );
+      });
   }
   private formatDate(dateString: string): string {
     const date = new Date(dateString);
@@ -87,5 +83,4 @@ export class BookingService {
     const day = String(date.getDate()).padStart(2, '0');
     return `${day}-${month}-${year}`;
   }
-
 }

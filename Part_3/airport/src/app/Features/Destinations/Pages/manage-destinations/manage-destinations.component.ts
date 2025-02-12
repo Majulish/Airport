@@ -16,7 +16,7 @@ import { RouterModule } from '@angular/router';
   templateUrl: './manage-destinations.component.html',
   styleUrls: ['./manage-destinations.component.css'],
   standalone: true,
-  imports: [CommonModule, MatIconModule, FormsModule, RouterModule] // ✅ Add RouterModule here
+  imports: [CommonModule, MatIconModule, FormsModule, RouterModule]
 })
 export class ManageDestinationsComponent implements OnInit {
   destinations: Destination[] = [];
@@ -69,8 +69,6 @@ export class ManageDestinationsComponent implements OnInit {
 
       if (totalFlights > 0) {
         console.warn(`🚫 Destination ${code} is used in flights and cannot be deleted.`);
-
-        // ✅ Show an alert if the destination is being used
         this.dialog.open(ConfirmationDialogComponent, {
           data: {
             title: 'Cannot Delete Destination',
@@ -81,7 +79,6 @@ export class ManageDestinationsComponent implements OnInit {
         return; // 🚀 Stop execution if the destination is used
       }
 
-      // ✅ Proceed with delete confirmation if no flights exist
       const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
         data: {
           title: 'Delete Destination',
@@ -95,14 +92,10 @@ export class ManageDestinationsComponent implements OnInit {
           try {
             console.log(`🗑️ Deleting destination: ${code}`);
             await deleteDoc(doc(this.firestore, `Destination/${code}`));
-
-            // ✅ Remove from UI
             this.destinations = this.destinations.filter(dest => dest.code !== code);
             this.filteredDestinations = [...this.destinations];
 
             console.log(`✅ Destination ${code} deleted successfully.`);
-
-            // ✅ Show success message
             this.dialog.open(ConfirmationDialogComponent, {
               data: {
                 title: 'Destination Deleted',
@@ -111,8 +104,6 @@ export class ManageDestinationsComponent implements OnInit {
             });
           } catch (error) {
             console.error('❌ Error deleting destination:', error);
-
-            // ✅ Show error message if deletion fails
             this.dialog.open(ConfirmationDialogComponent, {
               data: {
                 title: 'Error',
@@ -126,8 +117,6 @@ export class ManageDestinationsComponent implements OnInit {
       });
     } catch (error) {
       console.error('❌ Error checking flights:', error);
-
-      // ✅ Show error message if Firestore query fails
       this.dialog.open(ConfirmationDialogComponent, {
         data: {
           title: 'Error',
