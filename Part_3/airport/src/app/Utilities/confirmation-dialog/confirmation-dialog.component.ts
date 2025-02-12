@@ -20,8 +20,8 @@ export class ConfirmationDialogComponent {
       @Inject(MAT_DIALOG_DATA) public data: {
         title: string;
         message: string;
-        confirmation?: boolean; // ✅ Determines if Confirm/Cancel buttons should be shown
-        flights?: string[]; // ✅ List of flights (if relevant)
+        confirmation?: boolean;
+        flights?: string[];
       }
   ) {}
 

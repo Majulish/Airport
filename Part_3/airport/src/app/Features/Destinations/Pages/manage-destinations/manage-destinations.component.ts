@@ -1,13 +1,15 @@
+import { Firestore, collection, getDocs, deleteDoc, doc, query, where } from '@angular/fire/firestore';
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmationDialogComponent } from '../../../../Utilities/confirmation-dialog/confirmation-dialog.component';
 import { Router } from '@angular/router';
 import { DestinationsService } from '../../Service/destinations.service';
 import { Destination } from '../../Model/destination.module';
-import { MatDialog } from '@angular/material/dialog';
-import { ConfirmationDialogComponent } from '../../../../Utilities/confirmation-dialog/confirmation-dialog.component';
 import { CommonModule } from '@angular/common'; // Import CommonModule
 import { MatIconModule } from '@angular/material/icon'; // Import MatIconModule
 import { FormsModule } from '@angular/forms'; // Import FormsModule
-import { RouterModule } from '@angular/router'; // ✅ Import RouterModule for routerLink
+import { RouterModule } from '@angular/router';
+
 
 @Component({
   selector: 'app-manage-destinations',
@@ -24,7 +26,8 @@ export class ManageDestinationsComponent implements OnInit {
   constructor(
     private destinationsService: DestinationsService,
     private dialog: MatDialog,
-    private router: Router
+    private router: Router,
+    private firestore: Firestore,
   ) {}
 
   async ngOnInit(): Promise<void> {
@@ -42,37 +45,98 @@ export class ManageDestinationsComponent implements OnInit {
   }
 
   async confirmDelete(code: string): Promise<void> {
-    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      data: {
-        title: 'Delete Destination',
-        message: 'Are you sure you want to delete this destination? This action cannot be undone.',
-      },
-    });
+    try {
+      console.log(`Checking flights for destination: ${code}`);
 
-    dialogRef.afterClosed().subscribe(async (confirmed) => {
-      if (confirmed) {
-        try {
-          await this.destinationsService.deleteDestination(code);
-          this.destinations = this.destinations.filter(dest => dest.code !== code);
-        } catch (error) {
-          let errorMessage = 'An unexpected error occurred.';
+      // 🔹 Check if any flight has this destination as origin or arrival
+      const flightsQuery = query(
+          collection(this.firestore, 'Flight'),
+          where('originCode', '==', code)
+      );
+      const flightsQueryArrival = query(
+          collection(this.firestore, 'Flight'),
+          where('arrivalCode', '==', code)
+      );
 
-          if (error instanceof Error) {
-            errorMessage = error.message;
-          } else if (typeof error === 'string') {
-            errorMessage = error;
-          }
+      const [originFlightsSnapshot, arrivalFlightsSnapshot] = await Promise.all([
+        getDocs(flightsQuery),
+        getDocs(flightsQueryArrival),
+      ]);
 
-          this.dialog.open(ConfirmationDialogComponent, {
-            data: {
-              title: 'Error: Cannot Delete Destination',
-              message: errorMessage
-            }
-          });
-        }
+      const totalFlights = originFlightsSnapshot.size + arrivalFlightsSnapshot.size;
+
+      console.log(`Found ${totalFlights} flights for destination ${code}`);
+
+      if (totalFlights > 0) {
+        console.warn(`🚫 Destination ${code} is used in flights and cannot be deleted.`);
+
+        // ✅ Show an alert if the destination is being used
+        this.dialog.open(ConfirmationDialogComponent, {
+          data: {
+            title: 'Cannot Delete Destination',
+            message: `❌ This destination is used in ${totalFlights} flights and cannot be deleted.`,
+          },
+        });
+
+        return; // 🚀 Stop execution if the destination is used
       }
-    });
+
+      // ✅ Proceed with delete confirmation if no flights exist
+      const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+        data: {
+          title: 'Delete Destination',
+          message: 'Are you sure you want to delete this destination? This action cannot be undone.',
+          confirmation: true, // Enables "Yes/No" options
+        },
+      });
+
+      dialogRef.afterClosed().subscribe(async (confirmed) => {
+        if (confirmed) {
+          try {
+            console.log(`🗑️ Deleting destination: ${code}`);
+            await deleteDoc(doc(this.firestore, `Destination/${code}`));
+
+            // ✅ Remove from UI
+            this.destinations = this.destinations.filter(dest => dest.code !== code);
+            this.filteredDestinations = [...this.destinations];
+
+            console.log(`✅ Destination ${code} deleted successfully.`);
+
+            // ✅ Show success message
+            this.dialog.open(ConfirmationDialogComponent, {
+              data: {
+                title: 'Destination Deleted',
+                message: `Destination ${code} was successfully deleted.`,
+              },
+            });
+          } catch (error) {
+            console.error('❌ Error deleting destination:', error);
+
+            // ✅ Show error message if deletion fails
+            this.dialog.open(ConfirmationDialogComponent, {
+              data: {
+                title: 'Error',
+                message: 'An error occurred while deleting the destination. Please try again.',
+              },
+            });
+          }
+        } else {
+          console.log('🚫 Deletion canceled by user.');
+        }
+      });
+    } catch (error) {
+      console.error('❌ Error checking flights:', error);
+
+      // ✅ Show error message if Firestore query fails
+      this.dialog.open(ConfirmationDialogComponent, {
+        data: {
+          title: 'Error',
+          message: 'Failed to check flights associated with this destination. Please try again.',
+        },
+      });
+    }
   }
+
 
   navigateToView(code: string): void {
     this.router.navigate(['/view-destination', code]);
