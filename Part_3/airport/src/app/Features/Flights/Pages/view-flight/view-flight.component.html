@@ -3,10 +3,8 @@
   <p><strong>Flight Number:</strong> {{ flight.flightNumber }}</p>
   <p><strong>Origin:</strong> {{ flight.origin?.name || 'Unknown' }}</p>
   <p><strong>Destination:</strong> {{ flight.arrival?.name || 'Unknown' }}</p>
-  <p><strong>Boarding Date:</strong> {{ flight.boardingDate | date: 'dd-MM-yyyy' }}</p>
-  <p><strong>Boarding Time:</strong> {{ flight.boardingTime }}</p>
-  <p><strong>Arrival Date:</strong> {{ flight.arrivalDate | date: 'dd-MM-yyyy' }}</p>
-  <p><strong>Arrival Time:</strong> {{ flight.arrivalTime }}</p>
+  <p><strong>Boarding Date:</strong> {{ flight.boardingDate | date: 'dd-MM-yyyy HH:mm' }}</p>
+  <p><strong>Arrival Date:</strong> {{ flight.arrivalDate | date: 'dd-MM-yyyy HH:mm' }}</p>
   <p><strong>Seat Count:</strong> {{ flight.seatCount }}</p>
   <p><strong>Seats Taken:</strong> {{ flight.takenSeats }}</p>
 </div>

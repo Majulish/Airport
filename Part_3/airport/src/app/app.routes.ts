@@ -13,7 +13,7 @@ import {EditDestinationComponent} from './Features/Destinations/Pages/edit-desti
 import {ViewBookingComponent} from './Features/Bookings/Pages/view-booking/view-booking.component';
 import {AddDestinationComponent} from "./Features/Destinations/Pages/add-destination/add-destination.component";
 import {ViewDestinationComponent} from './Features/Destinations/Pages/view-destination/view-destination.component';
-import {BookFlightComponent} from "./Features/Bookings/Pages/bookk-flight/book-flight.component";
+import {BookFlightComponent} from "./Features/Bookings/Pages/book-flight/book-flight.component";
 
 export const appRoutes: Routes = [
   { path: '', redirectTo: '/home-page', pathMatch: 'full' },

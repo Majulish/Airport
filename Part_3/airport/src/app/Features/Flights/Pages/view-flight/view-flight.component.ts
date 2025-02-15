@@ -47,34 +47,32 @@ export class ViewFlightComponent implements OnInit {
         flightNumber: string;
         originCode: string;
         arrivalCode: string;
-        boardingDate: string;
-        boardingTime: string;
-        arrivalDate: string;
-        arrivalTime: string;
+        boardingDate: Date;
+        arrivalDate: Date;
         seatCount: number;
         takenSeats: number;
+        isActive: boolean
       };
 
-      console.log("Flight data from Firestore:", flightData); // ✅ Debugging line
+      console.log("Flight data from Firestore:", flightData);
 
       const [origin, arrival] = await Promise.all([
-        this.getDestinationByCode(flightData.originCode),  // ✅ Fetch origin
-        this.getDestinationByCode(flightData.arrivalCode)  // ✅ Fetch arrival
+        this.getDestinationByCode(flightData.originCode),
+        this.getDestinationByCode(flightData.arrivalCode)
       ]);
 
-      console.log("Origin retrieved:", origin); // ✅ Debugging line
-      console.log("Arrival retrieved:", arrival); // ✅ Debugging line
+      console.log("Origin retrieved:", origin);
+      console.log("Arrival retrieved:", arrival);
 
       this.flight = {
         flightNumber: flightData.flightNumber,
-        origin: origin,  // ✅ Assign full object, not just code
+        origin: origin,
         arrival: arrival,
         boardingDate: flightData.boardingDate,
-        boardingTime: flightData.boardingTime,
         arrivalDate: flightData.arrivalDate,
-        arrivalTime: flightData.arrivalTime,
         seatCount: flightData.seatCount,
-        takenSeats: flightData.takenSeats
+        takenSeats: flightData.takenSeats,
+        isActive: flightData.isActive
       };
 
       this.loading = false;
@@ -102,10 +100,10 @@ export class ViewFlightComponent implements OnInit {
 
       const destinationData = destinationSnapshot.data();
 
-      console.log(`Fetched destination:`, destinationData); // ✅ Debugging line
+      console.log(`Fetched destination:`, destinationData);
 
       return {
-        name: destinationData?.['name'] ?? "Unknown",  // ✅ Ensure `name` is returned
+        name: destinationData?.['name'] ?? "Unknown",
         code: destinationData?.['code'] ?? code
       };
     } catch (error) {

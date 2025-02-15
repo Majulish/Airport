@@ -36,111 +36,101 @@ export class FlightUploadService {
           'NYC123',
           'NYC',
           'DXB',
-          date.getUpcomingDate(1),
-          '08:00',
-          date.getUpcomingDate(1),
-          '18:00',
+          date.getUpcomingDate(1,8,0),
+          date.getUpcomingDate(1,18,0),
           250,
-          120
+          120,
+          true
       ),
       new Flight(
           'LAX456',
           'LAX',
           'LHR',
-          date.getUpcomingDate(1),
-          '10:00',
-          date.getUpcomingDate(1),
-          '20:00',
+          date.getUpcomingDate(1,10),
+          date.getUpcomingDate(1, 20),
           300,
-          200
+          200,
+          true
       ),
       new Flight(
           'LHR789',
           'LHR',
           'LAX',
-          date.getUpcomingDate(-3),
-          '15:00',
-          date.getUpcomingDate(-2),
-          '05:00',
+          date.getUpcomingDate(-3, 15, ),
+          date.getUpcomingDate(-2, 5),
           220,
-          180
+          180,
+          true
       ),
       new Flight(
           'DXB101',
           'DXB',
           'HND',
-          date.getUpcomingDate(-5),
-          '18:30',
-          date.getUpcomingDate(-5),
-          '23:00',
+          date.getUpcomingDate(-5, 18, 30),
+          date.getUpcomingDate(-5, 23),
           180,
-          50
+          50,
+          true
       ),
       new Flight(
           'HND202',
           'HND',
           'SYD',
-          date.getUpcomingDate(1),
-          '22:00',
-          date.getUpcomingDate(2),
-          '06:00',
+          date.getUpcomingDate(1,22),
+          date.getUpcomingDate(2,6),
           300,
-          270
+          270,
+          true
       ),
       new Flight(
           'SYD303',
           'SYD',
           'SFO',
-          date.getUpcomingDate(10),
-          '09:00',
-          date.getUpcomingDate(11),
-          '19:00',
+          date.getUpcomingDate(10,9),
+          date.getUpcomingDate(11,19),
           250,
-          100
+          100,
+          true
       ),
       new Flight(
           'CDG404',
           'CDG',
           'SIN',
-          date.getUpcomingDate(8),
-          '16:00',
-          date.getUpcomingDate(9),
-          '23:30',
+          date.getUpcomingDate(8,16),
+          date.getUpcomingDate(9,23,30),
           200,
-          150
+          150,
+          true
       ),
       new Flight(
           'SFO505',
           'SFO',
           'FCO',
-          date.getUpcomingDate(12),
-          '11:00',
-          date.getUpcomingDate(12),
-          '22:30',
+          date.getUpcomingDate(12,11),
+          date.getUpcomingDate(12,22,30),
           180,
-          60
+          60,
+          true
       ),
       new Flight(
           'SIN606',
           'SIN',
           'CDG',
-          date.getUpcomingDate(13),
-          '13:00',
-          date.getUpcomingDate(13),
-          '21:30',
+          date.getUpcomingDate(13,13),
+          date.getUpcomingDate(13,21,30),
           200,
-          120
+          120,
+          true
       ),
       new Flight(
           'FCO707',
           'FCO',
           'NYC',
-          date.getUpcomingDate(14),
-          '07:00',
-          date.getUpcomingDate(14),
-          '14:00',
+          date.getUpcomingDate(14,7),
+          date.getUpcomingDate(14,14),
           250,
-          140
+          140,
+          true
       ),
     ];
   }
@@ -168,13 +158,12 @@ export class FlightUploadService {
             originCode: flight.originCode,
             arrivalCode: flight.arrivalCode,
             boardingDate: flight.boardingDate,
-            boardingTime: flight.boardingTime,
             arrivalDate: flight.arrivalDate,
-            arrivalTime: flight.arrivalTime,
             seatCount: flight.seatCount,
             takenSeats: flight.takenSeats,
             originRef: doc(this.firestore, 'Destinations', flight.originCode),
             arrivalRef: doc(this.firestore, 'Destinations', flight.arrivalCode),
+            isActive: flight.isActive,
           },
           { merge: true }
       );

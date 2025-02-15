@@ -1,15 +1,14 @@
-import { Firestore, collection, getDocs, deleteDoc, doc, query, where } from '@angular/fire/firestore';
+import { Firestore, collection, getDocs, updateDoc, doc, query, where } from '@angular/fire/firestore';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../../../../Utilities/confirmation-dialog/confirmation-dialog.component';
 import { Router } from '@angular/router';
 import { DestinationsService } from '../../Service/destinations.service';
 import { Destination } from '../../Model/destination.module';
-import { CommonModule } from '@angular/common'; // Import CommonModule
-import { MatIconModule } from '@angular/material/icon'; // Import MatIconModule
-import { FormsModule } from '@angular/forms'; // Import FormsModule
+import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
+import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-
 
 @Component({
   selector: 'app-manage-destinations',
@@ -27,7 +26,7 @@ export class ManageDestinationsComponent implements OnInit {
     private destinationsService: DestinationsService,
     private dialog: MatDialog,
     private router: Router,
-    private firestore: Firestore,
+    private firestore: Firestore
   ) {}
 
   async ngOnInit(): Promise<void> {
@@ -44,18 +43,18 @@ export class ManageDestinationsComponent implements OnInit {
     );
   }
 
-  async confirmDelete(code: string): Promise<void> {
+  async confirmDeactivate(code: string): Promise<void> {
     try {
       console.log(`Checking flights for destination: ${code}`);
 
       // 🔹 Check if any flight has this destination as origin or arrival
       const flightsQuery = query(
-          collection(this.firestore, 'Flight'),
-          where('originCode', '==', code)
+        collection(this.firestore, 'Flight'),
+        where('originCode', '==', code)
       );
       const flightsQueryArrival = query(
-          collection(this.firestore, 'Flight'),
-          where('arrivalCode', '==', code)
+        collection(this.firestore, 'Flight'),
+        where('arrivalCode', '==', code)
       );
 
       const [originFlightsSnapshot, arrivalFlightsSnapshot] = await Promise.all([
@@ -68,11 +67,11 @@ export class ManageDestinationsComponent implements OnInit {
       console.log(`Found ${totalFlights} flights for destination ${code}`);
 
       if (totalFlights > 0) {
-        console.warn(`🚫 Destination ${code} is used in flights and cannot be deleted.`);
+        console.warn(`🚫 Destination ${code} is used in flights and cannot be deactivated.`);
         this.dialog.open(ConfirmationDialogComponent, {
           data: {
-            title: 'Cannot Delete Destination',
-            message: `❌ This destination is used in ${totalFlights} flights and cannot be deleted.`,
+            title: 'Cannot Deactivate Destination',
+            message: `❌ This destination is used in ${totalFlights} flights and cannot be deactivated.`,
           },
         });
 
@@ -81,8 +80,8 @@ export class ManageDestinationsComponent implements OnInit {
 
       const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
         data: {
-          title: 'Delete Destination',
-          message: 'Are you sure you want to delete this destination? This action cannot be undone.',
+          title: 'Deactivate Destination',
+          message: 'Are you sure you want to deactivate this destination? You will not be able to assign flights to it.',
           confirmation: true, // Enables "Yes/No" options
         },
       });
@@ -90,29 +89,32 @@ export class ManageDestinationsComponent implements OnInit {
       dialogRef.afterClosed().subscribe(async (confirmed) => {
         if (confirmed) {
           try {
-            console.log(`🗑️ Deleting destination: ${code}`);
-            await deleteDoc(doc(this.firestore, `Destination/${code}`));
-            this.destinations = this.destinations.filter(dest => dest.code !== code);
+            console.log(`🔄 Deactivating destination: ${code}`);
+            await updateDoc(doc(this.firestore, `Destination/${code}`), { isActive: false });
+
+            this.destinations = this.destinations.map(dest =>
+              dest.code === code ? { ...dest, isActive: false } : dest
+            );
             this.filteredDestinations = [...this.destinations];
 
-            console.log(`✅ Destination ${code} deleted successfully.`);
+            console.log(`✅ Destination ${code} deactivated successfully.`);
             this.dialog.open(ConfirmationDialogComponent, {
               data: {
-                title: 'Destination Deleted',
-                message: `Destination ${code} was successfully deleted.`,
+                title: 'Destination Deactivated',
+                message: `Destination ${code} was successfully deactivated.`,
               },
             });
           } catch (error) {
-            console.error('❌ Error deleting destination:', error);
+            console.error('❌ Error deactivating destination:', error);
             this.dialog.open(ConfirmationDialogComponent, {
               data: {
                 title: 'Error',
-                message: 'An error occurred while deleting the destination. Please try again.',
+                message: 'An error occurred while deactivating the destination. Please try again.',
               },
             });
           }
         } else {
-          console.log('🚫 Deletion canceled by user.');
+          console.log('🚫 Deactivation canceled by user.');
         }
       });
     } catch (error) {
@@ -125,7 +127,6 @@ export class ManageDestinationsComponent implements OnInit {
       });
     }
   }
-
 
   navigateToView(code: string): void {
     this.router.navigate(['/view-destination', code]);

@@ -1,12 +1,9 @@
 class getDate {
-  getUpcomingDate(daysFromNow: number): string {
+  getUpcomingDate(daysFromNow: number, hoursFromMidnight: number = 0, minutesFromMidnight: number = 0): Date {
     const date = new Date();
     date.setDate(date.getDate() + daysFromNow);
-    return this.formatDate(date)
-  }
-
-  getToday(): string {
-    return this.formatDate(new Date());
+    date.setHours(hoursFromMidnight, minutesFromMidnight, 0, 0);
+    return date;
   }
 
   public formatDate(date: Date): string {

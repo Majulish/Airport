@@ -3,6 +3,7 @@ import { Firestore, collection, getDocs, doc, getDoc } from '@angular/fire/fires
 import { Flight } from '../Model/filght.module';
 import { FlightWithDestination } from '../Model/flight-with-destination.module';
 import { Destination } from '../../Destinations/Model/destination.module';
+import { Timestamp } from 'firebase/firestore';
 
 @Injectable({
   providedIn: 'root',
@@ -20,13 +21,15 @@ export class FlightService {
     }
 
     const flightData = docSnap.data() as Flight;
+    flightData.boardingDate = (flightData.boardingDate as unknown as Timestamp).toDate();
+    flightData.arrivalDate = (flightData.arrivalDate as unknown as Timestamp).toDate();
 
     const [origin, arrival] = await Promise.all([
         this.getDestinationByCode(flightData.originCode),
         this.getDestinationByCode(flightData.arrivalCode)
         ])
 
-    return new FlightWithDestination(flightData.flightNumber, origin, arrival, flightData.boardingDate, flightData.boardingTime, flightData.arrivalDate, flightData.arrivalTime, flightData.seatCount, flightData.takenSeats);
+    return new FlightWithDestination(flightData.flightNumber, origin, arrival, flightData.boardingDate, flightData.arrivalDate, flightData.seatCount, flightData.takenSeats, flightData.isActive);
   }
 
   private async getDestinationByCode(code: string): Promise<Destination | null> {
@@ -47,7 +50,12 @@ export class FlightService {
     ]);
 
     // Process Flights
-    const flightsData: Flight[] = flightsSnapshot.docs.map(doc => doc.data() as Flight);
+    const flightsData: Flight[] = flightsSnapshot.docs.map(doc => {
+      const data = doc.data() as Flight;
+      data.boardingDate = (data.boardingDate as unknown as Timestamp).toDate();
+      data.arrivalDate = (data.arrivalDate as unknown as Timestamp).toDate();
+      return data;
+    });
 
     // Process Destinations into a Map for fast lookups
     const destinationsMap = new Map<string, Destination>();
@@ -66,11 +74,10 @@ export class FlightService {
           destinationsMap.get(flight.originCode) || null,
           destinationsMap.get(flight.arrivalCode) || null,
           flight.boardingDate,
-          flight.boardingTime,
           flight.arrivalDate,
-          flight.arrivalTime,
           flight.seatCount,
-          flight.takenSeats
+          flight.takenSeats,
+          flight.isActive
       );
     });
 
@@ -85,7 +92,13 @@ export class FlightService {
       getDocs(collection(this.firestore, 'Destinations'))
     ]);
 
-    const flightsData: Flight[] = flightsSnapshot.docs.map(doc => doc.data() as Flight);
+    const flightsData: Flight[] = flightsSnapshot.docs.map(doc => {
+      const data = doc.data() as Flight;
+      data.boardingDate = (data.boardingDate as unknown as Timestamp).toDate();
+      data.arrivalDate = (data.arrivalDate as unknown as Timestamp).toDate();
+      return data;
+    });
+
     const destinationsMap = new Map<string, Destination>();
     destinationsSnapshot.docs.forEach(doc => {
       const destination = doc.data() as Destination;
@@ -100,11 +113,10 @@ export class FlightService {
             destinationsMap.get(flight.originCode) || null,
             destinationsMap.get(flight.arrivalCode) || null,
             flight.boardingDate,
-            flight.boardingTime,
             flight.arrivalDate,
-            flight.arrivalTime,
             flight.seatCount,
-            flight.takenSeats
+            flight.takenSeats,
+            flight.isActive,
         ));
   }
 
@@ -115,7 +127,13 @@ export class FlightService {
       getDocs(collection(this.firestore, 'Destinations'))
     ]);
 
-    const flightsData: Flight[] = flightsSnapshot.docs.map(doc => doc.data() as Flight);
+    const flightsData: Flight[] = flightsSnapshot.docs.map(doc => {
+      const data = doc.data() as Flight;
+      data.boardingDate = (data.boardingDate as unknown as Timestamp).toDate();
+      data.arrivalDate = (data.arrivalDate as unknown as Timestamp).toDate();
+      return data;
+    });
+
     const destinationsMap = new Map<string, Destination>();
     destinationsSnapshot.docs.forEach(doc => {
       const destination = doc.data() as Destination;
@@ -136,11 +154,10 @@ export class FlightService {
             destinationsMap.get(flight.originCode) || null,
             destinationsMap.get(flight.arrivalCode) || null,
             flight.boardingDate,
-            flight.boardingTime,
             flight.arrivalDate,
-            flight.arrivalTime,
             flight.seatCount,
-            flight.takenSeats
+            flight.takenSeats,
+            flight.isActive,
         ));
 
     console.log(`Returning ${flightsForNextWeek.length} flights for next week`);

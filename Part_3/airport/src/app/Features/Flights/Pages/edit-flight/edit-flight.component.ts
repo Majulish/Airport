@@ -60,11 +60,10 @@ export class EditFlightComponent implements OnInit {
         origin: await this.getDestinationByCode(flightData["originCode"]),
         arrival: await this.getDestinationByCode(flightData["arrivalCode"]),
         boardingDate: flightData["boardingDate"],
-        boardingTime: flightData["boardingTime"],
         arrivalDate: flightData["arrivalDate"],
-        arrivalTime: flightData["arrivalTime"],
         seatCount: flightData["seatCount"],
-        takenSeats: flightData["takenSeats"]
+        takenSeats: flightData["takenSeats"],
+        isActive: flightData["isActive"]
       };
     } catch (error) {
       console.error("Error fetching flight:", error);
@@ -106,11 +105,10 @@ export class EditFlightComponent implements OnInit {
       const flightDocRef = doc(this.firestore, `Flight/${this.flight.flightNumber}`);
       await updateDoc(flightDocRef, {
         boardingDate: this.flight.boardingDate,
-        boardingTime: this.flight.boardingTime,
         arrivalDate: this.flight.arrivalDate,
-        arrivalTime: this.flight.arrivalTime,
         seatCount: this.flight.seatCount,
-        takenSeats: this.flight.takenSeats
+        takenSeats: this.flight.takenSeats,
+        isActive: this.flight.isActive,
       });
 
       this.openAlertDialog('Success', 'Flight updated successfully!', true);

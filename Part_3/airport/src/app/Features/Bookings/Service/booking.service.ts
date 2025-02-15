@@ -71,16 +71,17 @@ export class BookingService {
           origin: flight.origin?.name ?? 'Unknown',
           arrival: flight.arrival?.name ?? 'Unknown',
           image: flight.arrival?.imageUrl ?? 'empty',
-          boardingTime: new Date(flight.boardingDate + "T" + flight.boardingTime),
-          landingTime: new Date(flight.arrivalDate + "T" + flight.arrivalTime),
+          boardingTime: this.formatDate(flight.boardingDate),
+          landingTime: this.formatDate(flight.arrivalDate)
         };
       });
   }
-  private formatDate(dateString: string): string {
-    const date = new Date(dateString);
+  private formatDate(date: Date): string {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
-    return `${day}-${month}-${year}`;
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${day}-${month}-${year} ${hours}:${minutes}`;
   }
 }

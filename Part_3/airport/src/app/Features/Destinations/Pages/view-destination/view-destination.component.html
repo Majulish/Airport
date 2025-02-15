@@ -3,6 +3,7 @@
   <p><strong>Code:</strong> {{ destination.code }}</p>
   <p><strong>Name:</strong> {{ destination.name }}</p>
   <p><strong>Airport Name:</strong> {{ destination.airportName }}</p>
+  <p><strong>Status:</strong> {{ destination.isActive ? 'Active' : 'Disabled' }}</p>
   <p>
     <strong>Airport URL:</strong>
     <a [href]="destination.airportUrl" target="_blank">{{ destination.airportUrl }}</a>

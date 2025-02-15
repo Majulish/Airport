@@ -1,0 +1,65 @@
+.booking-container {
+    max-width: 500px;
+    margin: auto;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #f8f9fa;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+}
+
+h2 {
+    text-align: center;
+    color: #007bff;
+}
+
+.flight-details {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+}
+
+.passenger-selection {
+    margin-bottom: 15px;
+}
+
+.passenger-selection input {
+    width: 60px;
+    padding: 5px;
+    margin-left: 10px;
+}
+
+.passenger-form {
+    margin-top: 15px;
+}
+
+.passenger-form input {
+    width: 100%;
+    padding: 8px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.confirm-button {
+    width: 100%;
+    padding: 10px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.confirm-button:hover {
+    background: #0056b3;
+}
+
+.headline-passengers {
+    color: #261f1f;
+    font-size: 20px;
+    font-weight: bold;
+}

@@ -3,11 +3,10 @@ export class Flight {
     public flightNumber: string,
     public originCode: string,
     public arrivalCode: string,
-    public boardingDate: string,
-    public boardingTime: string,
-    public arrivalDate: string,
-    public arrivalTime: string,
+    public boardingDate: Date,
+    public arrivalDate: Date,
     public seatCount: number,
-    public takenSeats: number
+    public takenSeats: number,
+    public isActive: boolean
   ) {}
 }

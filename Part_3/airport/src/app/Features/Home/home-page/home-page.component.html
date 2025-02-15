@@ -17,8 +17,7 @@
             <h4>{{ flight.arrival?.name }}</h4>
             <p><strong>Airport:</strong> {{ flight.arrival?.airportName }}</p>
             <p><strong>Flight Number:</strong> {{ flight.flightNumber }}</p>
-            <p><strong>Departure Date:</strong> {{ flight.boardingDate | date: 'dd-MM-yyyy' }}</p>
-            <p><strong>Departure Time:</strong> {{ flight.boardingTime }}</p>
+            <p><strong>Departure Date:</strong> {{ flight.boardingDate | date: 'dd-MM-yyyy HH:mm' }}</p>
             <p><strong>Seats Taken:</strong> {{ flight.takenSeats }}</p>
           </mat-card-content>
           <mat-card-actions>

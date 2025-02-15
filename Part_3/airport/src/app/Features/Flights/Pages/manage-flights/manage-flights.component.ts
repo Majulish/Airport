@@ -8,6 +8,7 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import {Timestamp} from 'firebase/firestore';
 
 @Component({
   selector: 'app-manage-flights',
@@ -44,12 +45,11 @@ export class ManageFlightsComponent implements OnInit {
               flightNumber: flightData['flightNumber'],
               origin: await this.getDestinationByCode(flightData['originCode']),
               arrival: await this.getDestinationByCode(flightData['arrivalCode']),
-              boardingDate: flightData['boardingDate'],
-              boardingTime: flightData['boardingTime'],
-              arrivalDate: flightData['arrivalDate'],
-              arrivalTime: flightData['arrivalTime'],
+              boardingDate: (flightData['boardingDate'] as unknown as Timestamp).toDate(),
+              arrivalDate: (flightData['arrivalDate']as unknown as Timestamp).toDate(),
               seatCount: flightData['seatCount'],
-              takenSeats: flightData['takenSeats']
+              takenSeats: flightData['takenSeats'],
+              isActive: flightData['isActive']
             };
           })
       );
@@ -87,7 +87,6 @@ export class ManageFlightsComponent implements OnInit {
     try {
       console.log(`Checking reservations for flight: ${flightNumber}`);
 
-      // 🔹 Check if there are bookings for this flight in Firestore
       const bookingQuery = query(collection(this.firestore, 'Booking'), where('flightNo', '==', flightNumber));
       const bookingsSnapshot = await getDocs(bookingQuery);
 
@@ -96,7 +95,6 @@ export class ManageFlightsComponent implements OnInit {
       if (!bookingsSnapshot.empty) {
         console.warn(`🚫 Flight ${flightNumber} has reservations and cannot be deleted.`);
 
-        // ✅ Show an alert if the flight has active reservations
         this.dialog.open(ConfirmationDialogComponent, {
           data: {
             title: 'Cannot Delete Flight',
@@ -104,15 +102,14 @@ export class ManageFlightsComponent implements OnInit {
           },
         });
 
-        return; // 🚀 Stop execution if the flight has bookings
+        return;
       }
 
-      // ✅ Proceed with delete confirmation if no bookings exist
       const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
         data: {
           title: 'Delete Flight',
           message: 'Are you sure you want to delete this flight? This action cannot be undone.',
-          confirmation: true, // Enables "Yes/No" options
+          confirmation: true,
         },
       });
 
@@ -122,13 +119,11 @@ export class ManageFlightsComponent implements OnInit {
             console.log(`🗑️ Deleting flight: ${flightNumber}`);
             await deleteDoc(doc(this.firestore, `Flight/${flightNumber}`));
 
-            // ✅ Remove from UI
             this.flights = this.flights.filter(flight => flight.flightNumber !== flightNumber);
             this.filteredFlights = [...this.flights];
 
             console.log(`✅ Flight ${flightNumber} deleted successfully.`);
 
-            // ✅ Show success message
             this.dialog.open(ConfirmationDialogComponent, {
               data: {
                 title: 'Flight Deleted',
@@ -138,7 +133,6 @@ export class ManageFlightsComponent implements OnInit {
           } catch (error) {
             console.error('❌ Error deleting flight:', error);
 
-            // ✅ Show error message if deletion fails
             this.dialog.open(ConfirmationDialogComponent, {
               data: {
                 title: 'Error',
@@ -153,7 +147,6 @@ export class ManageFlightsComponent implements OnInit {
     } catch (error) {
       console.error('❌ Error checking reservations:', error);
 
-      // ✅ Show error message if Firestore query fails
       this.dialog.open(ConfirmationDialogComponent, {
         data: {
           title: 'Error',
@@ -168,6 +161,6 @@ export class ManageFlightsComponent implements OnInit {
   }
 
   navigateToEdit(flightNumber: string): void {
-    this.router.navigate([`/edit-flight/${flightNumber}`]); // ✅ Fixed pencil icon navigation
+    this.router.navigate([`/edit-flight/${flightNumber}`]);
   }
 }

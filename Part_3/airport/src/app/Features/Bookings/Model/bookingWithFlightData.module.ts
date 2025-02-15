@@ -7,8 +7,8 @@ export class BookingWithFlightData {
     public origin: string,
     public arrival: string,
     public image: string,
-    public boardingTime: Date,
-    public landingTime: Date,
+    public boardingTime: string,
+    public landingTime: string,
   ) {
   }
 }

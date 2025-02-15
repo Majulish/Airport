@@ -19,6 +19,7 @@
       <th>Airport Name</th>
       <th>Airport URL</th>
       <th>Image URL</th>
+      <th>Status</th>
       <th>Actions</th>
     </tr>
     </thead>
@@ -26,6 +27,7 @@
     <tr *ngFor="let destination of filteredDestinations">
       <td>{{ destination.code }}</td>
       <td>{{ destination.name }}</td>
+      <td>{{ destination.isActive ? 'Active' : 'Disabled'}}</td>
       <td>{{ destination.airportName }}</td>
       <td>
         <a [href]="destination.airportUrl" target="_blank">{{ destination.airportUrl }}</a>
@@ -39,7 +41,7 @@
         <mat-icon class="icon" (click)="navigateToEdit(destination.code)">edit</mat-icon>
 
         <!-- Delete Icon -->
-        <mat-icon class="icon" (click)="confirmDelete(destination.code)">delete</mat-icon>
+        <mat-icon class="icon" (click)="confirmDeactivate(destination.code)">Deactivate</mat-icon>
       </td>
     </tr>
     </tbody>

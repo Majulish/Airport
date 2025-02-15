@@ -4,7 +4,8 @@ export class Destination {
     public name: string,
     public airportName: string,
     public airportUrl: string,
-    public imageUrl: string
+    public imageUrl: string,
+    public isActive: boolean,
   ) {}
 }
 

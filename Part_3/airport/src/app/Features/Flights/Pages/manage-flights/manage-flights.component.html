@@ -18,11 +18,10 @@
       <th>Origin</th>
       <th>Destination</th>
       <th>Boarding Date</th>
-      <th>Boarding Time</th>
       <th>Arrival Date</th>
-      <th>Arrival Time</th>
       <th>Seat Count</th>
       <th>Seats Taken</th>
+      <th>Is Active</th>
       <th>Actions</th>
     </tr>
     </thead>
@@ -31,12 +30,11 @@
       <td>{{ flight.flightNumber }}</td>
       <td>{{ flight.origin?.name }}</td>
       <td>{{ flight.arrival?.name }}</td>
-      <td>{{ flight.boardingDate | date: 'dd-MM-yyyy' }}</td>
-      <td>{{ flight.boardingTime }}</td>
-      <td>{{ flight.arrivalDate | date: 'dd-MM-yyyy' }}</td>
-      <td>{{ flight.arrivalTime }}</td>
+      <td>{{ flight.boardingDate | date: 'dd-MM-yyyy HH:mm' }}</td>
+      <td>{{ flight.arrivalDate | date: 'dd-MM-yyyy HH:mm' }}</td>
       <td>{{ flight.seatCount }}</td>
       <td>{{ flight.takenSeats }}</td>
+      <td>{{ flight.isActive ? 'Active' : 'Disabled'}}</td>
       <td class="action-icons">
         <!-- View Icon -->
         <mat-icon class="icon view-icon" (click)="navigateToView(flight.flightNumber)">visibility</mat-icon>

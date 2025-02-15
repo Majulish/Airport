@@ -12,8 +12,8 @@
         <div class="booking-info">
           <p><strong>Origin:</strong> {{ booking.origin }}</p>
           <p><strong>Destination:</strong> {{ booking.arrival }}</p>
-          <p><strong>Boarding Time:</strong> {{ formatDate(booking.boardingTime)}}</p>
-          <p><strong>Landing Time:</strong> {{ formatDate(booking.landingTime)}}</p>
+          <p><strong>Boarding Time:</strong> {{booking.boardingTime}}</p>
+          <p><strong>Landing Time:</strong> {{booking.landingTime}}</p>
           <p><strong>Number of passengers:</strong> {{ booking.passengerCount }}</p>
         </div>
         <button class="view-booking-btn" (click)="viewBooking(booking.bookingId)">
@@ -34,8 +34,8 @@
         <div class="booking-info">
           <p><strong>Origin:</strong> {{ booking.origin }}</p>
           <p><strong>Destination:</strong> {{ booking.arrival }}</p>
-          <p><strong>Boarding Time:</strong> {{ formatDate(booking.boardingTime)}}</p>
-          <p><strong>Landing Time:</strong> {{ formatDate(booking.landingTime)}}</p>
+          <p><strong>Boarding Time:</strong> {{booking.boardingTime}}</p>
+          <p><strong>Landing Time:</strong> {{booking.landingTime}}</p>
           <p><strong>Number of passengers:</strong> {{ booking.passengerCount }}</p>
         </div>
         <button class="view-booking-btn" (click)="viewBooking(booking.bookingId)">
