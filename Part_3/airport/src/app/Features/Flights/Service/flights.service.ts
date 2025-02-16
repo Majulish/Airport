@@ -107,7 +107,7 @@ export class FlightService {
 
     const today = new Date();
     return flightsData
-        .filter(flight => new Date(flight.boardingDate) >= today)
+         .filter(flight => flight.isActive && new Date(flight.boardingDate) >= today)
         .map(flight => new FlightWithDestination(
             flight.flightNumber,
             destinationsMap.get(flight.originCode) || null,
@@ -147,7 +147,7 @@ export class FlightService {
     const flightsForNextWeek: FlightWithDestination[] = flightsData
         .filter(flight => {
           const flightDate = new Date(flight.boardingDate);
-          return flightDate >= today && flightDate <= nextWeek;
+          return flight.isActive && flightDate >= today && flightDate <= nextWeek
         })
         .map(flight => new FlightWithDestination(
             flight.flightNumber,
@@ -204,14 +204,4 @@ export class FlightService {
     return path.split('.').reduce((acc, part) => acc && acc[part], obj) ?? '';
   }
 
-  getSortIcon(column: string, currentSortColumn: string | null, currentSortDirection: string | null) {
-    if (currentSortColumn === column) {
-      if (currentSortDirection === 'asc') {
-        return 'fa-arrow-up';
-      } else if (currentSortDirection === 'desc') {
-        return 'fa-arrow-down';
-      }
-    }
-    return 'fa-arrow';
-  }
 }
