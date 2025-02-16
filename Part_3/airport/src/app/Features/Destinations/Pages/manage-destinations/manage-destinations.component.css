@@ -101,3 +101,55 @@
 .add-button mat-icon {
   font-size: 20px;
 }
+
+/* ✅ Ensures the table adjusts dynamically */
+.destinations-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto; /* ✅ Allows columns to resize naturally */
+}
+
+/* ✅ General table cell styles */
+.destinations-table th,
+.destinations-table td {
+  padding: 12px;
+  text-align: left;
+  vertical-align: middle;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap; /* ✅ Ensures text remains on one line */
+}
+
+/* ✅ Allow "Airport Name" column to be flexible */
+.destinations-table td:nth-child(3),
+.destinations-table th:nth-child(3) {
+  min-width: 180px; /* ✅ Ensures the airport name is visible */
+  max-width: 250px; /* ✅ Keeps it from expanding too much */
+}
+
+/* ✅ Limit "Image URL" column width */
+.destinations-table td:nth-child(5),
+.destinations-table th:nth-child(5) {
+  max-width: 220px; /* ✅ Prevents excessive width */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
+}
+
+/* ✅ Ensure 'Status' column stays in one line */
+.destinations-table td:nth-child(6),
+.destinations-table th:nth-child(6) {
+  white-space: nowrap; /* ✅ Prevents wrapping */
+}
+
+/* ✅ Adjust table for smaller screens */
+@media (max-width: 1200px) {
+  .destinations-table th,
+  .destinations-table td {
+    font-size: 0.9rem;
+  }
+
+  .destinations-table td:nth-child(5) {
+    max-width: 180px; /* ✅ Reduce width on smaller screens */
+  }
+}

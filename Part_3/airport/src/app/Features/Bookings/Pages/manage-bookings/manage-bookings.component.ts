@@ -50,10 +50,37 @@ export class ManageBookingsComponent {
   }
 
   sortTable(column: string) {
-    this.flightService.sortObjectArray(column, this.currentSortDirection, this.currentSortColumn, this.filteredFlights, this.flights)
+    // Cycle sorting direction: `asc` → `desc` → `neutral`
+    if (this.currentSortColumn === column) {
+      if (this.currentSortDirection === 'asc') {
+        this.currentSortDirection = 'desc';
+      } else if (this.currentSortDirection === 'desc') {
+        this.currentSortDirection = null;
+        this.filteredFlights = [...this.flights]; // Reset to original order
+        return;
+      } else {
+        this.currentSortDirection = 'asc';
+      }
+    } else {
+      this.currentSortColumn = column;
+      this.currentSortDirection = 'asc';
+    }
+
+    this.flightService.sortObjectArray(
+      column,
+      this.currentSortDirection,
+      this.filteredFlights
+    );
   }
 
   getSortIcon(column: string) {
-    return this.flightService.getSortIcon(column, this.currentSortDirection, this.currentSortColumn, this.filteredFlights, this.flights)
+    if (this.currentSortColumn === column) {
+      if (this.currentSortDirection === 'asc') {
+        return 'fa-arrow-up';
+      } else if (this.currentSortDirection === 'desc') {
+        return 'fa-arrow-down';
+      }
+    }
+    return 'fa-arrows-up-down';
   }
 }

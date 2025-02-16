@@ -16,13 +16,13 @@
         Flight Number
         <i class="fas" [ngClass]="getSortIcon('flightNumber')"></i>
       </th>
-      <th (click)="sortTable('originName')">
+      <th (click)="sortTable('origin.name')">
         Origin
-        <i class="fas" [ngClass]="getSortIcon('originName')"></i>
+        <i class="fas" [ngClass]="getSortIcon('origin.name')"></i>
       </th>
-      <th (click)="sortTable('destination.name')">
+      <th (click)="sortTable('arrival.name')">
         Destination
-        <i class="fas" [ngClass]="getSortIcon('destination.name')"></i>
+        <i class="fas" [ngClass]="getSortIcon('arrival.name')"></i>
       </th>
       <th (click)="sortTable('boardingDate')">
         Boarding Date

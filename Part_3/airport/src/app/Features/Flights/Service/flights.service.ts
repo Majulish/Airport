@@ -168,42 +168,43 @@ export class FlightService {
   sortObjectArray(
     column: string,
     currentSortDirection: "asc" | "desc" | null,
-    currentSortColumn: string | null,
-    filteredArray: any[],
-    sourceArray: any[]
+    filteredArray: any[]
   ) {
-    if (currentSortColumn === column) {
-      if (currentSortDirection === 'asc') {
-        currentSortDirection = 'desc';
-      } else if (currentSortDirection === 'desc') {
-        currentSortDirection = null;
-        filteredArray = [...sourceArray];
-        return;
-      } else {
-        currentSortDirection = 'asc';
-      }
-    } else {
-      currentSortColumn = column;
-      currentSortDirection = 'asc';
+    if (!currentSortDirection) {
+      return;
     }
 
     filteredArray.sort((a, b) => {
-      const valueA = (a as any)[column];
-      const valueB = (b as any)[column];
+      let valueA = this.resolveNestedProperty(a, column);
+      let valueB = this.resolveNestedProperty(b, column);
 
-      if (valueA < valueB) return currentSortDirection === 'asc' ? -1 : 1;
-      if (valueA > valueB) return currentSortDirection === 'asc' ? 1 : -1;
-      return 0;
+      // Handle dates properly
+      if (valueA instanceof Date && valueB instanceof Date) {
+        return currentSortDirection === 'asc'
+          ? valueA.getTime() - valueB.getTime()
+          : valueB.getTime() - valueA.getTime();
+      }
+
+      // Fallback to string comparison
+      if (typeof valueA === "string" && typeof valueB === "string") {
+        return currentSortDirection === 'asc'
+          ? valueA.localeCompare(valueB)
+          : valueB.localeCompare(valueA);
+      }
+
+      // Default number comparison
+      return currentSortDirection === 'asc' ? valueA - valueB : valueB - valueA;
     });
   }
 
-  getSortIcon(
-    column: string,
-    currentSortDirection: "asc" | "desc" | null,
-    currentSortColumn: string | null,
-    filteredArray: any[],
-    sourceArray: any[]
-  ) {
+  /**
+   * Handles nested properties, e.g., "destination.name"
+   */
+  private resolveNestedProperty(obj: any, path: string) {
+    return path.split('.').reduce((acc, part) => acc && acc[part], obj) ?? '';
+  }
+
+  getSortIcon(column: string, currentSortColumn: string | null, currentSortDirection: string | null) {
     if (currentSortColumn === column) {
       if (currentSortDirection === 'asc') {
         return 'fa-arrow-up';
@@ -211,6 +212,6 @@ export class FlightService {
         return 'fa-arrow-down';
       }
     }
-    return 'fa-arrows-up-down';
+    return 'fa-arrow';
   }
 }
