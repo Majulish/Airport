@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Firestore, collection, getDocs, doc, getDoc } from '@angular/fire/firestore';
+import {Firestore, collection, getDocs, doc, getDoc, setDoc} from '@angular/fire/firestore';
 import { Flight } from '../Model/filght.module';
 import { FlightWithDestination } from '../Model/flight-with-destination.module';
 import { Destination } from '../../Destinations/Model/destination.module';
@@ -32,12 +32,12 @@ export class FlightService {
     return new FlightWithDestination(flightData.flightNumber, origin, arrival, flightData.boardingDate, flightData.arrivalDate, flightData.seatCount, flightData.takenSeats, flightData.isActive);
   }
 
-  private async getDestinationByCode(code: string): Promise<Destination | null> {
-    if (!code) return null;
+  private async getDestinationByCode(code: string): Promise<Destination | undefined> {
+    if (!code) return undefined;
     const destinationDocRef = doc(this.firestore, `Destinations/${code}`);
     const destinationSnapshot = await getDoc(destinationDocRef);
 
-    return destinationSnapshot.exists() ? (destinationSnapshot.data() as Destination) : null;
+    return destinationSnapshot.exists() ? (destinationSnapshot.data() as Destination) : undefined;
   }
 
   async getAllFlights(): Promise<FlightWithDestination[]> {
@@ -71,8 +71,8 @@ export class FlightService {
     const flightsWithDestinations: FlightWithDestination[] = flightsData.map(flight => {
       return new FlightWithDestination(
           flight.flightNumber,
-          destinationsMap.get(flight.originCode) || null,
-          destinationsMap.get(flight.arrivalCode) || null,
+          destinationsMap.get(flight.originCode),
+          destinationsMap.get(flight.arrivalCode),
           flight.boardingDate,
           flight.arrivalDate,
           flight.seatCount,
@@ -110,8 +110,8 @@ export class FlightService {
          .filter(flight => flight.isActive && new Date(flight.boardingDate) >= today)
         .map(flight => new FlightWithDestination(
             flight.flightNumber,
-            destinationsMap.get(flight.originCode) || null,
-            destinationsMap.get(flight.arrivalCode) || null,
+            destinationsMap.get(flight.originCode),
+            destinationsMap.get(flight.arrivalCode),
             flight.boardingDate,
             flight.arrivalDate,
             flight.seatCount,
@@ -151,8 +151,8 @@ export class FlightService {
         })
         .map(flight => new FlightWithDestination(
             flight.flightNumber,
-            destinationsMap.get(flight.originCode) || null,
-            destinationsMap.get(flight.arrivalCode) || null,
+            destinationsMap.get(flight.originCode),
+            destinationsMap.get(flight.arrivalCode),
             flight.boardingDate,
             flight.arrivalDate,
             flight.seatCount,
@@ -204,4 +204,21 @@ export class FlightService {
     return path.split('.').reduce((acc, part) => acc && acc[part], obj) ?? '';
   }
 
+  async addFlight(flightData: any): Promise<void> {
+    const flightRef = doc(this.firestore, `Flight/${flightData.flightNumber}`);
+    const existingFlight = await getDoc(flightRef);
+
+    if (existingFlight.exists()) {
+      throw new Error(`Flight ${flightData.flightNumber} already exists.`);
+    }
+
+    // Convert date strings to Firebase Timestamp format
+    const formattedFlightData = {
+      ...flightData,
+      boardingDate: new Date(flightData.boardingDate),
+      arrivalDate: new Date(flightData.arrivalDate),
+    };
+
+    await setDoc(flightRef, formattedFlightData);
+  }
 }

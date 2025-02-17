@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DestinationsService } from '../../Service/destinations.service';
 import { Destination } from '../../Model/destination.module';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../../../../Utilities/confirmation-dialog/confirmation-dialog.component';
-import {CommonModule} from "@angular/common";
+import { CommonModule } from "@angular/common";
 
 @Component({
   selector: 'app-add-destination',
@@ -23,27 +23,28 @@ export class AddDestinationComponent implements OnInit {
   invalidNameFormat = false;
 
   constructor(
-      private destinationsService: DestinationsService,
-      private router: Router,
-      private fb: FormBuilder,
-      public dialog: MatDialog
+    private destinationsService: DestinationsService,
+    private router: Router,
+    private fb: FormBuilder,
+    public dialog: MatDialog
   ) {}
 
   async ngOnInit(): Promise<void> {
-    this.existingDestinations = await this.destinationsService.getAllDestinations();
-
     this.destinationForm = this.fb.group({
       code: ['', [Validators.required, Validators.pattern(/^[A-Z]{3}$/)]],
       name: ['', [Validators.required, Validators.pattern(/^[A-Za-z\s]+$/)]],
       airportName: ['', Validators.required],
-      airportUrl: ['', Validators.pattern('https?://.+')],
-      imageUrl: ['', Validators.pattern('https?://.+')]
+      airportUrl: ['', [Validators.required, Validators.pattern('https?://.+')]],
+      imageUrl: ['', [Validators.required, Validators.pattern('https?://.+')]]
     });
 
+    // Fetch existing destinations after initializing the form
+    this.existingDestinations = await this.destinationsService.getAllDestinations();
 
     this.destinationForm.get('code')!.valueChanges.subscribe(value => this.validateCode(value));
     this.destinationForm.get('name')!.valueChanges.subscribe(value => this.validateName(value));
   }
+
 
   validateCode(code: string): void {
     this.destinationCodeExists = this.existingDestinations.some(dest => dest.code.toUpperCase() === code.toUpperCase());
@@ -56,7 +57,7 @@ export class AddDestinationComponent implements OnInit {
   }
 
   openConfirmDialog(): void {
-    if (this.destinationCodeExists || this.destinationNameExists || this.invalidCodeFormat || this.invalidNameFormat) {
+    if (this.destinationForm.invalid || this.destinationCodeExists || this.destinationNameExists) {
       this.openAlertDialog('Error', 'Please correct the errors before saving.');
       return;
     }
@@ -77,7 +78,7 @@ export class AddDestinationComponent implements OnInit {
   }
 
   async saveDestination(): Promise<void> {
-    if (this.destinationCodeExists || this.destinationNameExists || this.invalidCodeFormat || this.invalidNameFormat) {
+    if (this.destinationForm.invalid || this.destinationCodeExists || this.destinationNameExists) {
       this.openAlertDialog('Error', 'Please correct the errors before saving.');
       return;
     }

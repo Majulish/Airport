@@ -3,7 +3,7 @@
 
     <div *ngIf="flight" class="flight-details">
         <p><strong>Origin:</strong> {{ flight.origin?.name }} - Boarding: {{ flight.boardingDate  | date: 'dd-MM-yyyy HH:mm'}} </p>
-        <p><strong>Destination:</strong> {{ flight.arrival?.name }} - Landing: {{ flight.arrivalDate  | date: 'dd-MM-yyyy HH:mm'}}/p>
+        <p><strong>Destination:</strong> {{ flight.arrival?.name }} - Landing: {{ flight.arrivalDate  | date: 'dd-MM-yyyy HH:mm'}}</p>
         <p><strong>Available Seats:</strong> {{ getAvailableSeats() }}</p>
     </div>
 

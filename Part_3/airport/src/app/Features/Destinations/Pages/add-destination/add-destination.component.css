@@ -77,7 +77,8 @@ button[type="submit"]:hover {
 }
 
 .error {
-    color: red;
-    font-size: 0.9rem;
-    margin-top: 5px;
+  color: red;
+  font-size: 14px;
+  margin-top: 5px;
+  display: block;
 }

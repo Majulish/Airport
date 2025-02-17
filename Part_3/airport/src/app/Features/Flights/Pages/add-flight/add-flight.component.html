@@ -1,0 +1,39 @@
+<div class="add-flight-container">
+  <h2>Add Flight</h2>
+  <form *ngIf="flightForm" [formGroup]="flightForm" (ngSubmit)="openConfirmDialog()">
+
+    <label>Flight Number:</label>
+    <input formControlName="flightNumber" type="text" placeholder="e.g., AB123">
+    <span class="error" *ngIf="flightForm.get('flightNumber')?.invalid && flightForm.get('flightNumber')?.touched">
+      Flight Number must be at least 3 characters long and contain only uppercase letters and numbers.
+    </span>
+
+    <label>Origin Code:</label>
+    <select formControlName="originCode">
+      <option *ngFor="let dest of activeDestinations" [value]="dest.code">{{ dest.name }} ({{ dest.code }})</option>
+    </select>
+
+    <label>Arrival Code:</label>
+    <select formControlName="arrivalCode">
+      <option *ngFor="let dest of activeDestinations" [value]="dest.code">{{ dest.name }} ({{ dest.code }})</option>
+    </select>
+
+    <label>Boarding Date:</label>
+    <input formControlName="boardingDate" type="datetime-local">
+
+    <label>Arrival Date:</label>
+    <input formControlName="arrivalDate" type="datetime-local">
+    <span class="error" *ngIf="isBoardingAfterArrival">Boarding date must be before arrival date.</span>
+
+    <label>Seat Count:</label>
+    <input formControlName="seatCount" type="number">
+    <span class="error" *ngIf="flightForm.get('seatCount')?.invalid && flightForm.get('seatCount')?.touched">
+      Seat count must be between 1 and 300.
+    </span>
+
+    <div class="button-container">
+      <button type="submit">Add Flight</button>
+      <button type="button" class="cancel-button" (click)="cancelAdd()">Cancel</button>
+    </div>
+  </form>
+</div>

@@ -48,7 +48,7 @@ export class DestinationsService {
   }
   async addDestination(destination: Destination): Promise<void> {
     const destinationsCollection = collection(this.firestore, 'Destinations');
-    await setDoc(doc(destinationsCollection, destination.code), { ...destination });
+    await setDoc(doc(destinationsCollection, destination.code), { ...destination, isActive: true});
   }
 
 

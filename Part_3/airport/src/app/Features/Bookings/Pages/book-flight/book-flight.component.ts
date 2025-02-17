@@ -8,6 +8,8 @@ import {Firestore, doc, getDoc, updateDoc, setDoc} from '@angular/fire/firestore
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../../../../Utilities/confirmation-dialog/confirmation-dialog.component';
 import { FlightWithDestination } from '../../../Flights/Model/flight-with-destination.module';
+import {Flight} from '../../../Flights/Model/filght.module';
+import {DestinationsService} from '../../../Destinations/Service/destinations.service';
 
 @Component({
   selector: 'book-flight',
@@ -26,7 +28,8 @@ export class BookFlightComponent implements OnInit {
       private route: ActivatedRoute,
       private firestore: Firestore,
       private router: Router,
-      private dialog: MatDialog
+      private dialog: MatDialog,
+      private destinationService: DestinationsService
   ) {}
 
   async ngOnInit() {
@@ -47,7 +50,14 @@ export class BookFlightComponent implements OnInit {
       return;
     }
 
-    this.flight = flightSnap.data() as FlightWithDestination;
+    const flightData = flightSnap.data();
+    const [origin, arrival] = await Promise.all([
+      this.destinationService.get(flightData['originCode']),
+      this.destinationService.get(flightData['arrivalCode'])
+    ])
+
+    this.flight = new FlightWithDestination(flightNumber, origin, arrival, flightData['boardingDate'].toDate(),
+      flightData['arrivalDate'].toDate(), flightData['seatCount'], flightData['takenSeats'], flightData['isActive']);
   }
 
   updatePassengerCount() {
@@ -78,9 +88,52 @@ export class BookFlightComponent implements OnInit {
   async confirmBooking() {
     if (!this.flight || this.passengerCount < 1) return;
 
+    // Validate Passenger Name (only letters)
+    const nameRegex = /^[A-Za-z\s]+$/;
+    for (const passenger of this.passengers) {
+      if (!nameRegex.test(passenger.name)) {
+        this.dialog.open(ConfirmationDialogComponent, {
+          data: {
+            title: 'Invalid Passenger Name',
+            message: 'Passenger names must contain only letters and spaces.',
+          },
+        });
+        return;
+      }
+    }
+
+    // Validate Passport ID (exactly 9 digits)
+    const passportRegex = /^\d{9}$/;
+    for (const passenger of this.passengers) {
+      if (!passportRegex.test(passenger.passportId)) {
+        this.dialog.open(ConfirmationDialogComponent, {
+          data: {
+            title: 'Invalid Passport ID',
+            message: 'Passport ID must be exactly 9 digits.',
+          },
+        });
+        return;
+      }
+    }
+
+    // Check for duplicate passport IDs
+    const passportSet = new Set();
+    for (const passenger of this.passengers) {
+      if (passportSet.has(passenger.passportId)) {
+        this.dialog.open(ConfirmationDialogComponent, {
+          data: {
+            title: 'Duplicate Passport ID',
+            message: 'Each passport ID must be unique. Please check your entries.',
+          },
+        });
+        return;
+      }
+      passportSet.add(passenger.passportId);
+    }
+
     try {
       const bookingId = this.generateBookingId();
-      const bookingRef = doc(this.firestore, `Booking/${bookingId}`); // Use this ID in Firestore
+      const bookingRef = doc(this.firestore, `Booking/${bookingId}`);
 
       const existingBooking = await getDoc(bookingRef);
       if (existingBooking.exists()) {
@@ -107,7 +160,6 @@ export class BookFlightComponent implements OnInit {
       });
 
       console.log('Booking confirmed successfully!');
-
       this.dialog.open(ConfirmationDialogComponent, {
         data: {
           title: 'Booking Successful',
@@ -126,5 +178,4 @@ export class BookFlightComponent implements OnInit {
       });
     }
   }
-
 }

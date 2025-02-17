@@ -3,11 +3,11 @@
 
   <div class="search-container">
     <input
-            type="text"
-            placeholder="Search by destination or origin code"
-            [(ngModel)]="searchTerm"
-            (input)="applyFilter()"
-            class="search-input"
+      type="text"
+      placeholder="Search by destination or origin code"
+      [(ngModel)]="searchTerm"
+      (input)="applyFilter()"
+      class="search-input"
     />
   </div>
 
@@ -34,18 +34,20 @@
       <td>{{ flight.arrivalDate | date: 'dd-MM-yyyy HH:mm' }}</td>
       <td>{{ flight.seatCount }}</td>
       <td>{{ flight.takenSeats }}</td>
-      <td>{{ flight.isActive ? 'Active' : 'Disabled'}}</td>
+      <td>{{ flight.isActive ? 'Active' : 'Disabled' }}</td>
       <td class="action-icons">
-        <!-- View Icon -->
-        <mat-icon class="icon view-icon" (click)="navigateToView(flight.flightNumber)">visibility</mat-icon>
-
-        <!-- Edit Icon -->
-        <mat-icon class="icon edit-icon" (click)="navigateToEdit(flight.flightNumber)">edit</mat-icon>
-
-        <!-- Delete Icon -->
-        <mat-icon class="icon delete-icon" (click)="confirmDelete(flight.flightNumber)">delete</mat-icon>
+        <mat-icon class="icon" (click)="navigateToView(flight.flightNumber)">visibility</mat-icon>
+        <mat-icon class="icon" (click)="navigateToEdit(flight.flightNumber)">edit</mat-icon>
+        <mat-icon class="icon" (click)="confirmDelete(flight.flightNumber)">delete</mat-icon>
       </td>
     </tr>
     </tbody>
   </table>
+
+  <div class="actions-container">
+    <button class="add-button" [routerLink]="['/add-flight']">
+      <mat-icon>add</mat-icon>
+      Add Flight
+    </button>
+  </div>
 </div>
