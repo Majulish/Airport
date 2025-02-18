@@ -21,6 +21,7 @@
           <i class="fas fa-eye icon" (click)="viewBooking(booking.bookingId)"></i>
           <i [ngClass]="!booking.isActive ? 'fas fa-check-circle icon' : 'fas fa-times-circle icon'" (click)="toggleBookingStatus(booking)"></i>
         </div>
+
       </div>
     </mat-expansion-panel>
 

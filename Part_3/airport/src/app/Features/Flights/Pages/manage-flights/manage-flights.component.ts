@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import {Firestore, collection, getDocs, deleteDoc, doc, query, where, getDoc} from '@angular/fire/firestore';
+import {Firestore, collection, getDocs, deleteDoc, doc, query, where, getDoc, setDoc} from '@angular/fire/firestore';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../../../../Utilities/confirmation-dialog/confirmation-dialog.component';
 import { FlightWithDestination } from '../../Model/flight-with-destination.module';
@@ -83,78 +83,114 @@ export class ManageFlightsComponent implements OnInit {
     );
   }
 
-  async confirmDelete(flightNumber: string): Promise<void> {
+  async disableFlight(flightNumber: string): Promise<void> {
     try {
-      console.log(`Checking reservations for flight: ${flightNumber}`);
-
-      const bookingQuery = query(collection(this.firestore, 'Booking'), where('flightNo', '==', flightNumber));
+      // Check if flight has active bookings
+      const bookingQuery = query(collection(this.firestore, 'Booking'), where('flightNo', '==', flightNumber), where('isActive', '==', true));
       const bookingsSnapshot = await getDocs(bookingQuery);
 
-      console.log(`Found ${bookingsSnapshot.size} reservations for flight ${flightNumber}`);
-
       if (!bookingsSnapshot.empty) {
-        console.warn(`🚫 Flight ${flightNumber} has reservations and cannot be deleted.`);
-
         this.dialog.open(ConfirmationDialogComponent, {
           data: {
-            title: 'Cannot Delete Flight',
-            message: `❌ This flight has ${bookingsSnapshot.size} active reservations and cannot be deleted.`,
+            title: 'Cannot Disable Flight',
+            message: `This flight has ${bookingsSnapshot.size} active bookings and cannot be disabled.`,
           },
         });
-
         return;
       }
 
+      // Confirm action
       const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
         data: {
-          title: 'Delete Flight',
-          message: 'Are you sure you want to delete this flight? This action cannot be undone.',
+          title: 'Disable Flight',
+          message: 'Are you sure you want to disable this flight?',
           confirmation: true,
         },
       });
 
       dialogRef.afterClosed().subscribe(async (confirmed) => {
         if (confirmed) {
-          try {
-            console.log(`🗑️ Deleting flight: ${flightNumber}`);
-            await deleteDoc(doc(this.firestore, `Flight/${flightNumber}`));
+          const flightRef = doc(this.firestore, 'Flight', flightNumber);
+          await setDoc(flightRef, { isActive: false }, { merge: true });
 
-            this.flights = this.flights.filter(flight => flight.flightNumber !== flightNumber);
-            this.filteredFlights = [...this.flights];
-
-            console.log(`✅ Flight ${flightNumber} deleted successfully.`);
-
-            this.dialog.open(ConfirmationDialogComponent, {
-              data: {
-                title: 'Flight Deleted',
-                message: `Flight ${flightNumber} was successfully deleted.`,
-              },
-            });
-          } catch (error) {
-            console.error('❌ Error deleting flight:', error);
-
-            this.dialog.open(ConfirmationDialogComponent, {
-              data: {
-                title: 'Error',
-                message: 'An error occurred while deleting the flight. Please try again.',
-              },
-            });
-          }
-        } else {
-          console.log('🚫 Deletion canceled by user.');
+          this.flights = this.flights.map(flight =>
+            flight.flightNumber === flightNumber ? { ...flight, isActive: false } : flight
+          );
+          this.filteredFlights = [...this.flights];
         }
       });
-    } catch (error) {
-      console.error('❌ Error checking reservations:', error);
 
+    } catch (error) {
+      console.error('❌ Error disabling flight:', error);
+    }
+  }
+
+
+
+  async enableFlight(flightNumber: string, originCode?: string, arrivalCode?: string): Promise<void> {
+    if (!originCode || !arrivalCode) {
       this.dialog.open(ConfirmationDialogComponent, {
         data: {
           title: 'Error',
-          message: 'Failed to check flight reservations. Please try again.',
+          message: 'Missing origin or destination. Please check flight details.',
         },
       });
+      return;
+    }
+
+    try {
+      const originRef = doc(this.firestore, `Destinations/${originCode}`);
+      const arrivalRef = doc(this.firestore, `Destinations/${arrivalCode}`);
+
+      const [originSnapshot, arrivalSnapshot] = await Promise.all([
+        getDoc(originRef),
+        getDoc(arrivalRef),
+      ]);
+
+      if (!originSnapshot.exists() || !arrivalSnapshot.exists()) {
+        console.error('❌ One or both destinations do not exist.');
+        return;
+      }
+
+      const originData = originSnapshot.data();
+      const arrivalData = arrivalSnapshot.data();
+
+      if (!originData['isActive'] || !arrivalData['isActive']) {
+        this.dialog.open(ConfirmationDialogComponent, {
+          data: {
+            title: 'Cannot Enable Flight',
+            message: 'Both origin and destination must be active before enabling this flight.',
+          },
+        });
+        return;
+      }
+
+      // Confirm action
+      const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+        data: {
+          title: 'Enable Flight',
+          message: 'Are you sure you want to enable this flight?',
+          confirmation: true,
+        },
+      });
+
+      dialogRef.afterClosed().subscribe(async (confirmed) => {
+        if (confirmed) {
+          const flightRef = doc(this.firestore, 'Flight', flightNumber);
+          await setDoc(flightRef, { isActive: true }, { merge: true });
+
+          this.flights = this.flights.map(flight =>
+            flight.flightNumber === flightNumber ? { ...flight, isActive: true } : flight
+          );
+          this.filteredFlights = [...this.flights];
+        }
+      });
+
+    } catch (error) {
+      console.error('❌ Error enabling flight:', error);
     }
   }
+
 
   navigateToView(flightNumber: string): void {
     this.router.navigate([`/view-flight/${flightNumber}`]);

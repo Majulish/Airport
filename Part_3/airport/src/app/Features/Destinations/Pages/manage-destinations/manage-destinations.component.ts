@@ -1,4 +1,4 @@
-import { Firestore, collection, getDocs, updateDoc, doc, query, where } from '@angular/fire/firestore';
+import {Firestore, collection, getDocs, updateDoc, doc, query, where, getDoc} from '@angular/fire/firestore';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../../../../Utilities/confirmation-dialog/confirmation-dialog.component';
@@ -45,17 +45,9 @@ export class ManageDestinationsComponent implements OnInit {
 
   async confirmDeactivate(code: string): Promise<void> {
     try {
-      console.log(`Checking flights for destination: ${code}`);
-
-      // 🔹 Check if any flight has this destination as origin or arrival
-      const flightsQuery = query(
-        collection(this.firestore, 'Flight'),
-        where('originCode', '==', code)
-      );
-      const flightsQueryArrival = query(
-        collection(this.firestore, 'Flight'),
-        where('arrivalCode', '==', code)
-      );
+      // Check if any flights are associated with this destination
+      const flightsQuery = query(collection(this.firestore, 'Flight'), where('originCode', '==', code));
+      const flightsQueryArrival = query(collection(this.firestore, 'Flight'), where('arrivalCode', '==', code));
 
       const [originFlightsSnapshot, arrivalFlightsSnapshot] = await Promise.all([
         getDocs(flightsQuery),
@@ -64,69 +56,130 @@ export class ManageDestinationsComponent implements OnInit {
 
       const totalFlights = originFlightsSnapshot.size + arrivalFlightsSnapshot.size;
 
-      console.log(`Found ${totalFlights} flights for destination ${code}`);
-
       if (totalFlights > 0) {
-        console.warn(`🚫 Destination ${code} is used in flights and cannot be deactivated.`);
         this.dialog.open(ConfirmationDialogComponent, {
           data: {
-            title: 'Cannot Deactivate Destination',
-            message: `❌ This destination is used in ${totalFlights} flights and cannot be deactivated.`,
+            title: 'Cannot Disable Destination',
+            message: `This destination is used in ${totalFlights} flights and cannot be disabled.`,
           },
         });
-
-        return; // 🚀 Stop execution if the destination is used
+        return;
       }
 
+      // Confirmation dialog before disabling
       const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
         data: {
-          title: 'Deactivate Destination',
-          message: 'Are you sure you want to deactivate this destination? You will not be able to assign flights to it.',
-          confirmation: true, // Enables "Yes/No" options
+          title: 'Disable Destination',
+          message: 'Are you sure you want to disable this destination?',
+          confirmation: true,
         },
       });
 
       dialogRef.afterClosed().subscribe(async (confirmed) => {
         if (confirmed) {
           try {
-            console.log(`🔄 Deactivating destination: ${code}`);
-            await updateDoc(doc(this.firestore, `Destination/${code}`), { isActive: false });
+            await updateDoc(doc(this.firestore, `Destinations/${code}`), { isActive: false });
 
             this.destinations = this.destinations.map(dest =>
               dest.code === code ? { ...dest, isActive: false } : dest
             );
             this.filteredDestinations = [...this.destinations];
 
-            console.log(`✅ Destination ${code} deactivated successfully.`);
             this.dialog.open(ConfirmationDialogComponent, {
               data: {
-                title: 'Destination Deactivated',
-                message: `Destination ${code} was successfully deactivated.`,
+                title: 'Destination Disabled',
+                message: `Destination ${code} has been successfully disabled.`,
               },
             });
           } catch (error) {
-            console.error('❌ Error deactivating destination:', error);
-            this.dialog.open(ConfirmationDialogComponent, {
-              data: {
-                title: 'Error',
-                message: 'An error occurred while deactivating the destination. Please try again.',
-              },
-            });
+            console.error('❌ Error disabling destination:', error);
           }
-        } else {
-          console.log('🚫 Deactivation canceled by user.');
         }
       });
     } catch (error) {
       console.error('❌ Error checking flights:', error);
-      this.dialog.open(ConfirmationDialogComponent, {
-        data: {
-          title: 'Error',
-          message: 'Failed to check flights associated with this destination. Please try again.',
-        },
-      });
     }
   }
+
+  async enableDestination(code: string): Promise<void> {
+    try {
+      // Get reference to the destination document
+      const destinationRef = doc(this.firestore, `Destinations/${code}`);
+      const destinationSnapshot = await getDoc(destinationRef);
+
+      // Check if the document exists
+      if (!destinationSnapshot.exists()) {
+        this.dialog.open(ConfirmationDialogComponent, {
+          data: {
+            title: 'Error',
+            message: `Destination ${code} does not exist in Firestore.`,
+          },
+        });
+        return;
+      }
+
+      // Check if there are any associated flights
+      const flightsQuery = query(collection(this.firestore, 'Flight'), where('originCode', '==', code));
+      const flightsQueryArrival = query(collection(this.firestore, 'Flight'), where('arrivalCode', '==', code));
+
+      const [originFlightsSnapshot, arrivalFlightsSnapshot] = await Promise.all([
+        getDocs(flightsQuery),
+        getDocs(flightsQueryArrival),
+      ]);
+
+      const flights = [...originFlightsSnapshot.docs, ...arrivalFlightsSnapshot.docs];
+
+      // Check if any associated flights are disabled
+      for (const flightDoc of flights) {
+        const flightData = flightDoc.data();
+        if (!flightData['isActive']) {
+          this.dialog.open(ConfirmationDialogComponent, {
+            data: {
+              title: 'Cannot Enable Destination',
+              message: 'This destination is associated with one or more disabled flights. Enable the flights first.',
+            },
+          });
+          return;
+        }
+      }
+
+      // Confirmation dialog before enabling
+      const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+        data: {
+          title: 'Enable Destination',
+          message: 'Are you sure you want to enable this destination?',
+          confirmation: true,
+        },
+      });
+
+      dialogRef.afterClosed().subscribe(async (confirmed) => {
+        if (confirmed) {
+          try {
+            await updateDoc(destinationRef, { isActive: true });
+
+            this.destinations = this.destinations.map(dest =>
+              dest.code === code ? { ...dest, isActive: true } : dest
+            );
+            this.filteredDestinations = [...this.destinations];
+
+            this.dialog.open(ConfirmationDialogComponent, {
+              data: {
+                title: 'Destination Enabled',
+                message: `Destination ${code} has been successfully enabled.`,
+              },
+            });
+          } catch (error) {
+            console.error('❌ Error enabling destination:', error);
+          }
+        }
+      });
+
+    } catch (error) {
+      console.error('❌ Error checking flights:', error);
+    }
+  }
+
+
 
   navigateToView(code: string): void {
     this.router.navigate(['/view-destination', code]);

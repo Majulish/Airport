@@ -34,15 +34,15 @@
       <td>{{ destination.imageUrl }}</td>
       <td>{{ destination.isActive ? 'Active' : 'Disabled'}}</td>
       <td class="action-icons">
-        <!-- View Icon -->
         <mat-icon class="icon" (click)="navigateToView(destination.code)">visibility</mat-icon>
-
-        <!-- Edit Icon -->
         <mat-icon class="icon" (click)="navigateToEdit(destination.code)">edit</mat-icon>
-
-        <!-- Delete Icon -->
-        <mat-icon class="icon" (click)="confirmDeactivate(destination.code)">delete</mat-icon>
+        <mat-icon
+          class="icon"
+          (click)="destination.isActive ? confirmDeactivate(destination.code) : enableDestination(destination.code)">
+          {{ destination.isActive ? 'delete' : 'check_circle' }}
+        </mat-icon>
       </td>
+
     </tr>
     </tbody>
   </table>

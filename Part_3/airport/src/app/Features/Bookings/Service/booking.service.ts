@@ -44,7 +44,7 @@ export class BookingService {
       return [];
     }
 
-    // 🔹 Step 2: Fetch all flights in one query
+
     const flightCollectionRef = collection(this.firestore, 'Flight');
     const flightSnapshot = await getDocs(flightCollectionRef);
     const flightsMap = await this.flightService.getAllFlights()
@@ -90,4 +90,17 @@ export class BookingService {
     const docRef = doc(this.firestore, 'Booking', bookingId);
     await updateDoc(docRef, { isActive });
   }
+
+  async getFlightStatus(flightNumber: string): Promise<{ isActive: boolean }> {
+    const docRef = doc(this.firestore, 'Flight', flightNumber);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      return { isActive: docSnap.data()['isActive'] }
+    } else {
+      console.warn(`No flight found with number: ${flightNumber}`);
+      return { isActive: false }; // Default to false if flight not found
+    }
+  }
+
 }

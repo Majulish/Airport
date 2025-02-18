@@ -38,8 +38,13 @@
       <td class="action-icons">
         <mat-icon class="icon" (click)="navigateToView(flight.flightNumber)">visibility</mat-icon>
         <mat-icon class="icon" (click)="navigateToEdit(flight.flightNumber)">edit</mat-icon>
-        <mat-icon class="icon" (click)="confirmDelete(flight.flightNumber)">delete</mat-icon>
+        <mat-icon class="icon"
+                  (click)="flight.isActive ? disableFlight(flight.flightNumber) : enableFlight(flight.flightNumber, flight.origin?.code, flight.arrival?.code)">
+          {{ flight.isActive ? 'delete' : 'check_circle' }}
+        </mat-icon>
       </td>
+
+
     </tr>
     </tbody>
   </table>
