@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Flight } from '../../Flights/Model/filght.module';
 import { FlightService } from '../../Flights/Service/flights.service';
 import { DestinationsService } from '../../Destinations/Service/destinations.service';
-import { Firestore, doc, getDoc, collection, getDocs } from '@angular/fire/firestore';
+import {Firestore, doc, getDoc, collection, getDocs, updateDoc} from '@angular/fire/firestore';
 import { Booking } from '../Model/booking.module';
 import {FlightWithDestination} from "../../Flights/Model/flight-with-destination.module";
 import {BookingWithFlightData} from "../Model/bookingWithFlightData.module";
@@ -71,8 +71,9 @@ export class BookingService {
           origin: flight.origin?.name ?? 'Unknown',
           arrival: flight.arrival?.name ?? 'Unknown',
           image: flight.arrival?.imageUrl ?? 'empty',
-          boardingTime: this.formatDate(flight.boardingDate),
-          landingTime: this.formatDate(flight.arrivalDate)
+          boardingTime: flight.boardingDate?.toISOString(),
+          landingTime: flight.arrivalDate?.toISOString(),
+          isActive: booking.isActive,
         };
       });
   }
@@ -83,5 +84,10 @@ export class BookingService {
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
     return `${day}-${month}-${year} ${hours}:${minutes}`;
+  }
+
+  async updateBookingStatus(bookingId: string, isActive: boolean): Promise<void> {
+    const docRef = doc(this.firestore, 'Booking', bookingId);
+    await updateDoc(docRef, { isActive });
   }
 }

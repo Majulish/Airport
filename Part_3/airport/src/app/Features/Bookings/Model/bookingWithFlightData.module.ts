@@ -9,6 +9,7 @@ export class BookingWithFlightData {
     public image: string,
     public boardingTime: string,
     public landingTime: string,
+    public isActive: boolean,
   ) {
   }
 }

@@ -27,15 +27,41 @@ export class MyBookingsComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     const allBookings = await this.bookingService.getAllBookings();
-    this.upcomingBookings = allBookings.filter((booking) => new Date(booking.boardingTime) > new Date());
-    this.previousBookings = allBookings.filter((booking) => new Date(booking.boardingTime) < new Date());
+    const now = new Date();
+
+    this.upcomingBookings = allBookings
+      .filter(booking => new Date(booking.boardingTime) > now)
+      .map(this.formatBookingDates.bind(this));
+
+    this.previousBookings = allBookings
+      .filter(booking => new Date(booking.boardingTime) < now)
+      .map(this.formatBookingDates.bind(this));
   }
 
   viewBooking(id: string): void {
     this.router.navigate(['view-booking', id]);
   }
 
-  formatDate(date: Date): string {
-    return format(date, 'dd-MM-yyyy HH:mm');
+  private formatBookingDates(booking: BookingWithFlightData): BookingWithFlightData {
+    return {
+      ...booking,
+      boardingTime: this.formatDate(booking.boardingTime),
+      landingTime: this.formatDate(booking.landingTime),
+    };
+  }
+
+  formatDate(date: string): string {
+    return format(new Date(date), 'dd-MM-yyyy HH:mm');
+  }
+
+  async toggleBookingStatus(booking: BookingWithFlightData): Promise<void> {
+    const newStatus = !booking.isActive;
+
+    try {
+      await this.bookingService.updateBookingStatus(booking.bookingId, newStatus);
+      booking.isActive = newStatus; // Update the UI immediately
+    } catch (error) {
+      console.error('Error updating booking status:', error);
+    }
   }
 }
