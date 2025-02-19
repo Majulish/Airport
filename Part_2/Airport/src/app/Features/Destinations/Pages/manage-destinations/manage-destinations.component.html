@@ -1,0 +1,41 @@
+<div class="manage-destinations-container">
+  <h2 class="title">Manage Destinations</h2>
+  <div class="search-container">
+    <input
+      type="text"
+      placeholder="Search by name or code"
+      [(ngModel)]="searchTerm"
+      (input)="applyFilter()"
+      class="search-input"
+    />
+  </div>
+  <table class="destinations-table">
+    <thead>
+    <tr>
+      <th>Code</th>
+      <th>Name</th>
+      <th>Airport Name</th>
+      <th>Airport URL</th>
+      <th>Image URL</th>
+      <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let destination of filteredDestinations">
+      <td>{{ destination.code }}</td>
+      <td>{{ destination.name }}</td>
+      <td>{{ destination.airportName }}</td>
+      <td>
+        <a [href]="destination.airportUrl" target="_blank">{{ destination.airportUrl }}</a>
+      </td>
+      <td>{{ destination.imageUrl }}</td>
+      <td>
+        <button class="edit-button" [routerLink]="['/edit-destination', destination.code]">
+          <mat-icon>edit</mat-icon>
+          Edit
+        </button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>

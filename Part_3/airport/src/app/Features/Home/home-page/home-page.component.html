@@ -1,0 +1,41 @@
+<div class="flights-section">
+  <mat-expansion-panel [expanded]="isLastMinuteExpanded" (opened)="onPanelOpened('lastMinute')">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <i class="fa-solid fa-plane-departure fas-icon"></i> <strong>Last Minute Flights</strong>
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <ng-template matExpansionPanelContent>
+      <div class="flights-container">
+        <div *ngIf="flights?.length === 0" class="no-flights-message">
+          <mat-icon>warning</mat-icon>
+          <p>No flights found. Please check back later.</p>
+        </div>
+        <mat-card *ngFor="let flight of flights" class="flight-card">
+          <img [src]="flight.arrival?.imageUrl" alt="no picture">
+          <mat-card-content>
+            <h4>{{ flight.arrival?.name }}</h4>
+            <p><strong>Airport:</strong> {{ flight.arrival?.airportName }}</p>
+            <p><strong>Flight Number:</strong> {{ flight.flightNumber }}</p>
+            <p><strong>Departure Date:</strong> {{ flight.boardingDate | date: 'dd-MM-yyyy HH:mm' }}</p>
+            <p><strong>Seats Taken:</strong> {{ flight.takenSeats }}</p>
+          </mat-card-content>
+          <mat-card-actions>
+            <button (click)="openAirportUrl(flight.arrival?.airportUrl)">Learn More</button>
+            <button [routerLink]="['/book-flight', flight.flightNumber]">Book Now</button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </ng-template>
+  </mat-expansion-panel>
+  <mat-expansion-panel [expanded]="isSearchFlightExpanded" (opened)="onPanelOpened('searchFlight')">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <i class="fa-solid fa-magnifying-glass fas-icon"></i> <strong>Search a Flight</strong>
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <ng-template matExpansionPanelContent>
+      <book-flight [showHeader]="false"></book-flight>
+    </ng-template>
+  </mat-expansion-panel>
+</div>

@@ -1,0 +1,24 @@
+<div class="booking-container">
+    <h2>Book a Flight</h2>
+
+    <div *ngIf="flight" class="flight-details">
+        <p><strong>Origin:</strong> {{ flight.origin?.name }} - Boarding: {{ flight.boardingDate  | date: 'dd-MM-yyyy HH:mm'}} </p>
+        <p><strong>Destination:</strong> {{ flight.arrival?.name }} - Landing: {{ flight.arrivalDate  | date: 'dd-MM-yyyy HH:mm'}}</p>
+        <p><strong>Available Seats:</strong> {{ getAvailableSeats() }}</p>
+    </div>
+
+    <div class="passenger-selection">
+        <label for="passengerCount">No of passengers:</label>
+        <input type="number" id="passengerCount" [(ngModel)]="passengerCount" (change)="updatePassengerCount()" min="1" [max]="getAvailableSeats()">
+    </div>
+
+    <div *ngIf="passengerCount > 0" class="passenger-form">
+        <div *ngFor="let passenger of passengers; let i = index">
+            <h4 class="headline-passengers">Passenger {{ i + 1 }} Details:</h4>
+            <input type="text" [(ngModel)]="passenger.name" placeholder="Passenger Name" required>
+            <input type="text" [(ngModel)]="passenger.passportId" placeholder="Passport Id" required>
+        </div>
+    </div>
+
+    <button class="confirm-button" (click)="confirmBooking()">Confirm Booking</button>
+</div>

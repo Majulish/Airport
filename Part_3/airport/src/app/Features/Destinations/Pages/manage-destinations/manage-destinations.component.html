@@ -1,0 +1,56 @@
+<div class="manage-destinations-container">
+  <h2 class="title">Manage Destinations</h2>
+
+  <div class="search-container">
+    <input
+      type="text"
+      placeholder="Search by name or code"
+      [(ngModel)]="searchTerm"
+      (input)="applyFilter()"
+      class="search-input"
+    />
+  </div>
+
+  <table class="destinations-table">
+    <thead>
+    <tr>
+      <th>Code</th>
+      <th>Name</th>
+      <th>Airport Name</th>
+      <th>Airport URL</th>
+      <th>Image URL</th>
+      <th>Status</th>
+      <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let destination of filteredDestinations">
+      <td>{{ destination.code }}</td>
+      <td>{{ destination.name }}</td>
+      <td>{{ destination.airportName }}</td>
+      <td>
+        <a [href]="destination.airportUrl" target="_blank">{{ destination.airportUrl }}</a>
+      </td>
+      <td>{{ destination.imageUrl }}</td>
+      <td>{{ destination.isActive ? 'Active' : 'Disabled'}}</td>
+      <td class="action-icons">
+        <mat-icon class="icon" (click)="navigateToView(destination.code)">visibility</mat-icon>
+        <mat-icon class="icon" (click)="navigateToEdit(destination.code)">edit</mat-icon>
+        <mat-icon
+          class="icon"
+          (click)="destination.isActive ? confirmDeactivate(destination.code) : enableDestination(destination.code)">
+          {{ destination.isActive ? 'delete' : 'check_circle' }}
+        </mat-icon>
+      </td>
+
+    </tr>
+    </tbody>
+  </table>
+
+  <div class="actions-container">
+    <button class="add-button" [routerLink]="['/add-destination']">
+      <mat-icon>add</mat-icon>
+      Add Destination
+    </button>
+  </div>
+</div>

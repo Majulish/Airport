@@ -1,0 +1,58 @@
+<div class="manage-flights-container">
+  <h2 class="title">Manage Flights</h2>
+
+  <div class="search-container">
+    <input
+      type="text"
+      placeholder="Search by destination or origin code"
+      [(ngModel)]="searchTerm"
+      (input)="applyFilter()"
+      class="search-input"
+    />
+  </div>
+
+  <table class="flights-table">
+    <thead>
+    <tr>
+      <th>Flight Number</th>
+      <th>Origin</th>
+      <th>Destination</th>
+      <th>Boarding Date</th>
+      <th>Arrival Date</th>
+      <th>Seat Count</th>
+      <th>Seats Taken</th>
+      <th>Status</th>
+      <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let flight of filteredFlights">
+      <td>{{ flight.flightNumber }}</td>
+      <td>{{ flight.origin?.name }}</td>
+      <td>{{ flight.arrival?.name }}</td>
+      <td>{{ flight.boardingDate | date: 'dd-MM-yyyy HH:mm' }}</td>
+      <td>{{ flight.arrivalDate | date: 'dd-MM-yyyy HH:mm' }}</td>
+      <td>{{ flight.seatCount }}</td>
+      <td>{{ flight.takenSeats }}</td>
+      <td>{{ flight.isActive ? 'Active' : 'Disabled' }}</td>
+      <td class="action-icons">
+        <mat-icon class="icon" (click)="navigateToView(flight.flightNumber)">visibility</mat-icon>
+        <mat-icon class="icon" (click)="navigateToEdit(flight.flightNumber)">edit</mat-icon>
+        <mat-icon class="icon"
+                  (click)="flight.isActive ? disableFlight(flight.flightNumber) : enableFlight(flight.flightNumber, flight.origin?.code, flight.arrival?.code)">
+          {{ flight.isActive ? 'delete' : 'check_circle' }}
+        </mat-icon>
+      </td>
+
+
+    </tr>
+    </tbody>
+  </table>
+
+  <div class="actions-container">
+    <button class="add-button" [routerLink]="['/add-flight']">
+      <mat-icon>add</mat-icon>
+      Add Flight
+    </button>
+  </div>
+</div>

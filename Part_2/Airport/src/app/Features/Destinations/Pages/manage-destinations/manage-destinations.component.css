@@ -1,0 +1,102 @@
+.manage-destinations-container {
+  padding: 2rem;
+  font-family: Arial, sans-serif;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: #000;
+  text-align: left;
+}
+
+.destinations-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #ddd;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
+
+.destinations-table th,
+.destinations-table td {
+  padding: 12px 15px;
+  text-align: left;
+}
+
+.destinations-table th {
+  background-color: #007bff;
+  color: #ffffff;
+  font-weight: bold;
+  text-transform: uppercase;
+  border-bottom: 2px solid #0056b3;
+}
+
+.destinations-table td {
+  border-bottom: 1px solid #ddd;
+  color: #333;
+  word-break: break-word;
+}
+
+.destinations-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.destinations-table tr:hover {
+  background-color: #f1f1f1;
+}
+
+.destinations-table a {
+  color: blue;
+  text-decoration: none;
+}
+
+.destinations-table a:hover {
+  text-decoration: underline;
+}
+
+
+.edit-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 5px 15px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  color: #ffffff;
+  background: linear-gradient(90deg, #007bff, #0056b3);
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  text-transform: none;
+  white-space: nowrap;
+}
+
+.edit-button mat-icon {
+  font-size: 14px;
+}
+
+.edit-button:hover {
+  background: linear-gradient(90deg, #0056b3, #007bff);
+  transform: translateY(-1px);
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.search-container {
+  margin-bottom: 1rem;
+}
+
+.search-input {
+  width: 100%;
+  padding: 8px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+

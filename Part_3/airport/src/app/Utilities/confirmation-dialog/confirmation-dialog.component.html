@@ -1,0 +1,22 @@
+<div class="dialog-container">
+  <h2 class="dialog-title">{{ data.title }}</h2>
+  <p class="dialog-message">{{ data.message }}</p>
+
+  <!-- Show flights list if applicable -->
+  <ul *ngIf="data.flights && data.flights.length > 0" class="dialog-flight-list">
+    <li *ngFor="let flight of data.flights">{{ flight }}</li>
+  </ul>
+
+  <div class="button-container">
+    <!-- If it's an alert, show only the OK button -->
+    <ng-container *ngIf="!data.confirmation; else confirmationButtons">
+      <button mat-button color="primary" class="ok-button" (click)="onClose()">OK</button>
+    </ng-container>
+
+    <!-- If it's a confirmation dialog, show Confirm & Cancel -->
+    <ng-template #confirmationButtons>
+      <button mat-button color="warn" class="confirm-button" (click)="onConfirm()">Confirm</button>
+      <button mat-button class="cancel-button" (click)="onCancel()">Cancel</button>
+    </ng-template>
+  </div>
+</div>

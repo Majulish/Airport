@@ -1,0 +1,183 @@
+.flights-section {
+  margin: 40px auto;
+  max-width: 1200px;
+  text-align: center;
+}
+
+.flights-section h3 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.flights-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  justify-content: center;
+}
+
+.flight-card {
+  width: 300px;
+  height: 500px;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+}
+
+.flight-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+mat-card {
+  border-radius: 8px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+mat-card img {
+  height: 180px;
+  object-fit: cover;
+  border-bottom: 2px solid #eee;
+  margin-bottom: 0;
+}
+
+mat-card-content {
+  flex: 1;
+  padding: 10px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.fas-icon {
+  margin-right: 10px;
+}
+
+mat-card-content h4 {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #007BFF;
+  margin-bottom: 5px;
+  margin-top: 0;
+}
+
+mat-card-content p {
+  font-size: 0.9rem;
+  color: #555;
+  margin: 3px 0;
+}
+
+mat-card-actions {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  border-top: 1px solid #eee;
+  background-color: #f9f9f9;
+  margin-top: auto;
+}
+
+mat-card-actions button {
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+.no-flights-message {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #FF6F61;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 40px auto;
+}
+
+.no-flights-message mat-icon {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+
+@media (max-width: 768px) {
+  .flight-card {
+    width: 90%;
+    height: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .flights-container {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+.manage-flights-container {
+  padding: 2rem;
+  font-family: Arial, sans-serif;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: #000;
+}
+
+.flights-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.flights-table th,
+.flights-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+
+.flights-table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+.flights-table tr:hover {
+  background-color: #f9f9f9;
+}
+
+
+.edit-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 5px 15px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #ffffff;
+  background: linear-gradient(90deg, #007bff, #0056b3);
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  text-transform: none;
+}
+
+.edit-button mat-icon {
+  font-size: 14px;
+}
+
+.edit-button:hover {
+  background: linear-gradient(90deg, #0056b3, #007bff);
+  transform: translateY(-1px);
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
+}

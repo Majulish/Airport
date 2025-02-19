@@ -1,0 +1,165 @@
+.manage-destinations-container {
+  padding: 2rem;
+  font-family: Arial, sans-serif;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: #000;
+  text-align: left;
+}
+
+.destinations-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #ddd;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
+
+.destinations-table th,
+.destinations-table td {
+  padding: 15px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.destinations-table th {
+  background-color: #007bff;
+  color: #ffffff;
+  font-weight: bold;
+  text-transform: uppercase;
+  border-bottom: 2px solid #0056b3;
+}
+
+.destinations-table td {
+  border-bottom: 1px solid #ddd;
+  color: #333;
+  word-break: break-word;
+}
+
+.destinations-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.destinations-table tr:hover {
+  background-color: #f1f1f1;
+}
+
+.action-icons {
+  min-width: 73px;
+}
+
+.icon {
+  color: #6c757d;
+  font-size: 18px;
+  cursor: pointer;
+  transition: color 0.3s ease, opacity 0.2s ease;
+}
+
+/* Hover effect: Darker gray */
+.icon:hover {
+  color: #343a40;
+}
+
+/* Keep delete and check-circle icons gray */
+.icon.delete-icon {
+  color: inherit; /* Keeps it gray */
+}
+
+.icon.check-icon {
+  color: inherit; /* Keeps it gray */
+}
+
+.search-container {
+  margin-bottom: 1rem;
+}
+
+.search-input {
+  width: 100%;
+  padding: 8px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.add-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: linear-gradient(90deg, #007bff, #0056b3);
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.add-button:hover {
+  background: linear-gradient(90deg, #0056b3, #004494);
+}
+
+.add-button mat-icon {
+  font-size: 20px;
+}
+
+/* ✅ Ensures the table adjusts dynamically */
+.destinations-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto; /* ✅ Allows columns to resize naturally */
+}
+
+/* ✅ General table cell styles */
+.destinations-table th,
+.destinations-table td {
+  padding: 12px;
+  text-align: left;
+  vertical-align: middle;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap; /* ✅ Ensures text remains on one line */
+}
+
+/* ✅ Allow "Airport Name" column to be flexible */
+.destinations-table td:nth-child(3),
+.destinations-table th:nth-child(3) {
+  min-width: 180px; /* ✅ Ensures the airport name is visible */
+  max-width: 250px; /* ✅ Keeps it from expanding too much */
+}
+
+/* ✅ Limit "Image URL" column width */
+.destinations-table td:nth-child(5),
+.destinations-table th:nth-child(5) {
+  max-width: 220px; /* ✅ Prevents excessive width */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
+}
+
+/* ✅ Ensure 'Status' column stays in one line */
+.destinations-table td:nth-child(6),
+.destinations-table th:nth-child(6) {
+  white-space: nowrap; /* ✅ Prevents wrapping */
+}
+
+/* ✅ Adjust table for smaller screens */
+@media (max-width: 1200px) {
+  .destinations-table th,
+  .destinations-table td {
+    font-size: 0.9rem;
+  }
+
+  .destinations-table td:nth-child(5) {
+    max-width: 180px; /* ✅ Reduce width on smaller screens */
+  }
+}

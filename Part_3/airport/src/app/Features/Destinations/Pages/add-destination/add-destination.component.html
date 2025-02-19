@@ -1,0 +1,41 @@
+<div class="add-destination-container">
+  <h2>Add Destination</h2>
+  <form *ngIf="destinationForm" [formGroup]="destinationForm" (ngSubmit)="openConfirmDialog()">
+
+    <label for="code">Code (3 uppercase letters):</label>
+    <input id="code" formControlName="code" type="text" placeholder="e.g., JFK">
+    <span class="error" *ngIf="destinationCodeExists">This code is already in use.</span>
+    <span class="error" *ngIf="invalidCodeFormat">Code must be exactly 3 uppercase letters.</span>
+
+    <label for="name">Name (Only letters & spaces):</label>
+    <input id="name" formControlName="name" type="text" placeholder="e.g., New York">
+    <span class="error" *ngIf="destinationNameExists">This name is already in use.</span>
+    <span class="error" *ngIf="invalidNameFormat">Name must contain only letters and spaces.</span>
+
+    <label for="airportName">Airport Name:</label>
+    <input id="airportName" formControlName="airportName" type="text" placeholder="Enter airport name" required>
+    <span class="error" *ngIf="destinationForm.get('airportName')?.invalid && destinationForm.get('airportName')?.touched">
+      Airport name is required.
+    </span>
+
+    <label for="airportUrl">Airport URL:</label>
+    <input id="airportUrl" formControlName="airportUrl" type="text" placeholder="Enter airport URL">
+    <span class="error" *ngIf="destinationForm.get('airportUrl')?.invalid && destinationForm.get('airportUrl')?.touched">
+      Must be a valid URL starting with http:// or https://
+    </span>
+
+    <label for="imageUrl">Image URL:</label>
+    <input id="imageUrl" formControlName="imageUrl" type="text" placeholder="Enter image URL">
+    <span class="error" *ngIf="destinationForm.get('imageUrl')?.invalid && destinationForm.get('imageUrl')?.touched">
+      Must be a valid URL starting with http:// or https://
+    </span>
+
+    <div class="button-container">
+      <button type="submit" [disabled]="destinationForm.invalid || destinationCodeExists || destinationNameExists">
+        Add Destination
+      </button>
+      <button type="button" class="cancel-button" (click)="cancelAdd()">Cancel</button>
+    </div>
+
+  </form>
+</div>

@@ -1,0 +1,51 @@
+<div class="container">
+  <mat-accordion>
+    <!-- Upcoming Flights -->
+    <mat-expansion-panel [expanded]="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <i class="fas fa-calendar-check"></i> Upcoming Bookings
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <div *ngFor="let booking of upcomingBookings" class="booking-card">
+        <img [src]="booking.image" alt="Destination" class="destination-img" />
+        <div class="booking-info">
+          <p><strong>Origin:</strong> {{ booking.origin }}</p>
+          <p><strong>Destination:</strong> {{ booking.arrival }}</p>
+          <p><strong>Boarding Time:</strong> {{booking.boardingTime}}</p>
+          <p><strong>Landing Time:</strong> {{booking.landingTime}}</p>
+          <p><strong>Number of passengers:</strong> {{ booking.passengerCount }}</p>
+          <p><strong>Status:</strong> {{ booking.isActive ? 'Active' : 'Disabled' }}</p>
+        </div>
+        <div class="action-icons">
+          <i class="fas fa-eye icon" (click)="viewBooking(booking.bookingId)"></i>
+          <i [ngClass]="!booking.isActive ? 'fas fa-check-circle icon' : 'fas fa-times-circle icon'" (click)="toggleBookingStatus(booking)"></i>
+        </div>
+
+      </div>
+    </mat-expansion-panel>
+
+    <!-- Previous Flights -->
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <i class="fas fa-history"></i> Previous Bookings
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <div *ngFor="let booking of previousBookings" class="booking-card">
+        <img [src]="booking.image" alt="Destination" class="destination-img" />
+        <div class="booking-info">
+          <p><strong>Origin:</strong> {{ booking.origin }}</p>
+          <p><strong>Destination:</strong> {{ booking.arrival }}</p>
+          <p><strong>Boarding Time:</strong> {{booking.boardingTime}}</p>
+          <p><strong>Landing Time:</strong> {{booking.landingTime}}</p>
+          <p><strong>Number of passengers:</strong> {{ booking.passengerCount }}</p>
+          <p><strong>Status:</strong> {{ booking.isActive ? 'Active' : 'Disabled' }}</p>
+        </div>
+        <div class="action-icons">
+          <i class="fas fa-eye icon" (click)="viewBooking(booking.bookingId)"></i>
+        </div>
+      </div>
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>
