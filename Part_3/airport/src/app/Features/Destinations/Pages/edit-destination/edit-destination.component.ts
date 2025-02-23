@@ -18,10 +18,10 @@ export class EditDestinationComponent implements OnInit {
   destination: Destination | undefined;
 
   constructor(
-      private route: ActivatedRoute,
-      private destinationsService: DestinationsService,
-      private router: Router,
-      public dialog: MatDialog
+    private route: ActivatedRoute,
+    private destinationsService: DestinationsService,
+    private router: Router,
+    public dialog: MatDialog
   ) {}
 
   async ngOnInit(): Promise<void> {
@@ -34,15 +34,15 @@ export class EditDestinationComponent implements OnInit {
         console.log('Fetched destination:', this.destination);
 
         if (!this.destination) {
-          this.openAlertDialog('Error', 'Destination not found!');
+          this.showDestinationNotFoundDialog(destinationCode);
         }
       } catch (error) {
         console.error('Error fetching destination:', error);
-        this.openAlertDialog('Error', 'Failed to load destination details!');
+        this.showDestinationNotFoundDialog(destinationCode);
       }
     } else {
       console.error('No destination code found in route parameters!');
-      this.openAlertDialog('Error', 'Invalid destination code!');
+      this.showDestinationNotFoundDialog('Invalid Destination Code');
     }
   }
 
@@ -51,7 +51,7 @@ export class EditDestinationComponent implements OnInit {
       data: {
         title: 'Confirm Changes',
         message: 'Are you sure you want to save these changes?',
-        confirmation: true // ✅ Indicates that the dialog is for confirmation
+        confirmation: true
       }
     });
 
@@ -74,10 +74,24 @@ export class EditDestinationComponent implements OnInit {
   }
 
   cancelEdit(): void {
-    this.router.navigate(['/manage-destinations']);
+    this.router.navigate(['/admin/manage-destinations']);
   }
 
-  openAlertDialog(title: string, message: string, navigateAfter?: boolean): void {
+  private showDestinationNotFoundDialog(destinationCode: string): void {
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: {
+        title: '404 - Destination Not Found',
+        message: `The destination with code "${destinationCode}" does not exist.`,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe(() => {
+      this.router.navigate(['/admin/manage-destinations']);
+    });
+  }
+
+
+openAlertDialog(title: string, message: string, navigateAfter?: boolean): void {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       data: { title, message }
     });

@@ -32,17 +32,19 @@ export class EditFlightComponent implements OnInit {
         this.flight = await this.getFlightFromFirestore(flightNumber);
 
         if (!this.flight) {
-          this.openAlertDialog('Error', 'Flight not found!');
+          this.openAlertDialog('Flight Not Found', `The flight with number "${flightNumber}" does not exist.`, true);
         }
       } catch (error) {
         console.error('Error fetching flight:', error);
-        this.openAlertDialog('Error', 'Failed to load flight details!');
+        this.openAlertDialog('Flight Not Found', `The flight with number "${flightNumber}" does not exist.`, true);
       }
     } else {
       console.error('No flight number found in route parameters!');
-      this.openAlertDialog('Error', 'Invalid flight number!');
+      this.openAlertDialog('Flight Not Found', 'Invalid flight number!', true);
     }
   }
+
+
 
   private async getFlightFromFirestore(flightNumber: string): Promise<FlightWithDestination | undefined> {
     try {
@@ -100,7 +102,6 @@ export class EditFlightComponent implements OnInit {
 
   async saveChanges(): Promise<void> {
     if (!this.flight) return;
-
     try {
       const flightDocRef = doc(this.firestore, `Flight/${this.flight.flightNumber}`);
       await updateDoc(flightDocRef, {
@@ -123,12 +124,15 @@ export class EditFlightComponent implements OnInit {
 
   openAlertDialog(title: string, message: string, navigateAfter?: boolean): void {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      data: { title, message }
+      data: {
+        title: `404 - ${title}`,
+        message: message,
+      }
     });
 
     dialogRef.afterClosed().subscribe(() => {
       if (navigateAfter) {
-        this.router.navigate(['/manage-flights']);
+        this.router.navigate(['/admin/manage-flights']);
       }
     });
   }

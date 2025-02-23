@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule, DatePipe } from '@angular/common';
 import { Firestore, doc, getDoc } from '@angular/fire/firestore';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmationDialogComponent } from '../../../../Utilities/confirmation-dialog/confirmation-dialog.component';
 import { FlightWithDestination } from "../../Model/flight-with-destination.module";
 
 @Component({
@@ -14,11 +16,12 @@ import { FlightWithDestination } from "../../Model/flight-with-destination.modul
 export class ViewFlightComponent implements OnInit {
   flight: FlightWithDestination | null = null;
   loading: boolean = true;
-  errorMessage: string | null = null;
 
   constructor(
-      private route: ActivatedRoute,
-      private firestore: Firestore
+    private route: ActivatedRoute,
+    private firestore: Firestore,
+    private dialog: MatDialog,
+    private router: Router
   ) {}
 
   async ngOnInit(): Promise<void> {
@@ -26,8 +29,7 @@ export class ViewFlightComponent implements OnInit {
     if (flightNumber) {
       await this.loadFlightData(flightNumber);
     } else {
-      this.errorMessage = "Invalid flight number.";
-      this.loading = false;
+      this.showFlightNotFoundDialog('Invalid flight number.');
     }
   }
 
@@ -38,8 +40,7 @@ export class ViewFlightComponent implements OnInit {
       const flightSnapshot = await getDoc(flightDocRef);
 
       if (!flightSnapshot.exists()) {
-        this.errorMessage = "Flight not found.";
-        this.loading = false;
+        this.showFlightNotFoundDialog(`The flight with number "${flightNumber}" does not exist.`);
         return;
       }
 
@@ -51,18 +52,13 @@ export class ViewFlightComponent implements OnInit {
         arrivalDate: Date;
         seatCount: number;
         takenSeats: number;
-        isActive: boolean
+        isActive: boolean;
       };
-
-      console.log("Flight data from Firestore:", flightData);
 
       const [origin, arrival] = await Promise.all([
         this.getDestinationByCode(flightData.originCode),
         this.getDestinationByCode(flightData.arrivalCode)
       ]);
-
-      console.log("Origin retrieved:", origin);
-      console.log("Arrival retrieved:", arrival);
 
       this.flight = {
         flightNumber: flightData.flightNumber,
@@ -78,17 +74,13 @@ export class ViewFlightComponent implements OnInit {
       this.loading = false;
     } catch (error) {
       console.error("Error fetching flight:", error);
-      this.errorMessage = "Failed to load flight data.";
-      this.loading = false;
+      this.showFlightNotFoundDialog("Failed to load flight data.");
     }
   }
 
   private async getDestinationByCode(code: string): Promise<any> {
     try {
-      if (!code) {
-        console.error("Invalid destination code.");
-        return { name: "Unknown", code };
-      }
+      if (!code) return { name: "Unknown", code };
 
       const destinationDocRef = doc(this.firestore, `Destinations/${code}`);
       const destinationSnapshot = await getDoc(destinationDocRef);
@@ -99,9 +91,6 @@ export class ViewFlightComponent implements OnInit {
       }
 
       const destinationData = destinationSnapshot.data();
-
-      console.log(`Fetched destination:`, destinationData);
-
       return {
         name: destinationData?.['name'] ?? "Unknown",
         code: destinationData?.['code'] ?? code
@@ -112,6 +101,16 @@ export class ViewFlightComponent implements OnInit {
     }
   }
 
+  private showFlightNotFoundDialog(message: string): void {
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: {
+        title: '404 - Flight Not Found',
+        message: message,
+      },
+    });
 
-
+    dialogRef.afterClosed().subscribe(() => {
+      this.router.navigate(['/admin/manage-flights']); // Redirect to manage flights
+    });
+  }
 }

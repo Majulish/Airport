@@ -57,3 +57,29 @@ button:hover {
   opacity: 0.9;
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
 }
+
+.dialog-title {
+  font-size: 22px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.dialog-message {
+  font-size: 16px;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.ok-button {
+  display: block;
+  margin: auto;
+  background-color: white;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+}
+
+.ok-button:hover {
+  background-color: #0056b3;
+}
+
