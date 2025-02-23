@@ -35,30 +35,58 @@ export class BookFlightComponent implements OnInit {
   async ngOnInit() {
     this.flightNumber = this.route.snapshot.paramMap.get('flightNumber');
     if (this.flightNumber) {
-      await this.getFlightDetails(this.flightNumber);
+      const flightFound = await this.getFlightDetails(this.flightNumber);
+      if (flightFound) {
+        this.updatePassengerCount();
+      }
     }
-
-    this.updatePassengerCount();
   }
 
-  async getFlightDetails(flightNumber: string) {
+
+  async getFlightDetails(flightNumber: string): Promise<boolean> {
     const flightRef = doc(this.firestore, `Flight/${flightNumber}`);
     const flightSnap = await getDoc(flightRef);
 
     if (!flightSnap.exists()) {
-      console.error('Flight not found!');
-      return;
+      console.error('❌ Flight not found!');
+
+      // Show 404 dialog and redirect to My Bookings
+      const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+        data: {
+          title: '404 - Flight Not Found',
+          message: `The flight with number "${flightNumber}" does not exist.`,
+        },
+      });
+
+      dialogRef.afterClosed().subscribe(() => {
+        this.router.navigate(['/user/manage-bookings']); // Redirect to bookings page after clicking OK
+      });
+
+      return false;
     }
 
     const flightData = flightSnap.data();
     const [origin, arrival] = await Promise.all([
       this.destinationService.get(flightData['originCode']),
       this.destinationService.get(flightData['arrivalCode'])
-    ])
+    ]);
 
-    this.flight = new FlightWithDestination(flightNumber, origin, arrival, flightData['boardingDate'].toDate(),
-      flightData['arrivalDate'].toDate(), flightData['seatCount'], flightData['takenSeats'], flightData['isActive']);
+    this.flight = new FlightWithDestination(
+      flightNumber,
+      origin,
+      arrival,
+      flightData['boardingDate'].toDate(),
+      flightData['arrivalDate'].toDate(),
+      flightData['seatCount'],
+      flightData['takenSeats'],
+      flightData['isActive']
+    );
+
+    return true;
   }
+
+
+
 
   updatePassengerCount() {
     if (this.passengerCount > this.getAvailableSeats()) {
