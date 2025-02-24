@@ -34,7 +34,11 @@
       <td>{{ flight.arrivalDate | date: 'dd-MM-yyyy HH:mm' }}</td>
       <td>{{ flight.seatCount }}</td>
       <td>{{ flight.takenSeats }}</td>
-      <td>{{ flight.isActive ? 'Active' : 'Disabled' }}</td>
+      <td>
+          <span class="status" [ngClass]="flight.isActive ? 'active' : 'disabled'">
+            {{ flight.isActive ? 'Active' : 'Disabled' }}
+          </span>
+      </td>
       <td class="action-icons">
         <mat-icon class="icon" (click)="navigateToView(flight.flightNumber)">visibility</mat-icon>
         <mat-icon class="icon" (click)="navigateToEdit(flight.flightNumber)">edit</mat-icon>

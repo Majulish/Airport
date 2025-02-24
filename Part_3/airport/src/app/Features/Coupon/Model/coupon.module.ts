@@ -8,8 +8,20 @@ export class Coupon {
     public discountPercentage: number,
     public description: string,
     public remainingUses: number,
-    public isActive: boolean
+    public isActive: boolean = true
   ) {}
+
+  static fromFirestore(data: any): Coupon {
+    return new Coupon(
+      data.code,
+      data.startDate instanceof Timestamp ? data.startDate.toDate() : new Date(data.startDate),
+      data.endDate instanceof Timestamp ? data.endDate.toDate() : new Date(data.endDate),
+      data.discountPercentage,
+      data.description,
+      data.remainingUses,
+      data.isActive ?? true
+    );
+  }
 
   toPlainObject() {
     return {
@@ -19,20 +31,7 @@ export class Coupon {
       discountPercentage: this.discountPercentage,
       description: this.description,
       remainingUses: this.remainingUses,
-      isActive: this.isActive
+      isActive: this.isActive,
     };
-  }
-
-
-  static fromFirestore(data: any): Coupon {
-    return new Coupon(
-      data.code,
-      data.startDate.toDate(),
-      data.endDate.toDate(),
-      data.discountPercentage,
-      data.description,
-      data.remainingUses,
-      data.isActive ?? true
-    );
   }
 }

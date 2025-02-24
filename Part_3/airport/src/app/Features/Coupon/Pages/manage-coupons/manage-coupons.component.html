@@ -27,19 +27,22 @@
     <tr *ngFor="let coupon of filteredCoupons">
       <td>{{ coupon.code }}</td>
       <td>{{ coupon.discountPercentage }}%</td>
-      <td>{{ coupon.startDate | date: 'MMMM d, y' }}</td>
-      <td>{{ coupon.endDate | date: 'MMMM d, y' }}</td>
+      <td>{{ coupon.startDate | date: 'dd-MM-yyyy' }}</td>
+      <td>{{ coupon.endDate | date: 'dd-MM-yyyy' }}</td>
       <td>{{ coupon.remainingUses }}</td>
       <td>
-          <span class="status" [ngClass]="coupon.isActive ? 'active' : 'inactive'">
-            {{ coupon.isActive ? 'Active' : 'Inactive' }}
+          <span class="status" [ngClass]="coupon.isActive ? 'active' : 'disabled'">
+            {{ coupon.isActive ? 'Active' : 'Disabled' }}
           </span>
       </td>
       <td class="action-icons">
-        <i class="fas fa-tag icon" (click)="navigateToView(coupon.code)"></i>
-        <i class="fas fa-edit icon" (click)="navigateToEdit(coupon.code)"></i>
-        <i class="fas" [ngClass]="coupon.isActive ? 'fa-ban' : 'fa-check-circle'"
-           (click)="toggleCouponStatus(coupon.code, coupon.isActive)"></i>
+        <mat-icon class="icon" (click)="navigateToView(coupon.code)">visibility</mat-icon>
+        <mat-icon class="icon" (click)="navigateToEdit(coupon.code)">edit</mat-icon>
+        <mat-icon
+          class="icon"
+          (click)="coupon.isActive ? toggleCouponStatus(coupon.code, true) : toggleCouponStatus(coupon.code, false)">
+          {{ coupon.isActive ? 'delete' : 'check_circle' }}
+        </mat-icon>
       </td>
     </tr>
     </tbody>

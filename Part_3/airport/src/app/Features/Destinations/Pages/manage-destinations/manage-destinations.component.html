@@ -32,7 +32,11 @@
         <a [href]="destination.airportUrl" target="_blank">{{ destination.airportUrl }}</a>
       </td>
       <td>{{ destination.imageUrl }}</td>
-      <td>{{ destination.isActive ? 'Active' : 'Disabled'}}</td>
+      <td>
+          <span class="status" [ngClass]="destination.isActive ? 'active' : 'disabled'">
+            {{ destination.isActive ? 'Active' : 'Disabled' }}
+          </span>
+      </td>
       <td class="action-icons">
         <mat-icon class="icon" (click)="navigateToView(destination.code)">visibility</mat-icon>
         <mat-icon class="icon" (click)="navigateToEdit(destination.code)">edit</mat-icon>

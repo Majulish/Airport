@@ -49,11 +49,29 @@
   background-color: #f1f1f1;
 }
 
+.status {
+  font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 5px;
+  display: inline-block;
+}
+
+.status.active {
+  color: white;
+  background-color: green;
+}
+
+.status.disabled {
+  color: white;
+  background-color: red;
+}
+
 .icon {
   color: #6c757d;
   font-size: 18px;
   cursor: pointer;
   transition: color 0.3s ease;
+  margin-right: 10px;
 }
 
 .icon:hover {
@@ -66,22 +84,6 @@
 
 .fa-check-circle {
   color: green;
-}
-
-.status {
-  font-weight: bold;
-  padding: 5px 10px;
-  border-radius: 5px;
-}
-
-.status.active {
-  color: white;
-  background-color: green;
-}
-
-.status.inactive {
-  color: white;
-  background-color: red;
 }
 
 .search-container {

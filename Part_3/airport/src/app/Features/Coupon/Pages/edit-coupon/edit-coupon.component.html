@@ -1,0 +1,31 @@
+<div *ngIf="coupon" class="edit-coupon-container">
+  <h2>Edit Coupon</h2>
+  <form #editForm="ngForm">
+    <label for="code">Code:</label>
+    <input type="text" id="code" [(ngModel)]="coupon.code" name="code" disabled />
+
+    <label for="discountPercentage">Discount Percentage:</label>
+    <input type="number" id="discountPercentage" [(ngModel)]="coupon.discountPercentage" name="discountPercentage" required />
+
+    <label for="startDate">Start Date:</label>
+    <input type="datetime-local" id="startDate" [(ngModel)]="coupon.startDate" name="startDate" required />
+
+    <label for="endDate">End Date:</label>
+    <input type="datetime-local" id="endDate" [(ngModel)]="coupon.endDate" name="endDate" required />
+
+    <label for="remainingUses">Remaining Uses:</label>
+    <input type="number" id="remainingUses" [(ngModel)]="coupon.remainingUses" name="remainingUses" required />
+
+    <label for="description">Description:</label>
+    <textarea id="description" [(ngModel)]="coupon.description" name="description" required></textarea>
+
+    <div class="button-container">
+      <button type="button" (click)="openConfirmDialog()" [disabled]="editForm.invalid">
+        Save Changes
+      </button>
+      <button type="button" class="cancel-button" (click)="cancelEdit()">
+        Cancel
+      </button>
+    </div>
+  </form>
+</div>

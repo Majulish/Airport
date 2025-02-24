@@ -8,7 +8,8 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-
+import {Timestamp} from 'firebase/firestore';
+import { format } from 'date-fns';
 @Component({
   selector: 'app-manage-coupons',
   templateUrl: './manage-coupons.component.html',
@@ -38,10 +39,26 @@ export class ManageCouponsComponent implements OnInit {
 
       this.coupons = querySnapshot.docs.map(docSnapshot => {
         const data = docSnapshot.data();
+
+        console.log("Raw Firestore Data:", data);
+
+        // ✅ Convert stored ISO strings back to JavaScript Date objects
+        const safeStartDate =
+          typeof data['startDate'] === "string"
+            ? new Date(data['startDate'])
+            : new Date("2025-01-01T00:00:00Z"); // Default if missing
+
+        const safeEndDate =
+          typeof data['endDate'] === "string"
+            ? new Date(data['endDate'])
+            : new Date(); // Default if missing
+
+        console.log(`Processed Dates - Code: ${data['code']}, Start: ${safeStartDate}, End: ${safeEndDate}`);
+
         return new Coupon(
           data['code'],
-          data['startDate'].toDate(),
-          data['endDate'].toDate(),
+          safeStartDate, // ✅ Store as Date object
+          safeEndDate,   // ✅ Store as Date object
           data['discountPercentage'],
           data['description'],
           data['remainingUses'],
