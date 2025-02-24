@@ -21,6 +21,10 @@
           <i class="fas fa-map-marked-alt"></i>
           <a [routerLink]="'/admin/manage-destinations'">Manage Destinations</a>
         </li>
+        <li (click)="onMenuItemClick()">
+          <i class="fas fa-ticket-alt"></i>
+          <a [routerLink]="'/admin/manage-coupons'">Manage Coupons</a>
+        </li>
       </ul>
 
       <li (click)="toggleMenu('user')">

@@ -9,6 +9,7 @@ export class FlightWithDestination {
     public arrivalDate: Date,
     public seatCount: number,
     public takenSeats: number,
+    public price: number,
     public isActive: boolean,
   ) {}
 }

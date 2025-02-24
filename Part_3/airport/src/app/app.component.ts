@@ -8,6 +8,7 @@ import {DestinationsUploadService} from './Features/Destinations/Service/destina
 import {FlightUploadService} from './Features/Flights/Service/flights-upload.service';
 import {BookingUploadService} from './Features/Bookings/Service/booking-upload.service';
 import { trigger, state, style, animate, transition } from '@angular/animations';
+import {CouponUploadService} from './Features/Coupon/Service/coupon-upload.service';
 
 @Component({
   selector: 'ono-air-root',
@@ -37,7 +38,8 @@ export class AppComponent implements OnInit {
   constructor(
     private UploadDestinationsService: DestinationsUploadService ,
     private UploadFlightService: FlightUploadService,
-    private uploadBookingService: BookingUploadService
+    private uploadBookingService: BookingUploadService,
+    private uploadCouponService: CouponUploadService
   ) {}
 
   async ngOnInit() {
@@ -45,6 +47,7 @@ export class AppComponent implements OnInit {
     await this.UploadDestinationsService.uploadDestinations();
     await this.UploadFlightService.loadDestinationsAndInitializeFlights();
     await this.uploadBookingService.uploadBookings();
+    await this.uploadCouponService.uploadCoupons();
   }
 
   onMenuItemClick(): void {

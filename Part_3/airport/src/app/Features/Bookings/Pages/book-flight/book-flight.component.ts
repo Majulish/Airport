@@ -79,6 +79,7 @@ export class BookFlightComponent implements OnInit {
       flightData['arrivalDate'].toDate(),
       flightData['seatCount'],
       flightData['takenSeats'],
+      flightData['price'],
       flightData['isActive']
     );
 

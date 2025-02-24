@@ -1,0 +1,54 @@
+<div class="manage-coupons-container">
+  <h2 class="title">Manage Coupons</h2>
+
+  <div class="search-container">
+    <input
+      type="text"
+      placeholder="Search by code or description"
+      [(ngModel)]="searchTerm"
+      (input)="applyFilter()"
+      class="search-input"
+    />
+  </div>
+
+  <table class="coupons-table">
+    <thead>
+    <tr>
+      <th>Code</th>
+      <th>Discount</th>
+      <th>Start Date</th>
+      <th>End Date</th>
+      <th>Remaining Uses</th>
+      <th>Status</th>
+      <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let coupon of filteredCoupons">
+      <td>{{ coupon.code }}</td>
+      <td>{{ coupon.discountPercentage }}%</td>
+      <td>{{ coupon.startDate | date: 'MMMM d, y' }}</td>
+      <td>{{ coupon.endDate | date: 'MMMM d, y' }}</td>
+      <td>{{ coupon.remainingUses }}</td>
+      <td>
+          <span class="status" [ngClass]="coupon.isActive ? 'active' : 'inactive'">
+            {{ coupon.isActive ? 'Active' : 'Inactive' }}
+          </span>
+      </td>
+      <td class="action-icons">
+        <i class="fas fa-tag icon" (click)="navigateToView(coupon.code)"></i>
+        <i class="fas fa-edit icon" (click)="navigateToEdit(coupon.code)"></i>
+        <i class="fas" [ngClass]="coupon.isActive ? 'fa-ban' : 'fa-check-circle'"
+           (click)="toggleCouponStatus(coupon.code, coupon.isActive)"></i>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+  <div class="actions-container">
+    <button class="add-button" [routerLink]="['/add-coupon']">
+      <mat-icon>add</mat-icon>
+      Add Coupon
+    </button>
+  </div>
+</div>

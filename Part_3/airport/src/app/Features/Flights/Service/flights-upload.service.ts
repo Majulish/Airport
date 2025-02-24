@@ -40,6 +40,7 @@ export class FlightUploadService {
           date.getUpcomingDate(1,18,0),
           250,
           120,
+          155,
           true
       ),
       new Flight(
@@ -50,6 +51,7 @@ export class FlightUploadService {
           date.getUpcomingDate(1, 20),
           300,
           200,
+          250,
           true
       ),
       new Flight(
@@ -60,6 +62,7 @@ export class FlightUploadService {
           date.getUpcomingDate(-2, 5),
           220,
           180,
+          250,
           true
       ),
       new Flight(
@@ -70,6 +73,7 @@ export class FlightUploadService {
           date.getUpcomingDate(-5, 23),
           180,
           50,
+          350,
           true
       ),
       new Flight(
@@ -80,6 +84,7 @@ export class FlightUploadService {
           date.getUpcomingDate(2,6),
           300,
           270,
+          450,
           true
       ),
       new Flight(
@@ -90,6 +95,7 @@ export class FlightUploadService {
           date.getUpcomingDate(11,19),
           250,
           100,
+          550,
           true
       ),
       new Flight(
@@ -100,6 +106,7 @@ export class FlightUploadService {
           date.getUpcomingDate(9,23,30),
           200,
           150,
+          225,
           true
       ),
       new Flight(
@@ -110,6 +117,7 @@ export class FlightUploadService {
           date.getUpcomingDate(12,22,30),
           180,
           60,
+          425,
           true
       ),
       new Flight(
@@ -120,6 +128,7 @@ export class FlightUploadService {
           date.getUpcomingDate(13,21,30),
           200,
           120,
+          225,
           true
       ),
       new Flight(
@@ -130,6 +139,7 @@ export class FlightUploadService {
           date.getUpcomingDate(14,14),
           250,
           140,
+          375,
           true
       ),
     ];
@@ -161,6 +171,7 @@ export class FlightUploadService {
             arrivalDate: flight.arrivalDate,
             seatCount: flight.seatCount,
             takenSeats: flight.takenSeats,
+            price: flight.price,
             originRef: doc(this.firestore, 'Destinations', flight.originCode),
             arrivalRef: doc(this.firestore, 'Destinations', flight.arrivalCode),
             isActive: flight.isActive,

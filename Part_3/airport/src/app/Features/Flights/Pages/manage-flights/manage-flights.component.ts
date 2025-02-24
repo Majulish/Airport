@@ -49,6 +49,7 @@ export class ManageFlightsComponent implements OnInit {
               arrivalDate: (flightData['arrivalDate']as unknown as Timestamp).toDate(),
               seatCount: flightData['seatCount'],
               takenSeats: flightData['takenSeats'],
+              price: flightData['price'],
               isActive: flightData['isActive']
             };
           })

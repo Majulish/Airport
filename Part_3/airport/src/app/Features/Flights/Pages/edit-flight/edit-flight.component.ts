@@ -65,6 +65,7 @@ export class EditFlightComponent implements OnInit {
         arrivalDate: flightData["arrivalDate"],
         seatCount: flightData["seatCount"],
         takenSeats: flightData["takenSeats"],
+        price: flightData["price"],
         isActive: flightData["isActive"]
       };
     } catch (error) {

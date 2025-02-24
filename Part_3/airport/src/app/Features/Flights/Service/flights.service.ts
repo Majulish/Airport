@@ -29,7 +29,7 @@ export class FlightService {
         this.getDestinationByCode(flightData.arrivalCode)
         ])
 
-    return new FlightWithDestination(flightData.flightNumber, origin, arrival, flightData.boardingDate, flightData.arrivalDate, flightData.seatCount, flightData.takenSeats, flightData.isActive);
+    return new FlightWithDestination(flightData.flightNumber, origin, arrival, flightData.boardingDate, flightData.arrivalDate, flightData.seatCount, flightData.takenSeats,flightData.price, flightData.isActive);
   }
 
   private async getDestinationByCode(code: string): Promise<Destination | undefined> {
@@ -77,6 +77,7 @@ export class FlightService {
           flight.arrivalDate,
           flight.seatCount,
           flight.takenSeats,
+          flight.price,
           flight.isActive
       );
     });
@@ -116,6 +117,7 @@ export class FlightService {
             flight.arrivalDate,
             flight.seatCount,
             flight.takenSeats,
+            flight.price,
             flight.isActive,
         ));
   }
@@ -157,6 +159,7 @@ export class FlightService {
             flight.arrivalDate,
             flight.seatCount,
             flight.takenSeats,
+            flight.price,
             flight.isActive,
         ));
 

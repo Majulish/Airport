@@ -15,6 +15,7 @@ import {AddDestinationComponent} from "./Features/Destinations/Pages/add-destina
 import {ViewDestinationComponent} from './Features/Destinations/Pages/view-destination/view-destination.component';
 import {BookFlightComponent} from "./Features/Bookings/Pages/book-flight/book-flight.component";
 import {AddFlightComponent} from './Features/Flights/Pages/add-flight/add-flight.component';
+import {ManageCouponsComponent} from './Features/Coupon/Pages/manage-coupons/manage-coupons.component';
 
 export const appRoutes: Routes = [
   { path: '', redirectTo: '/home-page', pathMatch: 'full' },
@@ -24,6 +25,7 @@ export const appRoutes: Routes = [
   { path: 'view-booking/:id', component: ViewBookingComponent },
   { path: 'user/manage-bookings', component: ManageBookingsComponent },
   { path: 'admin/manage-flights', component: ManageFlightsComponent },
+  { path: 'admin/manage-coupons', component: ManageCouponsComponent},
   { path: 'edit-flight/:flightNumber', component: EditFlightComponent },
   { path: 'view-flight/:flightNumber', component: ViewFlightComponent },
   { path: 'add-flight', component: AddFlightComponent},

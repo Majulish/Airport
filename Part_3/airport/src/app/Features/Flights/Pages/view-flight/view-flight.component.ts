@@ -52,6 +52,7 @@ export class ViewFlightComponent implements OnInit {
         arrivalDate: Date;
         seatCount: number;
         takenSeats: number;
+        price: number;
         isActive: boolean;
       };
 
@@ -68,6 +69,7 @@ export class ViewFlightComponent implements OnInit {
         arrivalDate: flightData.arrivalDate,
         seatCount: flightData.seatCount,
         takenSeats: flightData.takenSeats,
+        price: flightData.price,
         isActive: flightData.isActive
       };
 
