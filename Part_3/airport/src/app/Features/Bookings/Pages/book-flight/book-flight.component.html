@@ -21,5 +21,12 @@
         </div>
     </div>
 
-    <button class="confirm-button" (click)="confirmBooking()">Confirm Booking</button>
+  <div class="coupon-section">
+    <label for="couponCode">Have a Coupon?</label>
+    <input type="text" id="couponCode" [(ngModel)]="couponCode" placeholder="Enter Coupon Code">
+    <button class="apply-coupon-button" (click)="applyCoupon()">Apply</button>
+    <p *ngIf="discountedPrice !== null"><strong>Discounted Price:</strong> {{ discountedPrice }}$</p>
+    <p *ngIf="couponError" class="error-message">{{ couponError }}</p>
+  </div>
+  <button class="confirm-button" (click)="confirmBooking()">Confirm Booking</button>
 </div>

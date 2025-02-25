@@ -1,0 +1,19 @@
+<div *ngIf="coupon" class="view-coupon-container">
+  <h2>Coupon Details</h2>
+  <p><strong>Coupon Code:</strong> {{ coupon.code }}</p>
+  <p><strong>Description:</strong> {{ coupon.description }}</p>
+  <p><strong>Discount:</strong> {{ coupon.discountPercentage }}%</p>
+  <p><strong>Start Date:</strong> {{ coupon.startDate | date: 'dd-MM-yyyy HH:mm' }}</p>
+  <p><strong>End Date:</strong> {{ coupon.endDate | date: 'dd-MM-yyyy HH:mm' }}</p>
+  <p><strong>Remaining Uses:</strong> {{ coupon.remainingUses }}</p>
+  <p><strong>Status:</strong>
+    <span [ngClass]="coupon.isActive ? 'active-status' : 'disabled-status'">
+      {{ coupon.isActive ? 'Active' : 'Disabled' }}
+    </span>
+  </p>
+</div>
+
+<div *ngIf="loading" class="loading-container">
+  <p>Loading coupon details...</p>
+</div>
+

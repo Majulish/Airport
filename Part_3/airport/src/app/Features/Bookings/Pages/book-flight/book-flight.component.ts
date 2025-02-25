@@ -12,6 +12,8 @@ import { BookingService} from '../../Service/booking.service';
 import {Flight} from '../../../Flights/Model/filght.module';
 import {DestinationsService} from '../../../Destinations/Service/destinations.service';
 import {BookingUploadService} from '../../Service/booking-upload.service';
+import {CouponService} from '../../../Coupon/Service/coupon.service';
+import {Destination} from '../../../Destinations/Model/destination.module';
 
 @Component({
   selector: 'book-flight',
@@ -25,15 +27,20 @@ export class BookFlightComponent implements OnInit {
   flightNumber: string | null = null;
   passengerCount: number = 1;
   passengers: { name: string; passportId: string }[] = [];
+  couponCode: string = '';
+  discountedPrice: number | null = null;
+  couponError: string | null = null;
+  appliedCoupon: boolean = false;
 
 
   constructor(
-      private route: ActivatedRoute,
-      private firestore: Firestore,
-      private router: Router,
-      private dialog: MatDialog,
-      private destinationService: DestinationsService,
-      private bookingService: BookingService
+    private route: ActivatedRoute,
+    private firestore: Firestore,
+    private router: Router,
+    private dialog: MatDialog,
+    private bookingService: BookingService,
+    private destinationService: DestinationsService,
+    private couponService: CouponService
   ) {}
 
   async ngOnInit() {
@@ -46,7 +53,53 @@ export class BookFlightComponent implements OnInit {
     }
   }
 
+  async applyCoupon() {
+    if (this.appliedCoupon) {
+      this.couponError = 'Only one coupon can be used per order!';
+      return;
+    }
 
+    if (!this.flightNumber) {
+      this.couponError = 'Error: No flight selected!';
+      return;
+    }
+
+    try {
+      const couponData = await this.couponService.getCouponByCode(this.couponCode); // Updated method name
+
+      if (!couponData || !couponData.isActive) {
+        this.dialog.open(ConfirmationDialogComponent, {
+          data: {
+            title: 'Invalid Coupon',
+            message: 'This coupon is either disabled or does not exist.',
+          },
+        }).afterClosed().subscribe(() => {
+          this.couponCode = ''; // Clear coupon input field
+        });
+        return;
+      }
+
+      const totalPrice = await this.bookingService.calculateTotalPrice(this.flightNumber, this.passengerCount);
+      const discounted = await this.couponService.applyCoupon(this.couponCode, totalPrice);
+
+      if (discounted === null) {
+        this.couponError = 'Invalid or expired coupon!';
+        this.couponCode = ''; // Clear invalid coupon input
+      } else {
+        this.discountedPrice = discounted;
+        this.appliedCoupon = true;
+        this.couponError = null;
+      }
+    } catch (error) {
+      console.error('Error fetching coupon:', error);
+      this.dialog.open(ConfirmationDialogComponent, {
+        data: {
+          title: 'Error',
+          message: 'Failed to retrieve coupon details. Please try again.',
+        },
+      });
+    }
+  }
   async getFlightDetails(flightNumber: string): Promise<boolean> {
     const flightRef = doc(this.firestore, `Flight/${flightNumber}`);
     const flightSnap = await getDoc(flightRef);
@@ -89,10 +142,6 @@ export class BookFlightComponent implements OnInit {
 
     return true;
   }
-
-
-
-
   updatePassengerCount() {
     if (this.passengerCount > this.getAvailableSeats()) {
       this.dialog.open(ConfirmationDialogComponent, {
@@ -113,11 +162,9 @@ export class BookFlightComponent implements OnInit {
   getAvailableSeats(): number {
     return this.flight ? this.flight.seatCount - this.flight.takenSeats : 0;
   }
-
   generateBookingId(): string {
     return 'B' + Math.floor(1000 + Math.random() * 9000).toString();
   }
-
   async confirmBooking() {
     if (!this.flight || this.passengerCount < 1) return;
 
@@ -137,6 +184,7 @@ export class BookFlightComponent implements OnInit {
 
     // Validate Passport ID (exactly 9 digits)
     const passportRegex = /^\d{9}$/;
+    const passportSet = new Set();
     for (const passenger of this.passengers) {
       if (!passportRegex.test(passenger.passportId)) {
         this.dialog.open(ConfirmationDialogComponent, {
@@ -147,11 +195,6 @@ export class BookFlightComponent implements OnInit {
         });
         return;
       }
-    }
-
-    // Check for duplicate passport IDs
-    const passportSet = new Set();
-    for (const passenger of this.passengers) {
       if (passportSet.has(passenger.passportId)) {
         this.dialog.open(ConfirmationDialogComponent, {
           data: {
@@ -170,7 +213,6 @@ export class BookFlightComponent implements OnInit {
 
       const existingBooking = await getDoc(bookingRef);
       if (existingBooking.exists()) {
-        console.error(`Booking ID ${bookingId} already exists!`);
         this.dialog.open(ConfirmationDialogComponent, {
           data: {
             title: 'Error',
@@ -185,8 +227,11 @@ export class BookFlightComponent implements OnInit {
         return;
       }
 
-      const totalPrice = await this.bookingService.calculateTotalPrice(this.flightNumber, this.passengerCount);
-
+      let totalPrice = await this.bookingService.calculateTotalPrice(this.flightNumber, this.passengerCount);
+      if (this.appliedCoupon && this.discountedPrice !== null) {
+        totalPrice = this.discountedPrice;
+        await this.couponService.updateCouponUsage(this.couponCode); // ✅ Reduce coupon usage
+      }
 
       await setDoc(bookingRef, {
         bookingId: bookingId,
@@ -194,6 +239,7 @@ export class BookFlightComponent implements OnInit {
         numOfPassengers: this.passengerCount,
         passengers: this.passengers,
         totalPrice: totalPrice,
+        couponUsed: this.appliedCoupon ? this.couponCode : null,
       });
 
       const flightRef = doc(this.firestore, `Flight/${this.flightNumber}`);
@@ -201,7 +247,6 @@ export class BookFlightComponent implements OnInit {
         takenSeats: this.flight.takenSeats + this.passengerCount,
       });
 
-      console.log('Booking confirmed successfully!');
       this.dialog.open(ConfirmationDialogComponent, {
         data: {
           title: 'Booking Successful',
@@ -211,7 +256,6 @@ export class BookFlightComponent implements OnInit {
 
       this.router.navigate(['/my-bookings']);
     } catch (error) {
-      console.error('Error saving booking:', error);
       this.dialog.open(ConfirmationDialogComponent, {
         data: {
           title: 'Error',

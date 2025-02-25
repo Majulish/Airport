@@ -1,0 +1,40 @@
+<div class="add-coupon-container">
+  <h2>Add Coupon</h2>
+  <form *ngIf="couponForm" [formGroup]="couponForm" (ngSubmit)="openConfirmDialog()">
+
+    <label>Coupon Code:</label>
+    <input formControlName="code" type="text" placeholder="e.g., SAVE20">
+    <span class="error" *ngIf="couponForm.get('code')?.invalid && couponForm.get('code')?.touched">
+      Coupon Code must be at least 3 characters long and contain only uppercase letters and numbers.
+    </span>
+
+    <label>Start Date:</label>
+    <input formControlName="startDate" type="datetime-local">
+
+    <label>End Date:</label>
+    <input formControlName="endDate" type="datetime-local">
+    <span class="error" *ngIf="couponForm.get('startDate')?.value && couponForm.get('endDate')?.value && couponForm.get('startDate')?.value >= couponForm.get('endDate')?.value">
+      Start date must be before end date.
+    </span>
+
+    <label>Discount Percentage:</label>
+    <input formControlName="discountPercentage" type="number">
+    <span class="error" *ngIf="couponForm.get('discountPercentage')?.invalid && couponForm.get('discountPercentage')?.touched">
+      Discount must be between 1% and 100%.
+    </span>
+
+    <label>Description:</label>
+    <input formControlName="description" type="text">
+
+    <label>Remaining Uses:</label>
+    <input formControlName="remainingUses" type="number">
+    <span class="error" *ngIf="couponForm.get('remainingUses')?.invalid && couponForm.get('remainingUses')?.touched">
+      Must be at least 1.
+    </span>
+
+    <div class="button-container">
+      <button type="submit">Add Coupon</button>
+      <button type="button" class="cancel-button" (click)="cancelAdd()">Cancel</button>
+    </div>
+  </form>
+</div>

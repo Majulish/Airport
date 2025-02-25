@@ -18,6 +18,7 @@ import {AddFlightComponent} from './Features/Flights/Pages/add-flight/add-flight
 import {ManageCouponsComponent} from './Features/Coupon/Pages/manage-coupons/manage-coupons.component';
 import {EditCouponComponent} from './Features/Coupon/Pages/edit-coupon/edit-coupon.component';
 import {ViewCouponComponent} from './Features/Coupon/Pages/view-coupon/view-coupon.component';
+import {AddCouponComponent} from './Features/Coupon/Pages/add-coupon/add-coupon.component';
 
 export const appRoutes: Routes = [
   { path: '', redirectTo: '/home-page', pathMatch: 'full' },
@@ -30,6 +31,7 @@ export const appRoutes: Routes = [
   { path: 'admin/manage-coupons', component: ManageCouponsComponent},
   { path: 'edit-coupon/:code', component: EditCouponComponent},
   { path: 'view-coupon/:code', component: ViewCouponComponent},
+  { path: 'add-coupon', component: AddCouponComponent },
   { path: 'edit-flight/:flightNumber', component: EditFlightComponent },
   { path: 'view-flight/:flightNumber', component: ViewFlightComponent },
   { path: 'add-flight', component: AddFlightComponent},
