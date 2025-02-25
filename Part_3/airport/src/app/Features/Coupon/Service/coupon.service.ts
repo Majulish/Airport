@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Firestore, collection, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc, query, where } from '@angular/fire/firestore';
 import {Coupon} from '../Model/coupon.module';
+import {Timestamp} from 'firebase/firestore';
 
 
 @Injectable({

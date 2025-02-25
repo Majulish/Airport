@@ -10,12 +10,12 @@
   <div class="button-container">
     <!-- If it's an alert, show only the OK button -->
     <ng-container *ngIf="!data.confirmation; else confirmationButtons">
-      <button mat-button color="primary" class="ok-button" (click)="onClose()" autofocus>OK</button>
+      <button mat-button class="ok-button" (click)="onClose()" autofocus>OK</button>
     </ng-container>
 
     <!-- If it's a confirmation dialog, show Confirm & Cancel -->
     <ng-template #confirmationButtons>
-      <button mat-button color="warn" class="confirm-button" (click)="onConfirm()" autofocus>Confirm</button>
+      <button mat-button class="confirm-button" (click)="onConfirm()">Confirm</button>
       <button mat-button class="cancel-button" (click)="onCancel()">Cancel</button>
     </ng-template>
   </div>
