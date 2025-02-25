@@ -104,4 +104,18 @@ export class BookingService {
     }
   }
 
+  private async calculateTotalPrice(flightNo: string, numPassengers: number): Promise<number> {
+    const flightRef = doc(this.firestore, 'Flight', flightNo);
+    const flightSnap = await getDoc(flightRef);
+
+    if (flightSnap.exists()) {
+      const flightData = flightSnap.data();
+      const pricePerPassenger = flightData['price'];
+      return pricePerPassenger * numPassengers;
+    } else {
+      console.warn(`Flight ${flightNo} not found. Defaulting price to $0`);
+      return 0;
+    }
+  }
+
 }
