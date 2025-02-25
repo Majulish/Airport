@@ -15,6 +15,7 @@
           <p><strong>Boarding Time:</strong> {{booking.boardingTime}}</p>
           <p><strong>Landing Time:</strong> {{booking.landingTime}}</p>
           <p><strong>Number of passengers:</strong> {{ booking.passengerCount }}</p>
+          <p><strong>Total Price:</strong> {{ booking.totalPrice | number:'1.2-2' }}$</p>
           <p><strong>Status:</strong> {{ booking.isActive ? 'Active' : 'Disabled' }}</p>
         </div>
         <div class="action-icons">
@@ -40,6 +41,7 @@
           <p><strong>Boarding Time:</strong> {{booking.boardingTime}}</p>
           <p><strong>Landing Time:</strong> {{booking.landingTime}}</p>
           <p><strong>Number of passengers:</strong> {{ booking.passengerCount }}</p>
+          <p><strong>Total Price:</strong> {{ booking.totalPrice | number:'1.2-2' }}$</p>
           <p><strong>Status:</strong> {{ booking.isActive ? 'Active' : 'Disabled' }}</p>
         </div>
         <div class="action-icons">

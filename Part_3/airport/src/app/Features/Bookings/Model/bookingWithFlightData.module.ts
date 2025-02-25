@@ -3,6 +3,7 @@ export class BookingWithFlightData {
     public bookingId: string,
     public flightNumber: string,
     public passengers: { name: string; passportId: string }[],
+    public totalPrice: number,
     public passengerCount: number,
     public origin: string,
     public arrival: string,

@@ -68,6 +68,7 @@ export class BookingService {
           flightNumber: booking.flightNo,
           passengers: booking.passengers,
           passengerCount: booking.passengers.length,
+          totalPrice: booking.totalPrice,
           origin: flight.origin?.name ?? 'Unknown',
           arrival: flight.arrival?.name ?? 'Unknown',
           image: flight.arrival?.imageUrl ?? 'empty',
