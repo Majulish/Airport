@@ -21,6 +21,7 @@
       <th>Arrival Date</th>
       <th>Seat Count</th>
       <th>Seats Taken</th>
+      <th>Price</th>
       <th>Status</th>
       <th>Actions</th>
     </tr>
@@ -34,6 +35,7 @@
       <td>{{ flight.arrivalDate | date: 'dd-MM-yyyy HH:mm' }}</td>
       <td>{{ flight.seatCount }}</td>
       <td>{{ flight.takenSeats }}</td>
+      <td>{{ flight.price | number:'1.2-2' }}$</td>
       <td>
           <span class="status" [ngClass]="flight.isActive ? 'active' : 'disabled'">
             {{ flight.isActive ? 'Active' : 'Disabled' }}

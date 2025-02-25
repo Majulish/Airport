@@ -36,6 +36,7 @@ export class AddFlightComponent implements OnInit {
       boardingDate: ['', Validators.required],
       arrivalDate: ['', Validators.required],
       seatCount: ['', [Validators.required, Validators.min(1), Validators.max(300)]],
+      price: ['', Validators.required]
     });
 
     this.activeDestinations = (await this.destinationsService.getAllDestinations())

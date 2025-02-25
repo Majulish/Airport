@@ -20,6 +20,9 @@
     <label for="takenSeats">Seats Taken:</label>
     <input type="number" id="takenSeats" [(ngModel)]="flight.takenSeats" name="takenSeats" required />
 
+    <label for="price">Price:</label>
+    <input type="number" id="price" [(ngModel)]="flight.price" name="price" required />
+
     <div class="button-container">
       <button type="button" (click)="openConfirmDialog()" [disabled]="editForm.invalid">
         Save Changes

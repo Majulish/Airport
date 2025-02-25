@@ -3,9 +3,9 @@
     <menu-component (menuItemClicked)="onMenuItemClick()"></menu-component>
   </mat-sidenav>
 
-  <mat-sidenav-content>
+  <mat-sidenav-content class="main-content-container">
     <ono-air-header [matDrawer]="drawer"></ono-air-header>
-    <main class="content">
+    <main class="content-container">
       <router-outlet></router-outlet>
     </main>
     <ono-air-footer></ono-air-footer>
