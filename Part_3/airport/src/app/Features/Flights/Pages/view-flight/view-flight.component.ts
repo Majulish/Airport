@@ -1,17 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Firestore, doc, getDoc } from '@angular/fire/firestore';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../../../../Utilities/confirmation-dialog/confirmation-dialog.component';
-import { FlightWithDestination } from "../../Model/flight-with-destination.module";
+import { FlightWithDestination } from '../../Model/flight-with-destination.module';
+import { Timestamp } from '@angular/fire/firestore';
+import { format } from 'date-fns';
 
 @Component({
   selector: 'app-view-flight',
   templateUrl: './view-flight.component.html',
   styleUrls: ['./view-flight.component.css'],
   standalone: true,
-  imports: [CommonModule, DatePipe],
+  imports: [CommonModule],
 })
 export class ViewFlightComponent implements OnInit {
   flight: FlightWithDestination | null = null;
@@ -28,8 +30,6 @@ export class ViewFlightComponent implements OnInit {
     const flightNumber = this.route.snapshot.paramMap.get('flightNumber');
     if (flightNumber) {
       await this.loadFlightData(flightNumber);
-    } else {
-      this.showFlightNotFoundDialog('Invalid flight number.');
     }
   }
 
@@ -48,8 +48,8 @@ export class ViewFlightComponent implements OnInit {
         flightNumber: string;
         originCode: string;
         arrivalCode: string;
-        boardingDate: Date;
-        arrivalDate: Date;
+        boardingDate: Timestamp | string;
+        arrivalDate: Timestamp | string;
         seatCount: number;
         takenSeats: number;
         price: number;
@@ -65,8 +65,12 @@ export class ViewFlightComponent implements OnInit {
         flightNumber: flightData.flightNumber,
         origin: origin,
         arrival: arrival,
-        boardingDate: flightData.boardingDate,
-        arrivalDate: flightData.arrivalDate,
+        boardingDate: flightData.boardingDate instanceof Timestamp
+          ? flightData.boardingDate.toDate()
+          : new Date(flightData.boardingDate),
+        arrivalDate: flightData.arrivalDate instanceof Timestamp
+          ? flightData.arrivalDate.toDate()
+          : new Date(flightData.arrivalDate),
         seatCount: flightData.seatCount,
         takenSeats: flightData.takenSeats,
         price: flightData.price,
@@ -112,7 +116,7 @@ export class ViewFlightComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(() => {
-      this.router.navigate(['/admin/manage-flights']); // Redirect to manage flights
+      this.router.navigate(['/admin/manage-flights']);
     });
   }
 }

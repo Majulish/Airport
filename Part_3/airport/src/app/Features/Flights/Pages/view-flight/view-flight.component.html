@@ -7,4 +7,5 @@
   <p><strong>Arrival Date:</strong> {{ flight.arrivalDate | date: 'dd-MM-yyyy HH:mm' }}</p>
   <p><strong>Seat Count:</strong> {{ flight.seatCount }}</p>
   <p><strong>Seats Taken:</strong> {{ flight.takenSeats }}</p>
+  <p><strong>Price:</strong> {{ flight.price | number:'1.2-2' }}$</p>
 </div>
