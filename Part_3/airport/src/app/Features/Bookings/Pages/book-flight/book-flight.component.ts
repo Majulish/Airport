@@ -7,9 +7,11 @@ import { FormsModule } from '@angular/forms';
 import {Firestore, doc, getDoc, updateDoc, setDoc} from '@angular/fire/firestore';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../../../../Utilities/confirmation-dialog/confirmation-dialog.component';
-import { FlightWithDestination } from '../../../Flights/Model/flight-with-destination.module';
+import { FlightWithDestination} from '../../../Flights/Model/flight-with-destination.module';
+import { BookingService} from '../../Service/booking.service';
 import {Flight} from '../../../Flights/Model/filght.module';
 import {DestinationsService} from '../../../Destinations/Service/destinations.service';
+import {BookingUploadService} from '../../Service/booking-upload.service';
 
 @Component({
   selector: 'book-flight',
@@ -24,12 +26,14 @@ export class BookFlightComponent implements OnInit {
   passengerCount: number = 1;
   passengers: { name: string; passportId: string }[] = [];
 
+
   constructor(
       private route: ActivatedRoute,
       private firestore: Firestore,
       private router: Router,
       private dialog: MatDialog,
-      private destinationService: DestinationsService
+      private destinationService: DestinationsService,
+      private bookingService: BookingService
   ) {}
 
   async ngOnInit() {
@@ -176,11 +180,20 @@ export class BookFlightComponent implements OnInit {
         return;
       }
 
+      if (!this.flightNumber) {
+        console.error("Error: Flight number is missing.");
+        return;
+      }
+
+      const totalPrice = await this.bookingService.calculateTotalPrice(this.flightNumber, this.passengerCount);
+
+
       await setDoc(bookingRef, {
         bookingId: bookingId,
         flightNo: this.flightNumber,
         numOfPassengers: this.passengerCount,
         passengers: this.passengers,
+        totalPrice: totalPrice,
       });
 
       const flightRef = doc(this.firestore, `Flight/${this.flightNumber}`);
@@ -192,7 +205,7 @@ export class BookFlightComponent implements OnInit {
       this.dialog.open(ConfirmationDialogComponent, {
         data: {
           title: 'Booking Successful',
-          message: `You have successfully booked ${this.passengerCount} seat(s) on flight ${this.flightNumber}.`,
+          message: `You have successfully booked ${this.passengerCount} seat(s) on flight ${this.flightNumber}.\n\nTotal Price: ${totalPrice}$.`
         },
       });
 

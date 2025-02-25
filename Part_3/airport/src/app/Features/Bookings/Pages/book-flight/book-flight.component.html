@@ -5,6 +5,7 @@
         <p><strong>Origin:</strong> {{ flight.origin?.name }} - Boarding: {{ flight.boardingDate  | date: 'dd-MM-yyyy HH:mm'}} </p>
         <p><strong>Destination:</strong> {{ flight.arrival?.name }} - Landing: {{ flight.arrivalDate  | date: 'dd-MM-yyyy HH:mm'}}</p>
         <p><strong>Available Seats:</strong> {{ getAvailableSeats() }}</p>
+      <p><strong>Price:</strong> {{ flight.price | number:'1.2-2' }}$</p>
     </div>
 
     <div class="passenger-selection">

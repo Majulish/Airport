@@ -104,18 +104,24 @@ export class BookingService {
     }
   }
 
-  private async calculateTotalPrice(flightNo: string, numPassengers: number): Promise<number> {
+  async calculateTotalPrice(flightNo: string, numPassengers: number): Promise<number> {
+    if (!flightNo) {
+      console.warn("Error: Flight number is missing.");
+      return 0; // Default price if flight number is missing
+    }
+
     const flightRef = doc(this.firestore, 'Flight', flightNo);
     const flightSnap = await getDoc(flightRef);
 
     if (flightSnap.exists()) {
       const flightData = flightSnap.data();
-      const pricePerPassenger = flightData['price'];
+      const pricePerPassenger = flightData['price'] ?? 0;
       return pricePerPassenger * numPassengers;
     } else {
       console.warn(`Flight ${flightNo} not found. Defaulting price to $0`);
       return 0;
     }
   }
+
 
 }
