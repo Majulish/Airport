@@ -9,7 +9,17 @@
       class="search-input"
     />
   </div>
-  <table class="flights-table">
+  
+  <div class="date-filter-section">
+    <h3 class="filter-subtitle">Filter by Date</h3>
+    <app-date-filter (dateFilterChanged)="handleDateFilterChange($event)"></app-date-filter>
+  </div>
+  
+  <div *ngIf="noFlightsMessage" class="no-flights-message">
+    {{ noFlightsMessage }}
+  </div>
+  
+  <table class="flights-table" *ngIf="filteredFlights.length > 0">
     <thead>
     <tr>
       <th (click)="sortTable('flightNumber')">

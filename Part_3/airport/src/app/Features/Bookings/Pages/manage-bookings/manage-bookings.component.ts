@@ -6,14 +6,15 @@ import {RouterLink} from '@angular/router';
 import {FlightService} from '../../../Flights/Service/flights.service';
 import {FormsModule} from '@angular/forms';
 import {FlightWithDestination} from "../../../Flights/Model/flight-with-destination.module";
+import {DateFilterComponent, DateFilter} from '../date-filter/date-filter.component';
 
 
 @Component({
-  selector: 'book-flight',
+  selector: 'manage-bookings',
   templateUrl: './manage-bookings.component.html',
   styleUrls: ['./manage-bookings.component.css'],
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatButtonModule, RouterLink, FormsModule],
+  imports: [CommonModule, MatIconModule, MatButtonModule, RouterLink, FormsModule, DateFilterComponent],
 })
 export class ManageBookingsComponent {
   @Input() showHeader: boolean = true;
@@ -22,6 +23,8 @@ export class ManageBookingsComponent {
   currentSortColumn: string | null = null;
   currentSortDirection: 'asc' | 'desc' | null = null;
   searchTerm: string = '';
+  dateFilter: DateFilter | null = null;
+  noFlightsMessage: string = '';
 
   constructor(private flightService: FlightService) {
   }
@@ -36,17 +39,71 @@ export class ManageBookingsComponent {
   }
 
   applyFilter() {
-    const term = this.searchTerm.toLowerCase();
-    if (!term.length) {
-      this.filteredFlights = [...this.flights];
-      return;
-    }
-
-    this.filteredFlights = this.flights.filter(
+    // Reset filtered flights to all flights first
+    let filtered = [...this.flights];
+    
+    // Apply text search filter if present
+    if (this.searchTerm.length) {
+      const term = this.searchTerm.toLowerCase();
+      filtered = filtered.filter(
         flight =>
-            flight.arrival?.name.toLowerCase().includes(term) ||
-            flight.origin?.name.toLowerCase().includes(term)
-    );
+          flight.arrival?.name.toLowerCase().includes(term) ||
+          flight.origin?.name.toLowerCase().includes(term)
+      );
+    }
+    
+    // Apply date filter if present
+    if (this.dateFilter) {
+      if (this.dateFilter.type === 'specific' && this.dateFilter.startDate) {
+        const startDate = new Date(this.dateFilter.startDate);
+        startDate.setHours(0, 0, 0, 0);
+        
+        let endDate: Date;
+        if (this.dateFilter.endDate) {
+          endDate = new Date(this.dateFilter.endDate);
+          endDate.setHours(23, 59, 59, 999);
+        } else {
+          endDate = new Date(startDate);
+          endDate.setHours(23, 59, 59, 999);
+        }
+        
+        filtered = filtered.filter(flight => {
+          const boardingDate = new Date(flight.boardingDate);
+          return boardingDate >= startDate && boardingDate <= endDate;
+        });
+      } else if (this.dateFilter.type === 'flexible' && this.dateFilter.month) {
+        const selectedMonth = this.dateFilter.month.getMonth();
+        const selectedYear = this.dateFilter.month.getFullYear();
+        
+        filtered = filtered.filter(flight => {
+          const boardingDate = new Date(flight.boardingDate);
+          return boardingDate.getMonth() === selectedMonth && 
+                 boardingDate.getFullYear() === selectedYear;
+        });
+      }
+    }
+    
+    this.filteredFlights = filtered;
+    
+    // Set message if no flights found
+    if (this.filteredFlights.length === 0) {
+      if (this.searchTerm && this.dateFilter) {
+        this.noFlightsMessage = 'No flights found matching both search term and date filter.';
+      } else if (this.searchTerm) {
+        this.noFlightsMessage = 'No flights found matching search term.';
+      } else if (this.dateFilter) {
+        this.noFlightsMessage = 'No flights found in the selected date range.';
+      } else {
+        this.noFlightsMessage = 'No upcoming flights available.';
+      }
+    } else {
+      this.noFlightsMessage = '';
+    }
+  }
+
+  handleDateFilterChange(dateFilter: DateFilter): void {
+    this.dateFilter = dateFilter;
+    this.applyFilter();
   }
 
   sortTable(column: string) {
@@ -56,7 +113,8 @@ export class ManageBookingsComponent {
         this.currentSortDirection = 'desc';
       } else if (this.currentSortDirection === 'desc') {
         this.currentSortDirection = null;
-        this.filteredFlights = [...this.flights]; // Reset to original order
+        // Reapply filters to reset sorting
+        this.applyFilter();
         return;
       } else {
         this.currentSortDirection = 'asc';
