@@ -6,7 +6,7 @@ import {RouterLink} from '@angular/router';
 import {FlightService} from '../../../Flights/Service/flights.service';
 import {FormsModule} from '@angular/forms';
 import {FlightWithDestination} from "../../../Flights/Model/flight-with-destination.module";
-import {DateFilterComponent, DateFilter} from '../date-filter/date-filter.component';
+import {DateFilterComponent, DateFilter} from '../../../components/date-filter/date-filter.component';
 
 
 @Component({
@@ -31,79 +31,93 @@ export class ManageBookingsComponent {
 
   async ngOnInit() {
     try {
+      // Start with default (all active flights)
       this.flights = await this.flightService.getUpcomingFlights();
       this.filteredFlights = [...this.flights];
+      
+      // Only show the no flights message if there are truly no flights
+      if (this.filteredFlights.length === 0) {
+        this.noFlightsMessage = 'No upcoming flights available.';
+      } else {
+        this.noFlightsMessage = '';
+      }
     } catch (error) {
       console.error("Error fetching upcoming flights:", error);
+      this.noFlightsMessage = 'Error loading flights. Please try again later.';
     }
   }
 
   applyFilter() {
-    // Reset filtered flights to all flights first
-    let filtered = [...this.flights];
-    
-    // Apply text search filter if present
+    // Apply text search filter only (date filtering is handled by Firebase)
     if (this.searchTerm.length) {
       const term = this.searchTerm.toLowerCase();
-      filtered = filtered.filter(
+      this.filteredFlights = this.flights.filter(
         flight =>
           flight.arrival?.name.toLowerCase().includes(term) ||
           flight.origin?.name.toLowerCase().includes(term)
       );
-    }
-    
-    // Apply date filter if present
-    if (this.dateFilter) {
-      if (this.dateFilter.type === 'specific' && this.dateFilter.startDate) {
-        const startDate = new Date(this.dateFilter.startDate);
-        startDate.setHours(0, 0, 0, 0);
-        
-        let endDate: Date;
-        if (this.dateFilter.endDate) {
-          endDate = new Date(this.dateFilter.endDate);
-          endDate.setHours(23, 59, 59, 999);
-        } else {
-          endDate = new Date(startDate);
-          endDate.setHours(23, 59, 59, 999);
-        }
-        
-        filtered = filtered.filter(flight => {
-          const boardingDate = new Date(flight.boardingDate);
-          return boardingDate >= startDate && boardingDate <= endDate;
-        });
-      } else if (this.dateFilter.type === 'flexible' && this.dateFilter.month) {
-        const selectedMonth = this.dateFilter.month.getMonth();
-        const selectedYear = this.dateFilter.month.getFullYear();
-        
-        filtered = filtered.filter(flight => {
-          const boardingDate = new Date(flight.boardingDate);
-          return boardingDate.getMonth() === selectedMonth && 
-                 boardingDate.getFullYear() === selectedYear;
-        });
-      }
-    }
-    
-    this.filteredFlights = filtered;
-    
-    // Set message if no flights found
-    if (this.filteredFlights.length === 0) {
-      if (this.searchTerm && this.dateFilter) {
-        this.noFlightsMessage = 'No flights found matching both search term and date filter.';
-      } else if (this.searchTerm) {
+      
+      // Set message if no flights found
+      if (this.filteredFlights.length === 0) {
         this.noFlightsMessage = 'No flights found matching search term.';
-      } else if (this.dateFilter) {
-        this.noFlightsMessage = 'No flights found in the selected date range.';
       } else {
-        this.noFlightsMessage = 'No upcoming flights available.';
+        this.noFlightsMessage = '';
       }
     } else {
-      this.noFlightsMessage = '';
+      this.filteredFlights = [...this.flights];
+      
+      // Only show message if there are no flights after filtering
+      if (this.filteredFlights.length === 0) {
+        // Check if this is because of a date filter
+        if (this.dateFilter && (this.dateFilter.startDate || this.dateFilter.month)) {
+          this.noFlightsMessage = 'No flights found in the selected date range.';
+        } else {
+          this.noFlightsMessage = 'No upcoming flights available.';
+        }
+      } else {
+        this.noFlightsMessage = '';
+      }
     }
   }
 
-  handleDateFilterChange(dateFilter: DateFilter): void {
-    this.dateFilter = dateFilter;
-    this.applyFilter();
+  async handleDateFilterChange(dateFilter: DateFilter): Promise<void> {
+    try {
+      this.dateFilter = dateFilter;
+      
+      // Check if the filter is actually clearing the filter
+      const isFilterCleared = !dateFilter.type || 
+                             (dateFilter.type === 'specific' && !dateFilter.startDate && !dateFilter.endDate) ||
+                             (dateFilter.type === 'flexible' && !dateFilter.month);
+      
+      // Get flights from Firebase based on date filter
+      this.flights = await this.flightService.getFlightsByDateRange(dateFilter);
+      
+      // Apply text search filter on the returned flights
+      this.applyFilter();
+      
+      // If the user just cleared the filter, ensure we don't display a "no flights" message
+      // unless there truly are no flights at all
+      if (isFilterCleared && this.flights.length > 0) {
+        this.noFlightsMessage = '';
+      }
+    } catch (err: any) {
+      const error = err as Error;
+      console.error("Error applying date filter:", error);
+      
+      // If it's an index error, we'll try to recover
+      if (error.toString().includes('requires an index')) {
+        console.warn("Firebase index error detected. Using client-side filtering as fallback.");
+        try {
+          // Fall back to getting all flights and filtering client-side
+          this.flights = await this.flightService.getUpcomingFlights();
+          this.applyFilter();
+        } catch (fallbackError) {
+          this.noFlightsMessage = 'Error filtering flights. Please try again later.';
+        }
+      } else {
+        this.noFlightsMessage = 'Error filtering flights. Please try again later.';
+      }
+    }
   }
 
   sortTable(column: string) {
