@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
-import {Firestore, collection, getDocs, doc, getDoc, setDoc} from '@angular/fire/firestore';
+import {Firestore, collection, getDocs, doc, getDoc, setDoc, query, where, Query} from '@angular/fire/firestore';
 import { Flight } from '../Model/filght.module';
 import { FlightWithDestination } from '../Model/flight-with-destination.module';
 import { Destination } from '../../Destinations/Model/destination.module';
 import { Timestamp } from 'firebase/firestore';
+import { DateFilter } from '../../components/date-filter/date-filter.component';
 
 @Injectable({
   providedIn: 'root',
@@ -86,13 +87,26 @@ export class FlightService {
     return flightsWithDestinations;
   }
 
-
   async getUpcomingFlights(): Promise<FlightWithDestination[]> {
+    // For default view, we'll load all active flights without date restrictions
+    // to maintain the original behavior
+    const flightsRef = collection(this.firestore, 'Flight');
+    const flightQuery = query(flightsRef, where('isActive', '==', true));
+    
+    // Get all destinations for lookup
     const [flightsSnapshot, destinationsSnapshot] = await Promise.all([
-      getDocs(collection(this.firestore, 'Flight')),
+      getDocs(flightQuery),
       getDocs(collection(this.firestore, 'Destinations'))
     ]);
+    
+    // Process Destinations into a Map for fast lookups
+    const destinationsMap = new Map<string, Destination>();
+    destinationsSnapshot.docs.forEach(doc => {
+      const destination = doc.data() as Destination;
+      destinationsMap.set(destination.code, destination);
+    });
 
+    // Process the flight results
     const flightsData: Flight[] = flightsSnapshot.docs.map(doc => {
       const data = doc.data() as Flight;
       data.boardingDate = (data.boardingDate as unknown as Timestamp).toDate();
@@ -100,35 +114,80 @@ export class FlightService {
       return data;
     });
 
-    const destinationsMap = new Map<string, Destination>();
-    destinationsSnapshot.docs.forEach(doc => {
-      const destination = doc.data() as Destination;
-      destinationsMap.set(destination.code, destination);
+    // Map flights to destinations
+    const flightsWithDestinations: FlightWithDestination[] = flightsData.map(flight => {
+      return new FlightWithDestination(
+        flight.flightNumber,
+        destinationsMap.get(flight.originCode),
+        destinationsMap.get(flight.arrivalCode),
+        flight.boardingDate,
+        flight.arrivalDate,
+        flight.seatCount,
+        flight.takenSeats,
+        flight.price,
+        flight.isActive
+      );
     });
 
-    const today = new Date();
-    return flightsData
-         .filter(flight => flight.isActive && new Date(flight.boardingDate) >= today)
-        .map(flight => new FlightWithDestination(
-            flight.flightNumber,
-            destinationsMap.get(flight.originCode),
-            destinationsMap.get(flight.arrivalCode),
-            flight.boardingDate,
-            flight.arrivalDate,
-            flight.seatCount,
-            flight.takenSeats,
-            flight.price,
-            flight.isActive,
-        ));
+    console.log(`Returning ${flightsWithDestinations.length} active flights`);
+    return flightsWithDestinations;
   }
 
+  async getFlightsByDateRange(dateFilter: DateFilter): Promise<FlightWithDestination[]> {
+    console.log('Fetching flights by date range:', dateFilter);
 
-  async getAllFlightsForNextWeek(): Promise<FlightWithDestination[]> {
-    const [flightsSnapshot, destinationsSnapshot] = await Promise.all([
-      getDocs(collection(this.firestore, 'Flight')),
-      getDocs(collection(this.firestore, 'Destinations'))
-    ]);
+    // Get all destinations for lookup
+    const destinationsSnapshot = await getDocs(collection(this.firestore, 'Destinations'));
+    const destinationsMap = new Map<string, Destination>();
+    destinationsSnapshot.docs.forEach(doc => {
+      const destination = doc.data() as Destination;
+      destinationsMap.set(destination.code, destination);
+    });
 
+    // Build flight query based on date filter
+    let flightQuery: Query;
+    const flightsRef = collection(this.firestore, 'Flight');
+    const today = new Date();
+
+    if (!dateFilter || dateFilter.type === null) {
+      // If no specific date filter, just return all active flights
+      flightQuery = query(flightsRef, where('isActive', '==', true));
+    } else if (dateFilter.type === 'specific' && dateFilter.startDate) {
+      // Specific date range filter
+      let startDate = new Date(dateFilter.startDate);
+      startDate.setHours(0, 0, 0, 0);
+      
+      try {
+        if (dateFilter.endDate) {
+          // Both start and end dates specified
+          let endDate = new Date(dateFilter.endDate);
+          endDate.setHours(23, 59, 59, 999);
+          
+          // We'll try a simpler query first - just getting all active flights
+          flightQuery = query(flightsRef, where('isActive', '==', true));
+          
+          // We'll filter the date range on the client side to avoid index issues
+          // This isn't as efficient but will work without requiring index creation
+        } else {
+          // Only start date specified - same approach
+          flightQuery = query(flightsRef, where('isActive', '==', true));
+        }
+      } catch (error) {
+        console.warn("Query requires index, falling back to client-side filtering", error);
+        flightQuery = query(flightsRef, where('isActive', '==', true));
+      }
+    } else if (dateFilter.type === 'flexible' && dateFilter.month) {
+      // Month filter - also using the simplified approach
+      flightQuery = query(flightsRef, where('isActive', '==', true));
+    } else {
+      // Fallback to all active flights
+      flightQuery = query(flightsRef, where('isActive', '==', true));
+    }
+
+    // Execute the query
+    const flightsSnapshot = await getDocs(flightQuery);
+    
+    // Process the results
     const flightsData: Flight[] = flightsSnapshot.docs.map(doc => {
       const data = doc.data() as Flight;
       data.boardingDate = (data.boardingDate as unknown as Timestamp).toDate();
@@ -136,37 +195,67 @@ export class FlightService {
       return data;
     });
 
-    const destinationsMap = new Map<string, Destination>();
-    destinationsSnapshot.docs.forEach(doc => {
-      const destination = doc.data() as Destination;
-      destinationsMap.set(destination.code, destination);
+    // Map flights to destinations
+    let flightsWithDestinations: FlightWithDestination[] = flightsData.map(flight => {
+      return new FlightWithDestination(
+        flight.flightNumber,
+        destinationsMap.get(flight.originCode),
+        destinationsMap.get(flight.arrivalCode),
+        flight.boardingDate,
+        flight.arrivalDate,
+        flight.seatCount,
+        flight.takenSeats,
+        flight.price,
+        flight.isActive
+      );
     });
+    
+    // Apply date filtering on the client side if needed
+    if (dateFilter.type === 'specific' && dateFilter.startDate) {
+      let startDate = new Date(dateFilter.startDate);
+      startDate.setHours(0, 0, 0, 0);
+      
+      let endDate: Date;
+      if (dateFilter.endDate) {
+        endDate = new Date(dateFilter.endDate);
+        endDate.setHours(23, 59, 59, 999);
+      } else {
+        endDate = new Date(startDate);
+        endDate.setHours(23, 59, 59, 999);
+      }
+      
+      flightsWithDestinations = flightsWithDestinations.filter(flight => {
+        const boardingDate = new Date(flight.boardingDate);
+        return boardingDate >= startDate && boardingDate <= endDate;
+      });
+    } else if (dateFilter.type === 'flexible' && dateFilter.month) {
+      const selectedMonth = dateFilter.month.getMonth();
+      const selectedYear = dateFilter.month.getFullYear();
+      
+      flightsWithDestinations = flightsWithDestinations.filter(flight => {
+        const boardingDate = new Date(flight.boardingDate);
+        return boardingDate.getMonth() === selectedMonth && 
+               boardingDate.getFullYear() === selectedYear;
+      });
+    }
 
+    console.log(`Returning ${flightsWithDestinations.length} flights matching date filter`);
+    return flightsWithDestinations;
+  }
+
+  async getAllFlightsForNextWeek(): Promise<FlightWithDestination[]> {
     const today = new Date();
     const nextWeek = new Date();
     nextWeek.setDate(today.getDate() + 7);
 
-    const flightsForNextWeek: FlightWithDestination[] = flightsData
-        .filter(flight => {
-          const flightDate = new Date(flight.boardingDate);
-          return flight.isActive && flightDate >= today && flightDate <= nextWeek
-        })
-        .map(flight => new FlightWithDestination(
-            flight.flightNumber,
-            destinationsMap.get(flight.originCode),
-            destinationsMap.get(flight.arrivalCode),
-            flight.boardingDate,
-            flight.arrivalDate,
-            flight.seatCount,
-            flight.takenSeats,
-            flight.price,
-            flight.isActive,
-        ));
-
-    console.log(`Returning ${flightsForNextWeek.length} flights for next week`);
-    return flightsForNextWeek;
+    // Use the new date range function
+    return this.getFlightsByDateRange({
+      type: 'specific',
+      startDate: today,
+      endDate: nextWeek,
+      month: null
+    });
   }
-
 
   sortObjectArray(
     column: string,

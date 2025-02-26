@@ -1,0 +1,47 @@
+<div class="date-filter-container">
+    <form [formGroup]="dateFilterForm">
+      <div class="filter-type-toggle">
+        <mat-button-toggle-group formControlName="dateFilterType">
+          <mat-button-toggle value="specific">Specific dates</mat-button-toggle>
+          <mat-button-toggle value="flexible">Flexible dates</mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
+  
+      <div class="filter-content" *ngIf="dateFilterType === 'specific'">
+        <div formGroupName="dateRange" class="date-range">
+          <mat-form-field appearance="outline">
+            <mat-label>Start date</mat-label>
+            <input matInput [matDatepicker]="startPicker" formControlName="start">
+            <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+            <mat-datepicker #startPicker></mat-datepicker>
+          </mat-form-field>
+          <span class="date-separator">to</span>
+          <mat-form-field appearance="outline">
+            <mat-label>End date</mat-label>
+            <input matInput [matDatepicker]="endPicker" formControlName="end">
+            <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+            <mat-datepicker #endPicker></mat-datepicker>
+          </mat-form-field>
+        </div>
+      </div>
+  
+      <div class="filter-content" *ngIf="dateFilterType === 'flexible'">
+        <div class="months-grid">
+          <div 
+            *ngFor="let month of months" 
+            class="month-card" 
+            [class.selected]="isMonthSelected(month.date)"
+            (click)="selectMonth(month.date)"
+          >
+            <div class="year">{{month.date | date: 'yyyy'}}</div>
+            <div class="month-name">{{month.name}}</div>
+          </div>
+        </div>
+      </div>
+  
+      <div class="filter-actions">
+        <button mat-button type="button" (click)="clearDateFilter()">Clear</button>
+        <button mat-raised-button color="primary" type="button" (click)="applyDateFilter()">Apply</button>
+      </div>
+    </form>
+  </div>
