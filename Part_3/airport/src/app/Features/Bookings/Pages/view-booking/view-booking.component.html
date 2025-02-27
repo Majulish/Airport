@@ -1,12 +1,30 @@
 <div *ngIf="booking" class="view-booking-container">
   <h2>Booking Details</h2>
+  <p><strong>Booking ID:</strong> {{ booking.bookingId }}</p>
   <p><strong>Flight Number:</strong> {{ booking.flightNo }}</p>
   <p><strong>Number Of Passengers:</strong> {{ booking.passengerCount }}</p>
-  <p><strong>Passengers:</strong></p>
-  <ol>
-    <li *ngFor="let passenger of booking.passengers">
-      <p><strong>Name:</strong>{{ passenger.name }},   <strong>Passport:</strong>{{passenger.passportId}}</p>
-    </li>
-  </ol>
   <p><strong>Total Price:</strong> {{ booking.totalPrice | number:'1.2-2' }}$</p>
+  
+  <h3>Passengers</h3>
+  <div class="passengers-list">
+    <div *ngFor="let passenger of booking.passengers; let i = index" class="passenger-item">
+      <p><strong>Passenger {{ i + 1 }}:</strong> {{ passenger.name }} (Passport: {{ passenger.passportId }})</p>
+      
+      <div *ngIf="passenger.luggage" class="luggage-info">
+        <p><strong>Luggage:</strong></p>
+        <ul *ngIf="hasLuggage(passenger.luggage)">
+          <li *ngIf="passenger.luggage.type1 > 0">
+            Cabin Baggage (8kg): {{ passenger.luggage.type1 }}
+          </li>
+          <li *ngIf="passenger.luggage.type2 > 0">
+            Checked Baggage (23kg): {{ passenger.luggage.type2 }}
+          </li>
+          <li *ngIf="passenger.luggage.type3 > 0">
+            Heavy Baggage (32kg): {{ passenger.luggage.type3 }}
+          </li>
+        </ul>
+        <p *ngIf="!hasLuggage(passenger.luggage)" class="no-luggage">No luggage</p>
+      </div>
+    </div>
+  </div>
 </div>
