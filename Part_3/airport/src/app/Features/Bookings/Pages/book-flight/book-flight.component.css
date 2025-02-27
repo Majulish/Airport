@@ -1,5 +1,5 @@
 .booking-container {
-  max-width: 500px;
+  max-width: 800px;
   margin: auto;
   padding: 20px;
   border-radius: 10px;
@@ -71,6 +71,7 @@ h2 {
   border-radius: 5px;
   background-color: #eef2f7;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
@@ -114,4 +115,101 @@ h2 {
 .error-message {
   color: red;
   font-size: 14px;
+}
+
+/* Stepper Styles */
+.stepper-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.luggage-section {
+  margin: 15px 0;
+}
+
+.luggage-info {
+  color: #666;
+  margin-bottom: 15px;
+}
+
+.luggage-prices-info {
+  background: #eef2f7;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 15px;
+}
+
+.luggage-prices-info ul {
+  margin: 5px 0;
+  padding-left: 20px;
+}
+
+.passenger-luggage-list {
+  margin: 20px 0;
+}
+
+.passenger-luggage-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  margin-bottom: 10px;
+  background: white;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.passenger-luggage-details {
+  flex: 1;
+}
+
+.passenger-luggage-details h4 {
+  margin: 0 0 5px 0;
+}
+
+.passenger-luggage-details p {
+  margin: 5px 0;
+  color: #555;
+}
+
+.luggage-summary {
+  margin-top: 20px;
+  padding: 10px;
+  background: #eef2f7;
+  border-radius: 5px;
+  text-align: right;
+}
+
+.confirm-step {
+  padding: 10px;
+}
+
+.summary-section {
+  background: white;
+  padding: 15px;
+  border-radius: 5px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+}
+
+.summary-section h4 {
+  margin-top: 0;
+  color: #007bff;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 5px;
+}
+
+.passenger-summary {
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.passenger-summary:last-child {
+  border-bottom: none;
+}
+
+.price-summary {
+  background-color: #eef2f7;
 }
