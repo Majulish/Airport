@@ -1,0 +1,97 @@
+<div class="luggage-modal-container">
+    <h2 mat-dialog-title>Luggage Selection for {{ passengerName }}</h2>
+    
+    <mat-dialog-content>
+      <div class="luggage-options">
+        <!-- Cabin Baggage -->
+        <div class="luggage-option">
+          <div class="luggage-info">
+            <h3>Cabin Baggage (8kg)</h3>
+            <p class="luggage-price">{{ luggagePrices.type1 }}$ per item</p>
+            <p class="luggage-description">
+              Small luggage that fits in the overhead compartment or under the seat.
+            </p>
+          </div>
+          
+          <div class="luggage-quantity">
+            <button mat-icon-button color="primary" (click)="decreaseLuggage('type1')" [disabled]="luggage.type1 === 0">
+              <mat-icon>remove</mat-icon>
+            </button>
+            <span class="quantity-value">{{ luggage.type1 }}</span>
+            <button mat-icon-button color="primary" (click)="increaseLuggage('type1')">
+              <mat-icon>add</mat-icon>
+            </button>
+          </div>
+          
+          <div class="luggage-total">
+            {{ luggage.type1 * luggagePrices.type1 }}$
+          </div>
+        </div>
+        
+        <!-- Checked Baggage -->
+        <div class="luggage-option">
+          <div class="luggage-info">
+            <h3>Checked Baggage (23kg)</h3>
+            <p class="luggage-price">{{ luggagePrices.type2 }}$ per item</p>
+            <p class="luggage-description">
+              Medium-sized luggage that will be checked in and stored in the cargo hold.
+            </p>
+          </div>
+          
+          <div class="luggage-quantity">
+            <button mat-icon-button color="primary" (click)="decreaseLuggage('type2')" [disabled]="luggage.type2 === 0">
+              <mat-icon>remove</mat-icon>
+            </button>
+            <span class="quantity-value">{{ luggage.type2 }}</span>
+            <button mat-icon-button color="primary" (click)="increaseLuggage('type2')">
+              <mat-icon>add</mat-icon>
+            </button>
+          </div>
+          
+          <div class="luggage-total">
+            {{ luggage.type2 * luggagePrices.type2 }}$
+          </div>
+        </div>
+        
+        <!-- Heavy Baggage -->
+        <div class="luggage-option">
+          <div class="luggage-info">
+            <h3>Heavy Baggage (32kg)</h3>
+            <p class="luggage-price">{{ luggagePrices.type3 }}$ per item</p>
+            <p class="luggage-description">
+              Large, heavy luggage that will be checked in and stored in the cargo hold.
+            </p>
+          </div>
+          
+          <div class="luggage-quantity">
+            <button mat-icon-button color="primary" (click)="decreaseLuggage('type3')" [disabled]="luggage.type3 === 0">
+              <mat-icon>remove</mat-icon>
+            </button>
+            <span class="quantity-value">{{ luggage.type3 }}</span>
+            <button mat-icon-button color="primary" (click)="increaseLuggage('type3')">
+              <mat-icon>add</mat-icon>
+            </button>
+          </div>
+          
+          <div class="luggage-total">
+            {{ luggage.type3 * luggagePrices.type3 }}$
+          </div>
+        </div>
+      </div>
+      
+      <div class="luggage-summary">
+        <button mat-button color="warn" (click)="clearLuggage()" [disabled]="luggage.type1 === 0 && luggage.type2 === 0 && luggage.type3 === 0">
+          Clear All
+        </button>
+        <div class="total-price">
+          <span>Total:</span>
+          <span class="price-value">{{ getTotalPrice() }}$</span>
+        </div>
+      </div>
+    </mat-dialog-content>
+    
+    <mat-dialog-actions align="end">
+      <button mat-button (click)="onNoClick()">Cancel</button>
+      <button mat-raised-button color="primary" (click)="submit()">Confirm</button>
+    </mat-dialog-actions>
+  </div>

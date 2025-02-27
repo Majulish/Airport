@@ -1,32 +1,145 @@
 <div class="booking-container">
-    <h2>Book a Flight</h2>
+  <h2>Book a Flight</h2>
 
-    <div *ngIf="flight" class="flight-details">
-        <p><strong>Origin:</strong> {{ flight.origin?.name }} - Boarding: {{ flight.boardingDate  | date: 'dd-MM-yyyy HH:mm'}} </p>
-        <p><strong>Destination:</strong> {{ flight.arrival?.name }} - Landing: {{ flight.arrivalDate  | date: 'dd-MM-yyyy HH:mm'}}</p>
-        <p><strong>Available Seats:</strong> {{ getAvailableSeats() }}</p>
-      <p><strong>Price:</strong> {{ flight.price | number:'1.2-2' }}$</p>
-    </div>
-
-    <div class="passenger-selection">
-        <label for="passengerCount">No of passengers:</label>
-        <input type="number" id="passengerCount" [(ngModel)]="passengerCount" (change)="updatePassengerCount()" min="1" [max]="getAvailableSeats()">
-    </div>
-
-    <div *ngIf="passengerCount > 0" class="passenger-form">
-        <div *ngFor="let passenger of passengers; let i = index">
-            <h4 class="headline-passengers">Passenger {{ i + 1 }} Details:</h4>
-            <input type="text" [(ngModel)]="passenger.name" placeholder="Passenger Name" required>
-            <input type="text" [(ngModel)]="passenger.passportId" placeholder="Passport Id" required>
-        </div>
-    </div>
-
-  <div class="coupon-section">
-    <label for="couponCode">Have a Coupon?</label>
-    <input type="text" id="couponCode" [(ngModel)]="couponCode" placeholder="Enter Coupon Code">
-    <button class="apply-coupon-button" (click)="applyCoupon()">Apply</button>
-    <p *ngIf="discountedPrice !== null"><strong>Discounted Price:</strong> {{ discountedPrice }}$</p>
-    <p *ngIf="couponError" class="error-message">{{ couponError }}</p>
+  <div *ngIf="flight" class="flight-details">
+    <p><strong>Origin:</strong> {{ flight.origin?.name }} - Boarding: {{ flight.boardingDate | date: 'dd-MM-yyyy HH:mm' }}</p>
+    <p><strong>Destination:</strong> {{ flight.arrival?.name }} - Landing: {{ flight.arrivalDate | date: 'dd-MM-yyyy HH:mm' }}</p>
+    <p><strong>Available Seats:</strong> {{ getAvailableSeats() }}</p>
+    <p><strong>Price per passenger:</strong> {{ flight.price | number:'1.2-2' }}$</p>
   </div>
-  <button class="confirm-button" (click)="confirmBooking()">Confirm Booking</button>
+
+  <mat-stepper linear="true" #stepper>
+    <!-- Step 1: Passenger Details -->
+    <mat-step [completed]="isPassengerDetailsValid">
+      <ng-template matStepLabel>Passenger Details</ng-template>
+      
+      <div class="passenger-selection">
+        <label for="passengerCount">Number of passengers:</label>
+        <input type="number" id="passengerCount" [(ngModel)]="passengerCount" (change)="updatePassengerCount()" min="1" [max]="getAvailableSeats()">
+      </div>
+
+      <div *ngIf="passengerCount > 0" class="passenger-form">
+        <div *ngFor="let passenger of passengers; let i = index">
+          <h4 class="headline-passengers">Passenger {{ i + 1 }} Details:</h4>
+          <input type="text" [(ngModel)]="passenger.name" placeholder="Passenger Name" required>
+          <input type="text" [(ngModel)]="passenger.passportId" placeholder="Passport ID" required>
+        </div>
+      </div>
+
+      <div class="stepper-actions">
+        <button mat-button matStepperNext (click)="validatePassengerDetails()">Next</button>
+      </div>
+    </mat-step>
+
+    <!-- Step 2: Luggage Selection -->
+    <mat-step [completed]="isLuggageSelectionValid">
+      <ng-template matStepLabel>Luggage Selection</ng-template>
+      
+      <div class="luggage-section">
+        <h3>Add Luggage for Passengers</h3>
+        <p class="luggage-info">Select luggage options for each passenger</p>
+        
+        <div class="luggage-prices-info">
+          <p><strong>Luggage Options:</strong></p>
+          <ul>
+            <li>Cabin Baggage (8kg): {{ luggagePrices.type1 }}$</li>
+            <li>Checked Baggage (23kg): {{ luggagePrices.type2 }}$</li>
+            <li>Heavy Baggage (32kg): {{ luggagePrices.type3 }}$</li>
+          </ul>
+        </div>
+
+        <div class="passenger-luggage-list">
+          <div *ngFor="let passenger of passengers; let i = index" class="passenger-luggage-item">
+            <div class="passenger-luggage-details">
+              <h4>{{ passenger.name }}</h4>
+              <p *ngIf="getLuggageCount(i) > 0">
+                Total luggage items: {{ getLuggageCount(i) }} 
+                (Price: {{ getTotalLuggagePriceForPassenger(i) }}$)
+              </p>
+              <p *ngIf="getLuggageCount(i) === 0">No luggage selected</p>
+            </div>
+            <button mat-raised-button color="primary" (click)="openLuggageSelectionModal(i)">
+              {{ getLuggageCount(i) > 0 ? 'Edit Luggage' : 'Add Luggage' }}
+            </button>
+          </div>
+        </div>
+
+        <div class="luggage-summary">
+          <p><strong>Total Luggage Price:</strong> {{ totalLuggagePrice }}$</p>
+        </div>
+      </div>
+
+      <div class="stepper-actions">
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button matStepperNext (click)="validateLuggageSelection()">Next</button>
+      </div>
+    </mat-step>
+
+    <!-- Step 3: Confirm Booking -->
+    <mat-step>
+      <ng-template matStepLabel>Confirm Booking</ng-template>
+      
+      <div class="confirm-step">
+        <h3>Booking Summary</h3>
+        
+        <!-- Flight Details -->
+        <div class="summary-section">
+          <h4>Flight Details</h4>
+          <p><strong>Flight Number:</strong> {{ flightNumber }}</p>
+          <p><strong>Origin:</strong> {{ flight?.origin?.name }}</p>
+          <p><strong>Destination:</strong> {{ flight?.arrival?.name }}</p>
+          <p><strong>Boarding Time:</strong> {{ flight?.boardingDate | date: 'dd-MM-yyyy HH:mm' }}</p>
+          <p><strong>Arrival Time:</strong> {{ flight?.arrivalDate | date: 'dd-MM-yyyy HH:mm' }}</p>
+        </div>
+        
+        <!-- Passenger Details -->
+        <div class="summary-section">
+          <h4>Passenger Details</h4>
+          <div *ngFor="let passenger of passengers; let i = index" class="passenger-summary">
+            <h5>Passenger {{ i + 1 }}: {{ passenger.name }}</h5>
+            <p><strong>Passport ID:</strong> {{ passenger.passportId }}</p>
+            <div *ngIf="passenger.luggage">
+              <p><strong>Luggage:</strong></p>
+              <ul>
+                <li *ngIf="passenger.luggage.type1 > 0">
+                  Cabin Baggage (8kg): {{ passenger.luggage.type1 }} × {{ luggagePrices.type1 }}$ = {{ passenger.luggage.type1 * luggagePrices.type1 }}$
+                </li>
+                <li *ngIf="passenger.luggage.type2 > 0">
+                  Checked Baggage (23kg): {{ passenger.luggage.type2 }} × {{ luggagePrices.type2 }}$ = {{ passenger.luggage.type2 * luggagePrices.type2 }}$
+                </li>
+                <li *ngIf="passenger.luggage.type3 > 0">
+                  Heavy Baggage (32kg): {{ passenger.luggage.type3 }} × {{ luggagePrices.type3 }}$ = {{ passenger.luggage.type3 * luggagePrices.type3 }}$
+                </li>
+                <li *ngIf="(passenger.luggage.type1 + passenger.luggage.type2 + passenger.luggage.type3) === 0">
+                  No luggage selected
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Price Summary -->
+        <div class="summary-section price-summary">
+          <h4>Price Summary</h4>
+          <p><strong>Flight Price:</strong> {{ flight?.price ?? 0 }} × {{ passengerCount }} = {{ (flight?.price ?? 0) * passengerCount }}$</p>
+          <p><strong>Luggage Price:</strong> {{ totalLuggagePrice }}$</p>
+          <p><strong>Total Price:</strong> {{ totalBookingPrice }}$</p>
+          
+          <!-- Coupon section -->
+          <div class="coupon-section">
+            <label for="couponCode">Have a Coupon?</label>
+            <input type="text" id="couponCode" [(ngModel)]="couponCode" placeholder="Enter Coupon Code" [disabled]="appliedCoupon">
+            <button class="apply-coupon-button" (click)="applyCoupon()" [disabled]="appliedCoupon || !couponCode">Apply</button>
+            <p *ngIf="discountedPrice !== null"><strong>Discounted Price:</strong> {{ discountedPrice }}$</p>
+            <p *ngIf="couponError" class="error-message">{{ couponError }}</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="stepper-actions">
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-raised-button color="primary" class="confirm-button" (click)="confirmBooking()">Confirm Booking</button>
+      </div>
+    </mat-step>
+  </mat-stepper>
 </div>

@@ -4,34 +4,57 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { FormsModule } from '@angular/forms';
-import {Firestore, doc, getDoc, updateDoc, setDoc} from '@angular/fire/firestore';
+import { Firestore, doc, getDoc, updateDoc, setDoc } from '@angular/fire/firestore';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../../../../Utilities/confirmation-dialog/confirmation-dialog.component';
-import { FlightWithDestination} from '../../../Flights/Model/flight-with-destination.module';
-import { BookingService} from '../../Service/booking.service';
-import {Flight} from '../../../Flights/Model/filght.module';
-import {DestinationsService} from '../../../Destinations/Service/destinations.service';
-import {BookingUploadService} from '../../Service/booking-upload.service';
-import {CouponService} from '../../../Coupon/Service/coupon.service';
-import {Destination} from '../../../Destinations/Model/destination.module';
+import { FlightWithDestination } from '../../../Flights/Model/flight-with-destination.module';
+import { BookingService } from '../../Service/booking.service';
+import { CouponService } from '../../../Coupon/Service/coupon.service';
+import { DestinationsService } from '../../../Destinations/Service/destinations.service';
+import { MatStepperModule } from '@angular/material/stepper';
+import { LuggageSelectionModalComponent } from '../../../components/luggage-selection-modal/luggage-selection-modal.component';
 
 @Component({
   selector: 'book-flight',
   templateUrl: './book-flight.component.html',
   styleUrls: ['./book-flight.component.css'],
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatButtonModule, FormsModule],
+  imports: [
+    CommonModule, 
+    MatIconModule, 
+    MatButtonModule, 
+    FormsModule,
+    MatStepperModule
+  ],
 })
 export class BookFlightComponent implements OnInit {
   flight: FlightWithDestination | null = null;
   flightNumber: string | null = null;
   passengerCount: number = 1;
-  passengers: { name: string; passportId: string }[] = [];
+  passengers: { 
+    name: string; 
+    passportId: string; 
+    luggage?: { 
+      type1: number, 
+      type2: number, 
+      type3: number 
+    } 
+  }[] = [];
   couponCode: string = '';
   discountedPrice: number | null = null;
   couponError: string | null = null;
   appliedCoupon: boolean = false;
-
+  luggagePrices = {
+    type1: 25, // Cabin baggage (8kg)
+    type2: 50, // Checked baggage (23kg)
+    type3: 100 // Heavy baggage (32kg)
+  };
+  totalLuggagePrice: number = 0;
+  totalBookingPrice: number = 0;
+  
+  // For stepper linear mode
+  isPassengerDetailsValid: boolean = false;
+  isLuggageSelectionValid: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -65,7 +88,7 @@ export class BookFlightComponent implements OnInit {
     }
 
     try {
-      const couponData = await this.couponService.getCouponByCode(this.couponCode); // Updated method name
+      const couponData = await this.couponService.getCouponByCode(this.couponCode);
 
       if (!couponData || !couponData.isActive) {
         this.dialog.open(ConfirmationDialogComponent, {
@@ -79,8 +102,9 @@ export class BookFlightComponent implements OnInit {
         return;
       }
 
-      const totalPrice = await this.bookingService.calculateTotalPrice(this.flightNumber, this.passengerCount);
-      const discounted = await this.couponService.applyCoupon(this.couponCode, totalPrice);
+      const flightPrice = await this.bookingService.calculateTotalPrice(this.flightNumber, this.passengerCount);
+      this.totalBookingPrice = flightPrice + this.totalLuggagePrice;
+      const discounted = await this.couponService.applyCoupon(this.couponCode, this.totalBookingPrice);
 
       if (discounted === null) {
         this.couponError = 'Invalid or expired coupon!';
@@ -100,6 +124,7 @@ export class BookFlightComponent implements OnInit {
       });
     }
   }
+
   async getFlightDetails(flightNumber: string): Promise<boolean> {
     const flightRef = doc(this.firestore, `Flight/${flightNumber}`);
     const flightSnap = await getDoc(flightRef);
@@ -142,6 +167,7 @@ export class BookFlightComponent implements OnInit {
 
     return true;
   }
+
   updatePassengerCount() {
     if (this.passengerCount > this.getAvailableSeats()) {
       this.dialog.open(ConfirmationDialogComponent, {
@@ -156,17 +182,33 @@ export class BookFlightComponent implements OnInit {
     this.passengers = Array.from({ length: this.passengerCount }, () => ({
       name: '',
       passportId: '',
+      luggage: {
+        type1: 0,
+        type2: 0,
+        type3: 0
+      }
     }));
+
+    this.updateTotalLuggagePrice();
   }
 
   getAvailableSeats(): number {
     return this.flight ? this.flight.seatCount - this.flight.takenSeats : 0;
   }
+
   generateBookingId(): string {
     return 'B' + Math.floor(1000 + Math.random() * 9000).toString();
   }
-  async confirmBooking() {
-    if (!this.flight || this.passengerCount < 1) return;
+
+  validatePassengerDetails(): boolean {
+    // Check if all passenger names and passport IDs are filled
+    const allFieldsFilled = this.passengers.every(
+      p => p.name.trim() !== '' && p.passportId.trim() !== ''
+    );
+
+    if (!allFieldsFilled) {
+      return false;
+    }
 
     // Validate Passenger Name (only letters)
     const nameRegex = /^[A-Za-z\s]+$/;
@@ -178,7 +220,7 @@ export class BookFlightComponent implements OnInit {
             message: 'Passenger names must contain only letters and spaces.',
           },
         });
-        return;
+        return false;
       }
     }
 
@@ -193,7 +235,7 @@ export class BookFlightComponent implements OnInit {
             message: 'Passport ID must be exactly 9 digits.',
           },
         });
-        return;
+        return false;
       }
       if (passportSet.has(passenger.passportId)) {
         this.dialog.open(ConfirmationDialogComponent, {
@@ -202,10 +244,84 @@ export class BookFlightComponent implements OnInit {
             message: 'Each passport ID must be unique. Please check your entries.',
           },
         });
-        return;
+        return false;
       }
       passportSet.add(passenger.passportId);
     }
+
+    this.isPassengerDetailsValid = true;
+    return true;
+  }
+
+  openLuggageSelectionModal(passengerIndex: number) {
+    const passenger = this.passengers[passengerIndex];
+    
+    const dialogRef = this.dialog.open(LuggageSelectionModalComponent, {
+      width: '500px',
+      data: {
+        passengerName: passenger.name,
+        luggage: { ...passenger.luggage },
+        luggagePrices: this.luggagePrices
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.passengers[passengerIndex].luggage = result;
+        this.updateTotalLuggagePrice();
+      }
+    });
+  }
+
+  updateTotalLuggagePrice() {
+    this.totalLuggagePrice = this.passengers.reduce((total, passenger) => {
+      if (!passenger.luggage) return total;
+      
+      return total + 
+        (passenger.luggage.type1 * this.luggagePrices.type1) +
+        (passenger.luggage.type2 * this.luggagePrices.type2) +
+        (passenger.luggage.type3 * this.luggagePrices.type3);
+    }, 0);
+
+    this.updateTotalBookingPrice();
+  }
+
+  async updateTotalBookingPrice() {
+    if (!this.flightNumber) return;
+    
+    const flightPrice = await this.bookingService.calculateTotalPrice(this.flightNumber, this.passengerCount);
+    this.totalBookingPrice = flightPrice + this.totalLuggagePrice;
+    
+    // If coupon is applied, recalculate the discounted price
+    if (this.appliedCoupon && this.couponCode) {
+      this.discountedPrice = await this.couponService.applyCoupon(this.couponCode, this.totalBookingPrice);
+    }
+  }
+
+  getLuggageCount(passengerIndex: number): number {
+    const luggage = this.passengers[passengerIndex].luggage;
+    if (!luggage) return 0;
+    
+    return luggage.type1 + luggage.type2 + luggage.type3;
+  }
+
+  getTotalLuggagePriceForPassenger(passengerIndex: number): number {
+    const luggage = this.passengers[passengerIndex].luggage;
+    if (!luggage) return 0;
+    
+    return (luggage.type1 * this.luggagePrices.type1) +
+           (luggage.type2 * this.luggagePrices.type2) +
+           (luggage.type3 * this.luggagePrices.type3);
+  }
+
+  validateLuggageSelection(): boolean {
+    // No validation requirements for luggage, it's optional
+    this.isLuggageSelectionValid = true;
+    return true;
+  }
+
+  async confirmBooking() {
+    if (!this.flight || this.passengerCount < 1) return;
 
     try {
       const bookingId = this.generateBookingId();
@@ -227,10 +343,13 @@ export class BookFlightComponent implements OnInit {
         return;
       }
 
-      let totalPrice = await this.bookingService.calculateTotalPrice(this.flightNumber, this.passengerCount);
+      // Calculate final price based on flight price, luggage, and any applied coupon
+      await this.updateTotalBookingPrice();
+      let finalPrice = this.totalBookingPrice;
+      
       if (this.appliedCoupon && this.discountedPrice !== null) {
-        totalPrice = this.discountedPrice;
-        await this.couponService.updateCouponUsage(this.couponCode); // ✅ Reduce coupon usage
+        finalPrice = this.discountedPrice;
+        await this.couponService.updateCouponUsage(this.couponCode);
       }
 
       await setDoc(bookingRef, {
@@ -238,8 +357,9 @@ export class BookFlightComponent implements OnInit {
         flightNo: this.flightNumber,
         numOfPassengers: this.passengerCount,
         passengers: this.passengers,
-        totalPrice: totalPrice,
+        totalPrice: finalPrice,
         couponUsed: this.appliedCoupon ? this.couponCode : null,
+        isActive: true
       });
 
       const flightRef = doc(this.firestore, `Flight/${this.flightNumber}`);
@@ -250,12 +370,13 @@ export class BookFlightComponent implements OnInit {
       this.dialog.open(ConfirmationDialogComponent, {
         data: {
           title: 'Booking Successful',
-          message: `You have successfully booked ${this.passengerCount} seat(s) on flight ${this.flightNumber}.\n\nTotal Price: ${totalPrice}$.`
+          message: `You have successfully booked ${this.passengerCount} seat(s) on flight ${this.flightNumber}.\n\nTotal Price: ${finalPrice}$.`
         },
       });
 
       this.router.navigate(['/my-bookings']);
     } catch (error) {
+      console.error('Error during booking:', error);
       this.dialog.open(ConfirmationDialogComponent, {
         data: {
           title: 'Error',
