@@ -1,0 +1,91 @@
+.luggage-modal-container {
+    font-family: Arial, sans-serif;
+  }
+  
+  h2 {
+    color: #007bff;
+    margin-bottom: 20px;
+  }
+  
+  .luggage-options {
+    margin-bottom: 20px;
+  }
+  
+  .luggage-option {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+  }
+  
+  .luggage-info {
+    flex: 1;
+  }
+  
+  .luggage-info h3 {
+    margin: 0 0 5px 0;
+    font-size: 18px;
+    color: #333;
+  }
+  
+  .luggage-price {
+    font-weight: bold;
+    color: #28a745;
+    margin: 0 0 5px 0;
+  }
+  
+  .luggage-description {
+    font-size: 14px;
+    color: #666;
+    margin: 0;
+  }
+  
+  .luggage-quantity {
+    display: flex;
+    align-items: center;
+    margin: 0 15px;
+  }
+  
+  .quantity-value {
+    font-size: 18px;
+    font-weight: bold;
+    min-width: 30px;
+    text-align: center;
+  }
+  
+  .luggage-total {
+    font-size: 18px;
+    font-weight: bold;
+    color: #007bff;
+    min-width: 70px;
+    text-align: right;
+  }
+  
+  .luggage-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    margin-top: 20px;
+    background-color: #eef2f7;
+    border-radius: 8px;
+  }
+  
+  .total-price {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .price-value {
+    font-size: 24px;
+    font-weight: bold;
+    color: #28a745;
+  }
+  
+  mat-dialog-actions {
+    margin-top: 20px;
+  }
