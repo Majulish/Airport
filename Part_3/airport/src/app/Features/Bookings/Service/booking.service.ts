@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Flight } from '../../Flights/Model/filght.module';
 import { FlightService } from '../../Flights/Service/flights.service';
 import { DestinationsService } from '../../Destinations/Service/destinations.service';
-import {Firestore, doc, getDoc, collection, getDocs, updateDoc} from '@angular/fire/firestore';
+import {Firestore, doc, getDoc, collection, getDocs, updateDoc, arrayUnion, arrayRemove} from '@angular/fire/firestore';
 import { Booking } from '../Model/booking.module';
 import {FlightWithDestination} from "../../Flights/Model/flight-with-destination.module";
 import {BookingWithFlightData} from "../Model/bookingWithFlightData.module";
@@ -123,5 +123,90 @@ export class BookingService {
     }
   }
 
+  /**
+   * Updates luggage for a specific passenger in a booking
+   * @param bookingId The ID of the booking
+   * @param passportId The passport ID of the passenger
+   * @param luggageType The type of luggage (type1, type2, or type3)
+   * @param quantity The quantity to set for this luggage type
+   * @returns Promise<void>
+   */
+  async updatePassengerLuggage(
+    bookingId: string, 
+    passportId: string, 
+    luggageType: 'type1' | 'type2' | 'type3', 
+    quantity: number
+  ): Promise<void> {
+    // Get the booking document
+    const bookingRef = doc(this.firestore, 'Booking', bookingId);
+    const bookingSnap = await getDoc(bookingRef);
+    
+    if (!bookingSnap.exists()) {
+      throw new Error(`Booking ${bookingId} not found`);
+    }
+    
+    const bookingData = bookingSnap.data() as any;
+    const passengers = bookingData.passengers;
+    
+    // Find the passenger index
+    const passengerIndex = passengers.findIndex((p: any) => p.passportId === passportId);
+    
+    if (passengerIndex === -1) {
+      throw new Error(`Passenger with passport ID ${passportId} not found in booking ${bookingId}`);
+    }
+    
+    // Create the update object with the correct field path
+    const updateObject: any = {};
+    updateObject[`passengers.${passengerIndex}.luggage.${luggageType}`] = quantity;
+    
+    // Update the document
+    await updateDoc(bookingRef, updateObject);
+    
+    console.log(`Updated luggage for passenger ${passportId} in booking ${bookingId}`);
+  }
 
+  /**
+   * Adds luggage of a specific type to a passenger
+   * @param bookingId The ID of the booking
+   * @param passportId The passport ID of the passenger
+   * @param luggageType The type of luggage (type1, type2, or type3)
+   * @param quantityToAdd The quantity to add
+   * @returns Promise<void>
+   */
+  async addPassengerLuggage(
+    bookingId: string, 
+    passportId: string, 
+    luggageType: 'type1' | 'type2' | 'type3', 
+    quantityToAdd: number
+  ): Promise<void> {
+    // Get the booking document
+    const bookingRef = doc(this.firestore, 'Booking', bookingId);
+    const bookingSnap = await getDoc(bookingRef);
+    
+    if (!bookingSnap.exists()) {
+      throw new Error(`Booking ${bookingId} not found`);
+    }
+    
+    const bookingData = bookingSnap.data() as any;
+    const passengers = bookingData.passengers;
+    
+    // Find the passenger index
+    const passengerIndex = passengers.findIndex((p: any) => p.passportId === passportId);
+    
+    if (passengerIndex === -1) {
+      throw new Error(`Passenger with passport ID ${passportId} not found in booking ${bookingId}`);
+    }
+    
+    // Get current luggage quantity
+    const currentQuantity = passengers[passengerIndex].luggage?.[luggageType] || 0;
+    
+    // Create the update object with the correct field path
+    const updateObject: any = {};
+    updateObject[`passengers.${passengerIndex}.luggage.${luggageType}`] = currentQuantity + quantityToAdd;
+    
+    // Update the document
+    await updateDoc(bookingRef, updateObject);
+    
+    console.log(`Added ${quantityToAdd} of luggage type ${luggageType} for passenger ${passportId} in booking ${bookingId}`);
+  }
 }
