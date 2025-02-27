@@ -6,6 +6,12 @@ import { BookingService } from '../../Service/booking.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../../../../Utilities/confirmation-dialog/confirmation-dialog.component';
 
+interface Luggage {
+  type1: number;
+  type2: number;
+  type3: number;
+}
+
 @Component({
   selector: 'app-view-booking-details',
   imports: [CommonModule],
@@ -14,7 +20,6 @@ import { ConfirmationDialogComponent } from '../../../../Utilities/confirmation-
   standalone: true
 })
 export class ViewBookingComponent implements OnInit {
-
   booking: Booking | undefined;
 
   constructor(
@@ -28,7 +33,7 @@ export class ViewBookingComponent implements OnInit {
     const bookingId = this.route.snapshot.paramMap.get('id');
     if (bookingId) {
       try {
-        console.log(`Fetching booking with ID: ${bookingId}`);
+        console.log(Fetching booking with ID: ${bookingId});
         this.booking = await this.bookingService.getBookingById(bookingId);
 
         if (!this.booking) {
@@ -44,11 +49,19 @@ export class ViewBookingComponent implements OnInit {
     }
   }
 
+  /**
+   * Check if passenger has any luggage items
+   */
+  hasLuggage(luggage: Luggage | undefined): boolean {
+    if (!luggage) return false;
+    return luggage.type1 > 0 || luggage.type2 > 0 || luggage.type3 > 0;
+  }
+
   private showBookingNotFoundDialog(bookingId: string): void {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       data: {
         title: '404 - Booking Not Found',
-        message: `The booking with ID "${bookingId}" does not exist.`,
+        message: The booking with ID "${bookingId}" does not exist.,
       },
     });
 
